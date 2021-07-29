@@ -1,0 +1,986 @@
+
+@import url('https://fonts.googleapis.com/css?family=Mukta+Vaani');
+	
+body {
+	font-size:14px;
+	font-family: 'Mukta Vaani', sans-serif;
+}
+.loginflash figure:hover img {
+	opacity: 1;
+	-webkit-animation: flash 1.5s;
+	animation: flash 1.5s;
+}
+@-webkit-keyframes flash {
+	0% {
+		opacity: .95;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+@keyframes flash {
+	0% {
+		opacity: .95;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+
+.login{
+	 position:absolute; right:0; top:150px; padding:0; overflow:none;
+}
+.login-form{
+	 position:absolute; font-size:25px; padding:65px 65px 0 65px; top:0px;
+}
+@media (max-width: 991px) {
+  .login {
+    position:absolute;  top:150px; padding:0;
+  }
+}
+@media (max-width: 991px) {
+  .login-form {
+    position:absolute !important; font-size:16px; padding:25px; top:0px; bottom:0px;
+  }
+}
+.register-text{
+	font-size:16px;
+}
+@media (max-width: 767px) {
+  .register-text {
+    padding:15px 0; font-size:15px;
+  }
+}
+
+
+
+/*----------------------------------------*/
+body { 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.panel-default {
+opacity: 0.9;
+margin-top:30px;
+}
+.form-group.last { 
+	margin-bottom:0px;
+	text-align:left;
+ }
+/*--------------dashboard menu-----*/
+.nav-side-menu {
+  overflow: auto;
+  background-color: #2a3644;
+  top: 0px;
+  height: 100%;
+  color: #aab1b8;
+  margin:0 -15px;
+}
+.nav-side-menu .brand {
+  background-color: #23282e;
+  line-height: 50px;
+  display: block;
+  text-align: center;
+  font-size: 14px;
+}
+.nav-side-menu .toggle-btn {
+  display: none;
+}
+.nav-side-menu ul,
+.nav-side-menu li {
+  list-style: none;
+  padding: 0px;
+  margin: 0px;
+  line-height: 35px;
+  cursor: pointer;
+  /*    
+    .collapsed{
+       .arrow:before{
+                 font-family: FontAwesome;
+                 content: "\f053";
+                 display: inline-block;
+                 padding-left:10px;
+                 padding-right: 10px;
+                 vertical-align: middle;
+                 float:right;
+            }
+     }
+*/
+}
+.nav-side-menu ul :not(collapsed) .arrow:before,
+.nav-side-menu li :not(collapsed) .arrow:before {
+  font-family: FontAwesome;
+  content: "\f078";
+  display: inline-block;
+  padding-left: 10px;
+  padding-right: 10px;
+  vertical-align: middle;
+  float: right;
+}
+.nav-side-menu ul .active,
+.nav-side-menu li .active {
+  border-left: 3px solid #d19b3d;
+  background-color: #565d65;
+}
+.nav-side-menu ul .sub-menu li.active,
+.nav-side-menu li .sub-menu li.active {
+  color: #fff;
+}
+.nav-side-menu ul .sub-menu li.active a,
+.nav-side-menu li .sub-menu li.active a {
+  color: #fff;
+}
+.nav-side-menu ul .sub-menu li,
+.nav-side-menu li .sub-menu li {
+  background-color: #565d65;
+  border: none;
+  line-height: 28px;
+  border-bottom: 1px solid #23282e;
+  margin-left: 0px;
+}
+.nav-side-menu ul .sub-menu li:hover,
+.nav-side-menu li .sub-menu li:hover {
+  background-color: #565d65;
+}
+.nav-side-menu ul .sub-menu li:before,
+.nav-side-menu li .sub-menu li:before {
+  font-family: FontAwesome;
+  content: "\f105";
+  display: inline-block;
+  padding-left: 10px;
+  padding-right: 10px;
+  vertical-align: middle;
+}
+.nav-side-menu li {
+  padding-left: 0px;
+  border-left: 3px solid #2e353d;
+  border-bottom: 1px solid #23282e;
+}
+
+.nav-side-menu li a {
+  text-decoration: none;
+  color: #aab1b8;
+}
+.nav-side-menu li a i {
+  padding-left: 10px;
+  width: 20px;
+  padding-right: 20px;
+}
+.nav-side-menu li:hover {
+  border-left: 3px solid #d19b3d;
+  background-color: #565d65;
+  -webkit-transition: all 1s ease;
+  -moz-transition: all 1s ease;
+  -o-transition: all 1s ease;
+  -ms-transition: all 1s ease;
+  transition: all 1s ease;
+}
+@media (max-width: 767px) {
+  .nav-side-menu {
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .nav-side-menu .toggle-btn {
+    display: block;
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 10 !important;
+    padding: 3px;
+    background-color: #ffffff;
+    color: #000;
+    width: 40px;
+    text-align: center;
+  }
+  .brand {
+    text-align: left !important;
+    font-size: 22px;
+    padding-left: 20px;
+    line-height: 50px !important;
+  }
+}
+@media (min-width: 767px) {
+  .nav-side-menu .menu-list .menu-content {
+    display: block;
+  }
+}
+/*-------end--------*/
+.fix-right-side{
+	
+}
+@media (max-width: 767px) {
+.fix-right-side{
+	padding-top:10px;
+}
+}
+
+
+
+/*----------------------*/
+.progress {
+    position: relative;
+	height: 25px;
+	color:#777;
+	background-color:#f3f2f7;
+}
+.progress > .progress-type {
+	position: absolute;
+	left: 0px;
+	padding: 3px 10px;
+}
+.progress > .progress-completed {
+	position: absolute;
+	right: 0px;
+	font-weight: 800;
+	padding: 3px 10px;
+}
+
+
+/*-------Notification--------*/
+
+#news{}
+.alert_list{font-size: 11px; color:grey}
+li.alert_li {
+  font-size: 11px; 
+  color:grey;
+  padding:2px 2px 2px 0;
+  border-bottom: thin solid #c0c0c0;
+}
+li.alert_li:hover{background-color:#eee}
+.turn_off_alert{margin-bottom :1px}
+a.alert_message{color : grey; }
+a.alert_message:hover{color : grey}
+
+#notification_count 
+		{
+		padding: 1px 5px 2px 5px;
+		background: #c49900;
+		color: #ffffff;
+		font-weight: bold;
+		border-radius: 9px;
+		-moz-border-radius: 9px; 
+		-webkit-border-radius: 9px;
+		position: absolute;
+		margin-top: -10px;
+		font-size: 11px;
+		}
+/*-----Radio buttons-----*/
+.radio-button {
+  position: relative;
+  margin-left: 5px;
+}
+
+/* Hide the default, recreate in a moment */
+.radio-button input {
+  display: none;
+}
+
+.radio-button label {
+  display: inline-block;
+  margin: 0px;
+  padding:0px;
+  cursor: pointer;
+  font-weight: initial;
+  color: #000;
+}
+
+/* Outer circle that acts as typical radio button */
+.radio-button label:before {
+  content: "";
+  width: 20px;
+  height:20px;
+  border:4px solid;
+  position: absolute;
+  top: 2px;
+  left: -20px;
+  border-radius: 100%;
+  color: #ccc;
+}
+
+.radio-button label:hover:before {
+  color: #aaa;
+}
+
+/* The middle dot */
+.radio-button input + label:after {
+  content: "";
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: #fff;
+  top: 8px;
+  left: 0px;
+  -webkit-transform: scale(0);
+  -ms-transform: scale(0);
+  transform: scale(0);
+  border-radius: 100%;
+  transition: transform 250ms;
+  overflow: hidden;
+}
+
+.radio-button input:checked + label:before {
+  color: #000;
+}
+
+.radio-button input:checked + label:after {
+  -webkit-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+}
+/*-----------------------------*/
+
+ 
+.mobmenu{display:none;}
+.mobmenu a{color:#fff !important;}
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{color:#000 !important;}
+.desktopmenu{display:block;}
+.firsttd{width:20% !important;}
+.middletd{width:1% !important;}
+.lasttd{width:79% !important;}
+@media (max-width:767px){
+.centerdiv img{margin:0 auto !important;}
+.centerdiv{text-align:center !important;}
+}
+@media (max-width:991px){
+.firsttd{width:100% !important; display:block !important;}
+.middletd{width:100% !important; display:block !important;}
+.lasttd{width:100% !important; display:block !important;}
+.mobmenu{display:block; margin-top:-3px;}
+.desktopmenu{display:none;}
+.tbl_mobile{margin-top:20px;}
+}
+
+.txrght767{text-align:right;}
+.txleft767{text-align:left;}
+@media (max-width:767px){
+.txrght767{text-align:left; font-weight:bold;}
+.txleft767{text-align:left;}
+}
+
+.aumpichart{min-width:150px; height:180px; max-width:200px; margin:0;}
+@media (max-width:767px){
+.aumpichart{min-width:150px; height:180px; max-width:100%; margin:0;}
+}
+
+.pclegend_div{display:inline-block; float:right; position:absolute; top:70px; right:70px; color:#777777; font-size:13px;}
+.pclegend{display:block; margin-bottom:15px;}
+@media (max-width:1200px){
+.pclegend_div{display:inline-block; float:left; position:relative; top:20px; right:0px; color:#777777; font-size:13px;}
+.pclegend{display:inline-block; margin-bottom:15px; margin-left:40px;}
+}
+@media (min-width:860px) and (max-width:991px){
+.pclegend_div{display:inline-block; float:right; position:absolute; top:70px; right:20px; color:#777777; font-size:13px;}
+.pclegend{display:block; margin-bottom:15px;}
+}
+
+.rcchart_left{width:70%;}
+.rcchart_right{width:30%;}
+.rclegend{margin-bottom:15px;}
+.recommendation_chart{font-size:13px;}
+@media (max-width:530px){
+.rcchart_left{width:100% !important; display:block !important;}
+.rcchart_right{width:100% !important; display:block !important;}
+.recommendation_chart{display:block; float:left; position:relative; clear:both; color:#000; font-size:13px;}
+.rclegend{display:inline-block; margin-bottom:15px; margin-left:40px; margin-bottom:0px;}
+}
+
+	/*
+	Max width before this PARTICULAR table gets nasty
+	This query will take effect for any screen smaller than 760px
+	and also iPads specifically.
+	*/
+      
+
+
+
+
+	@media
+	only screen and (max-width: 760px),
+	(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+		/* Force table to not be like tables anymore */
+		#restable table, #restable thead, #restable tbody, #restable th, #restable td, #restable tr {
+			display: block;
+		}
+
+		/* Hide table headers (but not display: none;, for accessibility) */
+		#restable thead tr {
+			position: absolute;
+			top: -9999px;
+			left: -9999px;
+		}
+
+		#restable tr { border-bottom: 1px solid #000; }
+
+		#restable td {
+			/* Behave  like a "row" */
+			border: none;
+			border-bottom: 1px solid #eee;
+			position: relative;
+			padding-left: 50%;
+			text-align:left !important;
+		}
+
+		#restable td:before {
+			/* Now like a table header */
+			position: absolute;
+			/* Top/left values mimic padding */
+			top: 6px;
+			left: 6px;
+			width: 45%;
+			font-weight:bold;
+			padding-right: 10px;
+			white-space: nowrap;
+		}
+
+		/*
+		Label the data
+		*/
+		#restable td:nth-of-type(1):before { content: "Name"; }
+		#restable td:nth-of-type(2):before { content: "Contact"; }
+		#restable td:nth-of-type(3):before { content: "Pan Card"; }
+		#restable td:nth-of-type(4):before { content: "Purchase"; }
+                #restable td:nth-of-type(5):before { content: "Switch"; }
+                #restable td:nth-of-type(6):before { content: "Redeem"; }
+	}
+
+        @media
+	only screen and (max-width: 760px),
+	(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+		/* Force table to not be like tables anymore */
+		#restable_new table, #restable_new thead, #restable_new tbody, #restable_new th, #restable_new td, #restable_new tr {
+			display: block;
+		}
+
+		/* Hide table headers (but not display: none;, for accessibility) */
+		#restable_new thead tr {
+			position: absolute;
+			top: -9999px;
+			left: -9999px;
+		}
+
+		#restable_new tr { border-bottom: 1px solid #000; }
+
+		#restable_new td {
+			/* Behave  like a "row" */
+			border: none;
+			border-bottom: 1px solid #eee;
+			position: relative;
+			padding-left: 50%;
+			text-align:left !important;
+		}
+
+		#restable_new td:before {
+			/* Now like a table header */
+			position: absolute;
+			/* Top/left values mimic padding */
+			top: 6px;
+			left: 6px;
+			width: 45%;
+			font-weight:bold;
+			padding-right: 10px;
+			white-space: nowrap;
+		}
+
+		/*
+		Label the data
+		*/
+		#restable_new td:nth-of-type(1):before { content: "Name"; }
+		#restable_new td:nth-of-type(2):before { content: "Contact"; }
+		#restable_new td:nth-of-type(3):before { content: "Scheme Name"; }
+		#restable_new td:nth-of-type(4):before { content: "Amount (INR)"; }
+                #restable_new td:nth-of-type(5):before { content: "Due Date"; }
+                #restable_new td:nth-of-type(6):before { content: "Renewal"; }
+	}
+
+	
+	@media
+	only screen and (max-width: 760px),
+	(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+		/* Force table to not be like tables anymore */
+		#restable1 table, #restable1 thead, #restable1 tbody, #restable1 th, #restable1 td, #restable1 tr {
+			display: block;
+		}
+
+		/* Hide table headers (but not display: none;, for accessibility) */
+		#restable1 thead tr {
+			position: absolute;
+			top: -9999px;
+			left: -9999px;
+		}
+
+		#restable1 tr { border-bottom: 1px solid #000; }
+
+		#restable1 td {
+			/* Behave  like a "row" */
+			border: none;
+			border-bottom: 1px solid #eee;
+			position: relative;
+			padding-left: 50%;
+			text-align:left !important;
+		}
+
+		#restable1 td:before {
+			/* Now like a table header */
+			position: absolute;
+			/* Top/left values mimic padding */
+			top: 6px;
+			left: 6px;
+			width: 45%;
+			font-weight:bold;
+			padding-right: 10px;
+			white-space: nowrap;
+		}
+
+		/*
+		Label the data
+		*/
+		#restable1 td:nth-of-type(1):before { content: "Existing Schemes"; }
+		#restable1 td:nth-of-type(2):before { content: "Units"; }
+		#restable1 td:nth-of-type(3):before { content: "NAV (INR)"; }
+		#restable1 td:nth-of-type(4):before { content: "Invested Amt (INR)"; }
+		#restable1 td:nth-of-type(5):before { content: "Purchase"; }
+		#restable1 td:nth-of-type(6):before { content: "Switch"; }
+		#restable1 td:nth-of-type(7):before { content: "Redeem"; }
+	}
+	
+	.notify td {padding:7px 10px;}
+
+
+
+        @media
+	only screen and (max-width: 760px),
+	(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+		/* Force table to not be like tables anymore */
+		#tbl_responsive table, #tbl_responsive thead, #tbl_responsive tbody, #tbl_responsive th, #tbl_responsive td, #tbl_responsive tr {
+			display: block;
+		}
+
+		/* Hide table headers (but not display: none;, for accessibility) */
+		#tbl_responsive thead tr {
+			position: absolute;
+			top: -9999px;
+			left: -9999px;
+		}
+
+		#tbl_responsive tr { border-bottom: 1px solid #000; }
+
+		#tbl_responsive td {
+			/* Behave  like a "row" */
+			border: none;
+			border-bottom: 1px solid #eee;
+			position: relative;
+			padding-left: 50%;
+			text-align:left !important;
+		}
+
+		#tbl_responsive td:before {
+			/* Now like a table header */
+			position: absolute;
+			/* Top/left values mimic padding */
+			top: 6px;
+			left: 6px;
+			width: 45%;
+			font-weight:bold;
+			padding-right: 10px;
+			white-space: nowrap;
+		}
+
+		/*
+		Label the data
+		*/
+		#tbl_responsive td:nth-of-type(1):before { content: "Name"; }
+		#tbl_responsive td:nth-of-type(2):before { content: "Transaction Type"; }
+		#tbl_responsive td:nth-of-type(3):before { content: "Amount (INR)"; }
+		#tbl_responsive td:nth-of-type(4):before { content: "Status"; }
+		#tbl_responsive td:nth-of-type(5):before { content: "Date"; }
+	}
+
+    @media
+	only screen and (max-width: 760px),
+	(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+		/* Force table to not be like tables anymore */
+		#tbl_responsive2 table, #tbl_responsive2 thead, #tbl_responsive2 tbody, #tbl_responsive2 th, #tbl_responsive2 td, #tbl_responsive2 tr {
+			display: block;
+		}
+
+		/* Hide table headers (but not display: none;, for accessibility) */
+		#tbl_responsive2 thead tr {
+			position: absolute;
+			top: -9999px;
+			left: -9999px;
+		}
+
+		#tbl_responsive2 tr {border-bottom: 1px solid #000; }
+
+		#tbl_responsive2 td {
+			/* Behave  like a "row" */
+			border: none;
+			border-bottom: 1px solid #eee;
+			position: relative;
+			padding-left: 50%;
+			text-align:left !important;
+		}
+
+		#tbl_responsive2 td:before {
+			/* Now like a table header */
+			position: absolute;
+			/* Top/left values mimic padding */
+			top: 6px;
+			left: 6px;
+			width: 45%;
+			font-weight:bold;
+			padding-right: 10px;
+			white-space: nowrap;
+		}
+
+		/*
+		Label the data
+		*/
+		#tbl_responsive2 td:nth-of-type(1):before { content: "Rank"; }
+		#tbl_responsive2 td:nth-of-type(2):before { content: "Name"; }
+		#tbl_responsive2 td:nth-of-type(3):before { content: "Contact"; }
+		#tbl_responsive2 td:nth-of-type(4):before { content: "Portfolio Valuation (INR)"; }
+	}
+	
+	@media
+	only screen and (max-width: 760px),
+	(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+		/* Force table to not be like tables anymore */
+		#tbl_responsive3 table, #tbl_responsive3 thead, #tbl_responsive3 tbody, #tbl_responsive3 th, #tbl_responsive3 td, #tbl_responsive3 tr {
+			display: block;
+		}
+
+		/* Hide table headers (but not display: none;, for accessibility) */
+		#tbl_responsive3 thead tr {
+			position: absolute;
+			top: -9999px;
+			left: -9999px;
+		}
+
+		#tbl_responsive3 tr {border-bottom: 1px solid #000; }
+
+		#tbl_responsive3 td {
+			/* Behave  like a "row" */
+			border: none;
+			border-bottom: 1px solid #eee;
+			position: relative;
+			padding-left: 50%;
+			text-align:left !important;
+		}
+
+		#tbl_responsive3 td:before {
+			/* Now like a table header */
+			position: absolute;
+			/* Top/left values mimic padding */
+			top: 6px;
+			left: 6px;
+			width: 45%;
+			font-weight:bold;
+			padding-right: 10px;
+			white-space: nowrap;
+		}
+
+		/*
+		Label the data
+		*/
+                #tbl_responsive3 td:nth-of-type(1):before {content: "Srno";}
+		#tbl_responsive3 td:nth-of-type(2):before {content: "Name";}
+		#tbl_responsive3 td:nth-of-type(3):before {content: "Contact";}
+		#tbl_responsive3 td:nth-of-type(4):before {content: "Date Of Birth";}
+		#tbl_responsive3 td:nth-of-type(5):before {content: "Address";}
+		#tbl_responsive3 td:nth-of-type(6):before {content: "Occupation";}
+		#tbl_responsive3 td:nth-of-type(7):before {content: "Guardian";}
+                #tbl_responsive3 td:nth-of-type(8):before {content: "Folio Number";}
+	}
+
+        @media
+	only screen and (max-width: 760px),
+	(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+		/* Force table to not be like tables anymore */
+		#tbl_responsive_new table, #tbl_responsive_new thead, #tbl_responsive_new tbody, #tbl_responsive_new th, #tbl_responsive_new td, #tbl_responsive_new tr {
+			display: block;
+		}
+
+		/* Hide table headers (but not display: none;, for accessibility) */
+		#tbl_responsive_new thead tr {
+			position: absolute;
+			top: -9999px;
+			left: -9999px;
+		}
+
+		#tbl_responsive_new tr {border-bottom: 1px solid #000; }
+
+		#tbl_responsive_new td {
+			/* Behave  like a "row" */
+			border: none;
+			border-bottom: 1px solid #eee;
+			position: relative;
+			padding-left: 50%;
+			text-align:left !important;
+		}
+
+		#tbl_responsive_new td:before {
+			/* Now like a table header */
+			position: absolute;
+			/* Top/left values mimic padding */
+			top: 6px;
+			left: 6px;
+			width: 45%;
+			font-weight:bold;
+			padding-right: 10px;
+			white-space: nowrap;
+		}
+
+		/*
+		Label the data
+		*/
+                #tbl_responsive_new td:nth-of-type(1):before {content: "Srno";}
+		#tbl_responsive_new td:nth-of-type(2):before {content: "Name";}
+		#tbl_responsive_new td:nth-of-type(3):before {content: "Contact";}
+		#tbl_responsive_new td:nth-of-type(4):before {content: "Transaction";}
+		#tbl_responsive_new td:nth-of-type(5):before {content: "Scheme";}
+		#tbl_responsive_new td:nth-of-type(6):before {content: "Amount (INR)";}
+		#tbl_responsive_new td:nth-of-type(7):before {content: "Trade Date";}
+                #tbl_responsive_new td:nth-of-type(8):before {content: "Address";}
+	}
+
+        @media
+	only screen and (max-width: 760px),
+	(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+		/* Force table to not be like tables anymore */
+		#tb_responsive table, #tb_responsive thead, #tb_responsive tbody, #tb_responsive th, #tb_responsive td, #tb_responsive tr {
+			display: block;
+		}
+
+		/* Hide table headers (but not display: none;, for accessibility) */
+		#tb_responsive thead tr {
+			position: absolute;
+			top: -9999px;
+			left: -9999px;
+		}
+
+		#tb_responsive tr {border-bottom: 1px solid #000; }
+
+		#tb_responsive td {
+			/* Behave  like a "row" */
+			border: none;
+			border-bottom: 1px solid #eee;
+			position: relative;
+			padding-left: 50%;
+			text-align:left !important;
+		}
+
+		#tb_responsive td:before {
+			/* Now like a table header */
+			position: absolute;
+			/* Top/left values mimic padding */
+			top: 6px;
+			left: 6px;
+			width: 45%;
+			font-weight:bold;
+			padding-right: 10px;
+			white-space: nowrap;
+		}
+
+		/*
+		Label the data
+		*/
+                #tb_responsive td:nth-of-type(1):before {content: "Srno";}
+		#tb_responsive td:nth-of-type(2):before {content: "Name";}
+		#tb_responsive td:nth-of-type(3):before {content: "Contact";}
+		#tb_responsive td:nth-of-type(4):before {content: "Transaction";}
+		#tb_responsive td:nth-of-type(5):before {content: "Scheme";}
+		#tb_responsive td:nth-of-type(6):before {content: "Remarks";}
+		#tb_responsive td:nth-of-type(7):before {content: "Trade Date";}
+                #tb_responsive td:nth-of-type(8):before {content: "Address";}
+	}
+
+	
+	@media
+	only screen and (max-width: 760px),
+	(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+		/* Force table to not be like tables anymore */
+		#tbl_responsive4 table, #tbl_responsive4 thead, #tbl_responsive4 tbody, #tbl_responsive4 th, #tbl_responsive4 td, #tbl_responsive4 tr {
+			display: block;
+		}
+
+		/* Hide table headers (but not display: none;, for accessibility) */
+		#tbl_responsive4 thead tr {
+			position: absolute;
+			top: -9999px;
+			left: -9999px;
+		}
+
+		#tbl_responsive4 tr {border-bottom: 1px solid #000; }
+
+		#tbl_responsive4 td {
+			/* Behave  like a "row" */
+			border: none;
+			border-bottom: 1px solid #eee;
+			position: relative;
+			padding-left: 50%;
+			text-align:left !important;
+		}
+
+		#tbl_responsive4 td:before {
+			/* Now like a table header */
+			position: absolute;
+			/* Top/left values mimic padding */
+			top: 6px;
+			left: 6px;
+			width: 45%;
+			font-weight:bold;
+			padding-right: 10px;
+			white-space: nowrap;
+		}
+
+		/*
+		Label the data
+		*/
+		#tbl_responsive4 td:nth-of-type(1):before {content: "Name";}
+		#tbl_responsive4 td:nth-of-type(2):before {content: "Contact";}
+		#tbl_responsive4 td:nth-of-type(3):before {content: "Transaction";}
+		#tbl_responsive4 td:nth-of-type(4):before {content: "Scheme";}
+		#tbl_responsive4 td:nth-of-type(5):before {content: "Amount (INR)";}
+		#tbl_responsive4 td:nth-of-type(6):before {content: "Remarks";}
+	}
+
+    @media
+	only screen and (max-width: 760px),
+	(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+		/* Force table to not be like tables anymore */
+		#responsive1 table, #responsive1 thead, #responsive1 tbody, #responsive1 th, #responsive1 td, #responsive1 tr {
+			display: block;
+		}
+
+		/* Hide table headers (but not display: none;, for accessibility) */
+		#responsive1 thead tr {
+			position: absolute;
+			top: -9999px ;
+			left: -9999px;
+		}
+
+		#responsive1 tr { border-bottom: 1px solid #000; }
+
+		#responsive1 td {
+			/* Behave  like a "row" */
+			border: none;
+			border-bottom: 1px solid #eee;
+			position: relative;
+			padding-left: 50%;
+			text-align:left;
+		}
+
+		#responsive1 td:before {
+			/* Now like a table header */
+			position: absolute;
+			/* Top/left values mimic padding */
+			top: 6px;
+			left: 6px;
+			width: 45%;
+			font-weight:bold;
+			padding-right: 10px;
+			white-space: nowrap ;
+		}
+
+		/*
+		Label the data
+		*/
+		#responsive1 td:nth-of-type(1):before { content: "Name"; }
+		#responsive1 td:nth-of-type(2):before { content: "Contact"; }
+		#responsive1 td:nth-of-type(3):before { content: "Scheme Name"; }
+		#responsive1 td:nth-of-type(4):before { content: "Purchase"; }
+                #responsive1 td:nth-of-type(5):before { content: "Switch"; }
+                #responsive1 td:nth-of-type(6):before { content: "Redeem"; }
+	}
+
+
+/*
+  :: SELECT
+
+  <div class="select">
+    <select>
+      <option>Please Select</option>
+      <option>Option</option>
+      <option>Option</option>
+    </select>
+  </div>
+
+------------------------------------------------ */
+
+/* Base elements */
+.select {
+	position: relative;
+	display: inline-block;
+	width: 100%;
+	margin-bottom: 8px;
+}
+
+/* SELECT - Normal State */
+.select select {
+	display: inline-block;
+	width: 100%;
+	padding: 2px;
+	cursor: pointer;
+	border: 0;
+	outline: 0;
+	border-bottom: 1px solid #333;
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+}
+
+/* SELECT - Hover */
+.select select:hover,
+.select select:focus {
+	color: #000;
+	background: #eee;
+
+}
+
+/* SELECT - Arrow */
+.select:before {
+  content: '';
+  position: absolute;
+ 	transform: translateY(-50%);
+  top: 50%;
+	right: 15px;
+	width: 0;
+	height: 0;
+	pointer-events: none;
+	border-width: 5px 5px 0 5px;
+	border-style: solid;
+	border-color: #333 transparent transparent transparent;
+  z-index: 1;
+}
+
+/* SELECT - Disabled */
+.select select:disabled {
+	pointer-events: none;
+	opacity: .5;
+}
+
+.footerlink a{color:#aaa; text-decoration:none;}
+
+.footerlink a:hover{color:#fff; text-decoration:none;}
+
+@media(max-width:767px){
+    .mt20_767{margin-top:20px;}
+}
+

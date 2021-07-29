@@ -1,0 +1,146 @@
+  <!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+<title>Thyssenkrupp Industrial Solutions India Pvt Ltd</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no"/>
+<link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="css/custom.css" rel="stylesheet" type="text/css">
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<link href="vendor/hover/effects.min.css" rel="stylesheet">
+<script src="js/jquery.js"></script>
+<script src="js/common.js"></script>
+<script src="js/chart.min.js"></script>
+<script src="js/bootstrap.js"></script>
+
+<style>
+.header {
+	position: sticky;
+	top:0;
+}
+body {
+	height: 800px;
+}
+</style>
+
+</head>
+<!--<body onload="recommendation_summary();top_IFA_AUM_base();top_IFA_on_investors_base();topIFAonRecommadation()">-->
+<body>
+<!--header start-->
+<div class="header-top">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 col-sm-6 col-6 centerdiv">
+        <div class="logo"> <img src="images/thyssenkrupp-logo.jpg"  class="img-responsive logoimg"> </div>
+      </div>
+      <div class="col-md-6 col-sm-6 col-6  heading">QED BOT</div>
+    </div>
+    <!--header end-->
+  </div>
+</div>
+<div class="container-fluid p-0"><!-- #BeginLibraryItem "/Library/topnav.lbi" --><div class="top_nav"> <span class="top_nav_trigger">Menu</span>
+  <nav class="top_nav_links">
+    <ul>
+      <li class="topnav-first"><a class="topnav_home" href="dashboard.html">Dashboard</a></li>
+      <li><a  href="project-tracking.html">View Project Details</a></li>
+      <li><a  href="login.html">Logout</a></li>
+    </ul>
+  </nav>
+
+</div><!-- #EndLibraryItem --></div>
+</div>
+<div class="container-fluid px-4">
+  <div class="row" style="font-size:16px; padding:5px 2px;">
+    <div class="col-md-12 col-sm-12" >
+      <div class="login_user">Welcome <span class="user-name">Sameer Shirur</span>. You  are logged in as <span  class="user-name">Mgmt User</span> </div>
+    </div>
+  </div>
+  <h2>Inconsistencies v/s Time</h2>
+  
+    <div class="content-area">
+  <canvas id="myChart" style="width:100%;max-width:700px;margin:0 auto;padding:10px;"></canvas>
+
+<script>
+$(document).ready(function() {
+
+	//get canvas
+	var ctx = $("#myChart");
+
+	var data = {
+		labels : ["10/05/2021", "17/05/2021", "27/05/2021", "02/06/2021", "15/06/2021"],
+		datasets : [
+			{
+				label : "PROJECT_001",
+				data : [150, 121, 80, 40, 15],
+				backgroundColor : "blue",
+				borderColor : "lightblue",
+				fill : false,
+				lineTension : 0,
+				pointRadius : 5
+			},
+			{
+				label : "PROJECT_002",
+				data : [135, 101, 75, 37, 7],
+				backgroundColor : "green",
+				borderColor : "lightgreen",
+				fill : false,
+				lineTension : 0,
+				pointRadius : 5
+			},
+			{
+				label : "PROJECT_003",
+				data : [168, 127, 95, 55, 37],
+				backgroundColor : "#f1c40f",
+				borderColor : "#f1c40f",
+				fill : false,
+				lineTension : 0,
+				pointRadius : 5
+			}
+		]
+	};
+
+	var options = {
+		title : {
+			display : true,
+			position : "top",
+			text : "Line Graph",
+			fontSize : 18,
+			fontColor : "#111"
+		},
+		legend : {
+			display : true,
+			position : "bottom"
+		},
+		scales: {
+			yAxes: [{
+				ticks: {
+					max: 80,
+					min: -10,
+					stepSize: 10
+				}
+			}]
+		},
+	};
+
+	var chart = new Chart( ctx, {
+		type : "line",
+		data : data,
+		options : options
+	} );
+
+});
+    </script>
+  
+  
+
+  
+  
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="footer"> &copy  thyssenkrupp Industrial Solutions India Pvt Ltd </div>
+  </div>
+</div>
+</body>
+</html>
+

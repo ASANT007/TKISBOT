@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css?family=Mukta+Vaani');
+	
+body {
+	font-family: 'Mukta Vaani', sans-serif;
+	font-size:18px;
+	margin:0;
+	padding:0;
+}
+.loginflash figure:hover img {
+	opacity: 1;
+	-webkit-animation: flash 1.5s;
+	animation: flash 1.5s;
+}
+/*
+  :: SELECT
+
+  <div class="select">
+    <select>
+      <option>Please Select</option>
+      <option>Option</option>
+      <option>Option</option>
+    </select>
+  </div>
+
+------------------------------------------------ */
+
+/* Base elements */
+.select {
+	position: relative;
+	display: inline-block;
+	width: 100%;
+	margin-bottom: 8px;
+}
+
+/* SELECT - Normal State */
+.select select {
+	display: inline-block;
+	width: 100%;
+	padding: 2px;
+	cursor: pointer;
+	border: 0;
+	outline: 0;
+	border-bottom: 1px solid #333;
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+}
+
+/* SELECT - Hover */
+.select select:hover,
+.select select:focus {
+	color: #000;
+	background: #eee;
+
+}
+
+/* SELECT - Arrow */
+.select:before {
+  content: '';
+  position: absolute;
+ 	transform: translateY(-50%);
+  top: 50%;
+	right: 15px;
+	width: 0;
+	height: 0;
+	pointer-events: none;
+	border-width: 5px 5px 0 5px;
+	border-style: solid;
+	border-color: #333 transparent transparent transparent;
+  z-index: 1;
+}
+
+/* SELECT - Disabled */
+.select select:disabled {
+	pointer-events: none;
+	opacity: .5;
+}
+
+.main_selected{line-height:140px; background:#0daff0; text-align:center; color:#fff; font-size:24px; border-bottom:4px solid #0b9ed9;}
+.main_sel_arrow{margin-top:-7px; font-size:21px; color:#0b9ed9;}
+.main_normal{line-height:140px; background:#fff; text-align:center; color:#000; font-size:24px; border-bottom:4px solid #e2e2e2;}
+.main_normal_off{line-height:25px; height:145px; background:#fff; text-align:center; color:#b6b6b6; font-size:24px; border-bottom:4px solid #e2e2e2;}
+
+.contentpane table td{padding:10px;}
+
+.btn-primary{background:#0faef2; border-radius:0; border:none;}
+.btn-primary:hover{background:#0097d8; border-radius:none; border:none;}
+
+.footerlink a{color:#2a3642; text-decoration:none;}
+
+.footerlink a:hover{color:#2a3642; text-decoration:underline;}
+
+/*.footerlink{font-size:15px;}
+.footerlink a{color:#0daff0; text-decoration:none; font-size:15px;}
+.footerlink a:hover{color:#0daff0; text-decoration:underline;}
+*/
+.blue_subtext_heading{color:#0daff0; margin:0; padding:0; font-size:21px;}
+
+.marfull_767{margin:0 40px}
+.footerrow{background:#fff; margin:0 10px; padding:15px;}
+
+.marfull_767_footer{margin:0 15px 30px 15px;}
+.pay_select{border:none; outline:none; border-bottom:1px solid #ccc; width:70%;}
+
+@media (max-width:767px){
+.tdfull{width:100% !important; display:block;}
+.tdfull1{font-weight:bold !important;}
+.tdfull2{padding-top:0px !important;}
+.full767{width:100% !important; display:block;}
+.centerdiv{text-align: center !important;}
+.logoimg{margin:0 auto !important;}
+.marfull_767{margin:0px}
+.marfull_767_footer{margin:0px -15px; padding:0;}
+.marfull_767_footer1{padding:5px;}
+.pay_select{border:none; outline:none; border-bottom:1px solid #ccc; width:100%;}
+.confirm_borderbtm{border-bottom:1px solid #ddd; padding-bottom:20px; margin-bottom:10px;}
+.nopadd_left767{padding-left:0 !important;}
+}
+
+.showbelow991{display:none;}
+
+@media (max-width:991px){
+.hidebelow991{display:none;}
+.showbelow991{display:block;}
+}
+

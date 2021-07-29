@@ -1,0 +1,5 @@
+DBUsername=QEDBOTUser
+DBPassword=cnVuQk9UQHRrMXM=
+Url=jdbc:sqlserver://STMUDB77:1434;databaseName=qed_bot_db
+Driver=com.microsoft.sqlserver.jdbc.SQLServerDriver
+

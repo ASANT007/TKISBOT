@@ -1,0 +1,10 @@
+<div class="top_nav"> <span class="top_nav_trigger">Menu</span>
+  <nav class="top_nav_links">
+    <ul>
+      <li class="topnav-first"><a class="topnav_home" href="../dashboard.html">Dashboard</a></li>
+      <li><a  href="../project-tracking.html">View Project Details</a></li>
+      <li><a  href="../login.html">Logout</a></li>
+    </ul>
+  </nav>
+
+</div>
