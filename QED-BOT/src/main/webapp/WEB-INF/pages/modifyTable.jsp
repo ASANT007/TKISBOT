@@ -79,7 +79,7 @@ $(document).ready(function () {
       <a  href="/functionalAdminHome">Table Management</a>
       <ul>
       <li><a  href="/uploadExcel">Create Table</a></li>
-      <li><a  href="/modifyTable">Modify Table</a></li> 
+      <li><a  href="/modifyTable">Modify Table</a></li>      
       </ul>
       </li>
       <li><a  href="">Mapping Management</a></li>
@@ -97,7 +97,7 @@ $(document).ready(function () {
       <div class="login_user">Welcome <span class="user-name"><%=userName %></span>. You  are logged in as <span  class="user-name"><%=role %></span> </div>
     </div>
   </div>
-  <h2>Create Table</h2>  
+  <h2>Modify Table</h2>  
   <div class="content-area">
   <!-- START -->
   <form   action ="createtable" method = "POST" enctype = "multipart/form-data" id="fileUploadForm" name="fileUploadForm">

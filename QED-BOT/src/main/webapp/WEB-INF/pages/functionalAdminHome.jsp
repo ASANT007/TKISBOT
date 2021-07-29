@@ -79,9 +79,8 @@ $(document).ready(function () {
       <li>
       <a  href="/functionalAdminHome">Table Management</a>
       <ul>
-      <li><a  href="/uploadExcel">Add Table</a></li>
-      <li><a  href="">Modify Table</a></li>
-      <li><a  href="">View Table</a></li>
+      <li><a  href="/uploadExcel">Create Table</a></li>
+      <li><a  href="/modifyTable">Modify Table</a></li> 
       </ul>
       </li>
       <li><a  href="">Mapping Management</a></li>
