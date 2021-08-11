@@ -1,6 +1,8 @@
 package com.tkis.qedbot.dao;
 
+import java.math.BigInteger;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -11,6 +13,8 @@ import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.tkis.qedbot.entity.RepositoryDetails;
@@ -34,10 +38,14 @@ public class CustomTableDaoImp implements CustomTableDao {
 	@PersistenceContext
 	private EntityManager entityManager;
 	
+	
+	//Create table start
+	
 	@Override
 	public List<String> getProjectList() {
 		
 		List<String> projectList = null;
+		
 		String sql = "select project_name from project_master";
 		
 		
@@ -49,31 +57,16 @@ public class CustomTableDaoImp implements CustomTableDao {
 			}
 			
 			Query query = session.createNativeQuery(sql);
+			
 			projectList = query.getResultList();
+			
 		}catch(Exception e) {
 			
+			e.printStackTrace();
 		}
 		
 		return projectList;
 	}
-
-	/*
-	 * @Override
-	 * 
-	 * @Transactional(rollbackOn = Exception.class) public boolean isTableCreated()
-	 * {
-	 * 
-	 * Session session = null; if(entityManager == null || session =
-	 * entityManager.unwrap(Session.class) == null) { throw new
-	 * NullPointerException(); }
-	 * 
-	 * 
-	 * String sql = "Create table test (col1 int(10), name varchar(20))"; Query
-	 * query = entityManager.createNativeQuery(sql);
-	 * 
-	 * return false; }
-	 */
-
 		
 	@Override
 	@Transactional(rollbackOn = Exception.class)
@@ -129,17 +122,7 @@ public class CustomTableDaoImp implements CustomTableDao {
 		}
 		return false;
 	}
-
-	private int saveFileInRepository(String fileName) {
-		
-		int i = 0;
-		String sql = "insert into repository_details";
-		
-		detailsRepo.save(null);
-		
-		return i;
-	}
-
+	
 	@Override
 	public boolean isTablePresent(String tableName) {
 
@@ -158,22 +141,23 @@ public class CustomTableDaoImp implements CustomTableDao {
 			//BigInteger defVal = null;
 			Query query = session.createSQLQuery(sql);
 
-			// It work in MySQL 
-			/*
-			 * BigInteger result = (BigInteger) query.getSingleResult();
-			 * if(result.intValue() > 0) { System.out.println("#### Table is present...");
-			 * return true; }
-			 */
+				// It work in MySQL START
 			
+			  BigInteger result = (BigInteger) query.getSingleResult();
+			  if(result.intValue() > 0) { System.out.println("#### Table is present...");
+			  return true; }
+			 
+			// It work in MySQL END
+			  
 			// It work in MSSQL
-			int result = (int) query.getSingleResult();
-			
-			System.out.println("#### result "+result);
-			
-		  if(result > 0) { 
-			    System.out.println("#### Table is present..."); 
-		  		return true;
-		  }
+			/*
+			 * int result = (int) query.getSingleResult();
+			 * 
+			 * System.out.println("#### result "+result);
+			 * 
+			 * if(result > 0) { System.out.println("#### Table is present..."); return true;
+			 * }
+			 */
 			 
 			
 			
@@ -184,21 +168,60 @@ public class CustomTableDaoImp implements CustomTableDao {
 		}
 		return false;
 	}
+	//Create table end
+	
+	
+	
+	@Override
+	public List<String> findAllColumns(String tableName) {
+		
+		Session session = null;
+		if (entityManager == null || (session = entityManager.unwrap(Session.class)) == null) {
+			throw new NullPointerException();
+		}
+		//tableName = "Project_001_master_test_table";
+		System.out.println("#### findAllColumns : tableName "+tableName);
+		Query query = session.createSQLQuery("DESCRIBE " +tableName);
+		List<Object[]> list = query.getResultList();
+		List<String> collect = list.stream().map( arr -> {
+			return String.valueOf(arr[0]);
+		}).collect(Collectors.toList());
+		return collect;
+	}
 
 	
-
-
-
-
-/*
- * @Override public boolean isTablePresent(String tableName) {
- * 
- * String sql = "select * from information_schema.tables where table_name='" +
- * tableName + "'";
- * 
- * entityManager.createNativeQuery(sql);
- * 
- * return false; }
- */
+	@Modifying
+	@Transactional
+	@Override
+	public List<String> alterTable(String tableName, String column) {
+		
+		Session session = null;
+		if (entityManager == null || (session = entityManager.unwrap(Session.class)) == null) {
+			throw new NullPointerException();
+		}		
+		
+		List<String> colList = null;
+		int id = 0;
+		
+		String sql = "alter table "+tableName+" add column "+column+" varchar(750)";
+		
+		try
+		{
+			
+			Query query = session.createSQLQuery(sql);
+			
+			query.executeUpdate();
+			
+			colList = findAllColumns(tableName);
+			
+		} catch (Exception e) {
+			//System.out.println("##### Exception :: alterTable : "+e);
+			e.printStackTrace();
+		}
+		
+		
+		
+		return colList;
+	}
 
 }

@@ -82,8 +82,16 @@ $(document).ready(function () {
       <li><a  href="/modifyTable">Modify Table</a></li>      
       </ul>
       </li>
-      <li><a  href="">Mapping Management</a></li>
-      <li><a  href="">Rule Management</a></li>
+      <li>
+      	<a  href="/functionalAdminHome">Mapping Management</a>
+      </li>
+      	
+       <li>
+      	<a  href="/functionalAdminHome">Rule Management</a>
+      	<ul>
+      		<li><a  href="/createRule">Create Rule</a></li>
+      	</ul>
+      </li>
       <li><a  href="/logout">Logout</a></li>
       
     </ul>
@@ -102,13 +110,14 @@ $(document).ready(function () {
   <!-- START -->
   <form   action ="createtable" method = "POST" enctype = "multipart/form-data" id="fileUploadForm" name="fileUploadForm">
   <div class="row">
-           <div class="col-md-3 align-self-center">
+           <div class="col-md-3 align-self-center mdfProjectType">
       <% 
       		List<String> projectList = (List<String>) request.getAttribute("projectList");
       %>
-			<label>Select Project : </label> 
-			<select class="form-select tbl-select-opt" name="projectName" id="projectName">
-					<option value="select" >-- Select--</option>
+			<label>Select Project : </label>
+			<sup class="mandatory">*</sup>
+			<select class="form-select tbl-select-opt" name="projectName" id="projectName" onchange="getAllTables(this)">
+					<option value="" selected="selected" >-- Select Project--</option>
 					<% for(String projectName : projectList){%>
 						
 						<option value="<%= projectName%>"><%= projectName%></option>
@@ -118,40 +127,65 @@ $(document).ready(function () {
 					
 			</select>
 	 </div>
-	 
-      <div class="col-md-3 align-self-center">
-			<label>Table Type : </label> 
-			<select class="form-select tbl-select-opt" name="tabletype" id="tabletype">
-					<option value="select" >-- Select--</option>
-					<option value="master">Master</option>
-					<option value="deliverable">Deliverable</option>
-			</select>
+	 <div class="col-md-3 align-self-center mfdTableType">
+		  <lable>Select Table :</lable>	
+		  <sup class="mandatory">*</sup>
+		  <div class="selectDropDownDiv">
+		  <select class="form-select selectDropDown tbl-select-opt" name="tableName" id="tableName" >
+            <option value="" selected="selected" >--Select Table--</option>
+           </select>
+           </div>
 	 </div>
 	 
-	 <div class="col-md-3 align-self-center">
-		  <lable></lable>	
-		  <input type = "file" name = "file" id="file" value = "Browse File" accept=".xls,.xlsx,.csv"/>	  
+	  <div class="col-md-3 align-self-center mdfRadio">
+	 	<input class="mx-2" type = "radio" id= "viewTableRdo" name = "viewRadioOption" value = "viewtable"/><label>View table</label>    
+	  	<input class="mx-2" type = "radio" id= "viewFileRdo" name = "viewRadioOption"value = "viewfile" /><label>View file</label>
 	 </div>
 	 
-	 <div class="col-md-3 align-self-center">
-	 	<input class="btn btn-primary mx-2 " type = "button" value = "View Structure" onClick="validateTableStruc()"/>	    
-	  	<a href="/uploadExcel"><input class="btn btn-primary" type = "button" value = "Cancel" /></a>
+	 <div class="col-md-3 align-self-center mdfButtons">
+	 	<input class="btn btn-primary mx-2 " type = "button" value = "View" onClick="viewTable()"/>	    
+	  	<a href="/modifyTable"><input class="btn btn-primary" type = "button" value = "Cancel" /></a>
 	 </div>
   
   </div>
   
+  <div class="row"> 
+	   <div class="col-md-12">
+	  	<div id="colAddResult" name="colAddResult" style="height:35px"></div>
+	  </div>
+  </div>
    <div class="row"> 
 	   <div class="col-md-12">
 	  	<div id="result" name="result"></div>
 	  </div>
   </div>
   
+  <input type='hidden' id="currentTableName" name="currentTableName" value="">
     
    <div class="row">
    	<div class="col-md-12">   		
    		<div id="errorDiv" name="errorDiv" class="pt-3" style="color: red;text-align:center"></div> 		
    	</div>
-   </div>     
+   </div> 
+   
+   <div class="row mt-2" style="display:none" id="fileNameUpdationRow" name="fileNameUpdationRow"> 
+	   <div class="col-md-4">
+	  		<label class="mx-2">Old file Name :</label>
+	  		<label class="mx-2"id="oldFileName" name="oldFileName"></label>
+	  	</div>
+	  	
+	  	<div class="col-md-4">
+	  		<input class="form-control" type="text" id="newFileName" name="newFileName" placeholder="Please Enter File Name"/>
+	  	</div>
+	  	
+	  	<div class="col-md-4">
+  			<input type="button" value ="Update Name" id="updateFileNameBtn" name="updateFileNameBtn" class="btn btn-primary mx-2" onclick="getUpdatedFileName()">
+	  	</div>
+	  	
+	  	
+	  
+  </div>
+       
   </div>
 	 
         

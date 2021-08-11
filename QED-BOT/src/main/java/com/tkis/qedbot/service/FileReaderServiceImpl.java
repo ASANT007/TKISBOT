@@ -382,7 +382,10 @@ public class FileReaderServiceImpl implements FileReaderService
 			
 			tableDesignBuff = new StringBuffer("create table ");
 			tableDesignBuff.append(tableName);
-			tableDesignBuff.append("( ["+tableName+"_id] int identity(1,1) primary key,");	
+			//MSSQL Server
+			//tableDesignBuff.append("( ["+tableName+"_id] int identity(1,1) primary key,");
+			//MySQL
+			tableDesignBuff.append("( "+tableName+"_id int PRIMARY KEY AUTO_INCREMENT,");
 			
 		}else {
 			
@@ -407,9 +410,9 @@ public class FileReaderServiceImpl implements FileReaderService
 	{
 		if(isSave) {
 			
-			tableDesignBuff.append("[");
+			//tableDesignBuff.append("[");// Required to MSSQL
 			tableDesignBuff.append(cellValue);
-			tableDesignBuff.append("]");
+			//tableDesignBuff.append("]");// Required to MSSQL
 			tableDesignBuff.append(" ");
 			tableDesignBuff.append("varchar(200),");
               

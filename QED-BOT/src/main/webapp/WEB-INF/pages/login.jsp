@@ -68,8 +68,8 @@
             <div class=""> 
              <select class="form-select" id="domain" name = "domain" >
               <option value="">--Select--</option>
-              <option value="STMUDC02">STMUDC02</option>
-              <option value="STMUDC15">STMUDC15</option>
+              <option value="STMUDC02">KUMUD02</option>
+              <option value="STMUDC15">KUMUD05</option>
               </select>
             </div>
             <div class="text-center">

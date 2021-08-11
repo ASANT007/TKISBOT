@@ -77,14 +77,20 @@ $(document).ready(function () {
     <ul>
       <!-- <li class="topnav-first"><a class="topnav_home" href="adminDashboard.jsp">Dashboard</a></li> -->
       <li>
-      <a  href="/functionalAdminHome">Table Management</a>
+      	<a  href="/functionalAdminHome">Table Management</a>
       <ul>
-      <li><a  href="/uploadExcel">Create Table</a></li>
-      <li><a  href="/modifyTable">Modify Table</a></li> 
+      	<li><a  href="/uploadExcel">Create Table</a></li>
+      	<li><a  href="/modifyTable">Modify Table</a></li> 
       </ul>
       </li>
-      <li><a  href="">Mapping Management</a></li>
-      <li><a  href="">Rule Management</a></li>
+      <li><a  href="/functionalAdminHome"">Mapping Management</a></li>
+      <li>
+      	<a  href="/functionalAdminHome"">Rule Management</a>
+      	<ul>
+      		<li><a  href="/createRule">Create Rule</a></li>
+      	</ul>
+      </li>
+      
       <li><a  href="/logout">Logout</a></li>
     </ul>
   </nav>

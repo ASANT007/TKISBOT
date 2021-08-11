@@ -82,8 +82,17 @@ $(document).ready(function () {
       <li><a  href="/modifyTable">Modify Table</a></li> 
       </ul>
       </li>
-      <li><a  href="">Mapping Management</a></li>
-      <li><a  href="">Rule Management</a></li>
+      
+	  <li>
+      	<a  href="/functionalAdminHome">Mapping Management</a>
+      </li>
+      	
+       <li>
+      	<a  href="/functionalAdminHome">Rule Management</a>
+      	<ul>
+      		<li><a  href="/createRule">Create Rule</a></li>
+      	</ul>
+      </li>
       <li><a  href="/logout">Logout</a></li>
       
     </ul>
@@ -102,11 +111,12 @@ $(document).ready(function () {
   <!-- START -->
   <form   action ="createtable" method = "POST" enctype = "multipart/form-data" id="fileUploadForm" name="fileUploadForm">
   <div class="row">
-           <div class="col-md-3 align-self-center">
+           <div class="col-md-3 select-project align-self-center">
       <% 
       		List<String> projectList = (List<String>) request.getAttribute("projectList");
       %>
 			<label>Select Project : </label> 
+			<sup class="mandatory">*</sup>
 			<select class="form-select tbl-select-opt" name="projectName" id="projectName">
 					<option value="select" >-- Select--</option>
 					<% for(String projectName : projectList){%>
@@ -119,9 +129,10 @@ $(document).ready(function () {
 			</select>
 	 </div>
 	 
-      <div class="col-md-3 align-self-center">
+      <div class="col-md-3 table-type-div align-self-center">
 			<label>Table Type : </label> 
-			<select class="form-select tbl-select-opt" name="tabletype" id="tabletype">
+			<sup class="mandatory">*</sup>
+			<select class="form-select tbl-type tbl-select-opt" name="tabletype" id="tabletype">
 					<option value="select" >-- Select--</option>
 					<option value="master">Master</option>
 					<option value="deliverable">Deliverable</option>
@@ -129,11 +140,12 @@ $(document).ready(function () {
 	 </div>
 	 
 	 <div class="col-md-3 align-self-center">
-		  <lable></lable>	
+		  <lable></lable>
+		  <sup class="mandatory">*</sup>	
 		  <input type = "file" name = "file" id="file" value = "Browse File" accept=".xls,.xlsx,.csv"/>	  
 	 </div>
 	 
-	 <div class="col-md-3 align-self-center">
+	 <div class="col-md-3 proj_btn align-self-center">
 	 	<input class="btn btn-primary mx-2 " type = "button" value = "View Structure" onClick="validateTableStruc()"/>	    
 	  	<a href="/uploadExcel"><input class="btn btn-primary" type = "button" value = "Cancel" /></a>
 	 </div>

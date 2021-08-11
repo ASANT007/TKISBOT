@@ -115,7 +115,7 @@ h2 span {
 	padding: 6PX;
 	FONT-SIZE: 13PX;
 }label {
-    font-weight: bold;
+   /*  font-weight: bold; */
 }
 /* =============================================================================
     Top Nav Styles
@@ -528,8 +528,19 @@ p.product-heading-cg {
  padding: 37px 19px 0 0;
  font-weight: bold;
  color: #fff;
-}}
- @media only screen and (min-width: 800px) {
+}
+.col-md-3.select-project.align-self-center {
+	width: 26%;
+}
+.table-type-div{
+    width: 24%;
+}
+.select.form-select.tbl-type.tbl-select-opt {
+    width: 146px;
+}
+.col-md-3.proj_btn.align-self-center {
+    width: 22%;
+}
 .content-inner {
     overflow-x: inherit;
 }
@@ -542,6 +553,80 @@ p.product-heading-cg {
     margin: 0 0 0 10px;
 }
 }
+
+ @media only screen and (min-width:960px) {
+ 
+ .mdfProjectType{
+	 width:26%;
+	}
+	 
+	.mfdTableType{
+	 	width:32%;
+	}
+	 
+	 .mdfRadio{
+	 	width:17%;
+	 }
+	 
+	 .mdfButtons{
+	 	width:21%;
+	}
+	.select-action-createRule{
+		width: 100%;
+	    max-width: 242px;
+	    display: inline-block;
+	    vertical-align: top;
+	}
+	.select-action-createRule select {
+		width: 133px;
+    display: inline-block;
+    vertical-align: top;
+	}
+	.select-table-createRule{
+		width: 100%;
+    max-width: 278px;
+    display: inline-block;
+    vertical-align: top;
+	}
+	.select-table-createRule select {
+		width: 166px;
+    display: inline-block;
+    vertical-align: middle;
+	}
+	.select-field-createRule{
+		width: 100%;
+    max-width: 268px;
+    display: inline-block;
+    vertical-align: top;
+	}
+	.select-field-createRule select {
+		width: 160px;
+    display: inline-block;
+	}
+	.select-tarrgetString-createRule{
+		width: 100%;
+    max-width: 242px;
+    display: inline-block;
+	}
+	.select-tarrgetString-createRule input {
+		width: 133px;
+    display: inline-block;
+	}
+	.select-replace-createRule{
+		width: 100%;
+    max-width: 184px;
+    display: inline-block;
+	}
+	.select-replace-createRule input {
+		width: 99px;
+    display: inline-block;
+	}
+	
+}
+
+
+
+
  @media only screen and (min-width: 640px) {
  .top_nav {
  background-color:#eef0f2;
@@ -670,6 +755,27 @@ li.has_child.mis-menu ul {
  margin-top: -195px;
  padding-bottom: 30px;
 }
+}
+
+.selectDropDownDiv{
+	position:relative;
+	padding: 0 0 40px 0;
+	display: inline-block;
+	width: 73%;
+	vertical-align: middle;
+}
+
+.selectDropDown{
+	position:absolute;
+	left:0;
+	z-index:9;
+	left:0;
+	top: 2px;
+	width: 73%;
+}
+
+.mandatory{
+	color:red;
 }
 
 
