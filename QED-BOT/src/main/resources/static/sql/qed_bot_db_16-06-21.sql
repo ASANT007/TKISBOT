@@ -280,3 +280,21 @@ CREATE TABLE [deliverable_Pipe_Status_CU](
 	[Slope_Direction] [nvarchar](50) NOT NULL
 	
 );
+
+
+-- Added on 10-08-2021  START --
+	
+	alter table repository_details add last_updated_by VARCHAR(20);
+	alter table repository_details add last_updation_date DATETIME;
+	
+	alter table project_table_mapping add created_by VARCHAR(150) not null;
+	alter table project_table_mapping add creation_date DATETIME not null;
+	alter table project_table_mapping add last_updated_by VARCHAR(20);
+	alter table project_table_mapping addlast_updation_date DATETIME;
+	
+	alter table user_project_mapping add created_by VARCHAR(150) not null;
+	alter table user_project_mapping add creation_date DATETIME not null;
+	alter table user_project_mapping add last_updated_by VARCHAR(20);
+	alter table user_project_mapping add last_updation_date DATETIME;
+	
+-- Added on 10-08-2021  END --
