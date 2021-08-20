@@ -1,3 +1,24 @@
+<%
+	
+	response.setHeader("pragma","no-cache");//HTTP 1.1
+	response.setHeader("Cache-Control","no-cache");
+	response.setHeader("Cache-Control","no-store");
+	response.addDateHeader("Expires", -1);
+	response.setDateHeader("max-age", 0);
+	response.setIntHeader ("Expires", -1); //prevents caching at the proxy server
+	response.addHeader("cache-Control", "private");
+	
+	String userId = checkNull((String)session.getAttribute("userId"));
+	String role = checkNull((String)session.getAttribute("role"));
+	String userName = (String)session.getAttribute("DisplayName");
+	String message = checkNull((String) request.getAttribute("message"));
+	
+	if(userId == null || userId.equals("-1") || userId.equals("")) 
+	{  
+	     response.sendRedirect("login");
+	     return;
+	}
+%>
 <!DOCTYPE HTML>
 <html lang="en-US">
 <head>
@@ -53,11 +74,7 @@ $(document).ready(function () {
 });
 </script>
 </head>
-<%
-	String userName = checkNull((String) session.getAttribute("DisplayName"));
-	String role =  checkNull((String) session.getAttribute("role"));
-%>
-<!--<body onload="recommendation_summary();top_IFA_AUM_base();top_IFA_on_investors_base();topIFAonRecommadation()">-->
+
 <body>
 <%@page import="java.util.List" %>
 <!--header start-->
@@ -78,7 +95,7 @@ $(document).ready(function () {
       <li>
       <a  href="/functionalAdminHome">Table Management</a>
       <ul>
-      <li><a  href="/uploadExcel">Create Table</a></li>
+      <li><a  href="/createTable">Create Table</a></li>
       <li><a  href="/modifyTable">Modify Table</a></li> 
       </ul>
       </li>
@@ -91,6 +108,8 @@ $(document).ready(function () {
       	<a  href="/functionalAdminHome">Rule Management</a>
       	<ul>
       		<li><a  href="/createRule">Create Rule</a></li>
+      		<li><a  href="/executeRule">Execute Rule</a></li>
+      		<li><a  href="/viewRulePanel">View Rule</a></li>
       	</ul>
       </li>
       <li><a  href="/logout">Logout</a></li>
@@ -109,31 +128,49 @@ $(document).ready(function () {
   <h2>Create Table</h2>  
   <div class="content-area">
   <!-- START -->
-  <form   action ="createtable" method = "POST" enctype = "multipart/form-data" id="fileUploadForm" name="fileUploadForm">
+  <%if(message.length() > 0) {%>
   <div class="row">
-           <div class="col-md-3 select-project align-self-center">
-      <% 
-      		List<String> projectList = (List<String>) request.getAttribute("projectList");
-      %>
+	  <div class="row text-center">
+        <div id="message" name="message"  class="alert alert-danger mx-auto mt-3" role="alert"><%=message %></div>
+      </div>
+  </div>
+  <% }else{%>
+  <!-- <form   action ="createtable" method = "POST" enctype = "multipart/form-data" id="fileUploadForm" name="fileUploadForm"> -->
+  <form  enctype = "multipart/form-data" id="fileUploadForm" name="fileUploadForm">
+  <div class="row">
+  
+	  <div class="col-md-3 align-self-center">
+      		<% 
+      			List<Object[]> deliverabletype = (List<Object[]>) request.getAttribute("deliverableType");
+     		 %>
+     		 <div class="select-action-createRule">
+			<label>Select Deliverable Type : </label>
+			<sup class="mandatory">*</sup>
+			<select class="form-select" name="deliverableType" id="deliverableType" onchange="getProjects(this)">
+					<option value="" selected="selected" >--Select Deliverable--</option>
+					<% for(Object[] dt : deliverabletype){%>
+						
+						<option value="<%= (Number) dt[0]%>"><%= (String) dt[1]%></option>
+						
+					<%} %>
+			</select>
+	 		</div>
+	  </div>
+		  
+       <div class="col-md-3 select-project align-self-center">
+      
 			<label>Select Project : </label> 
 			<sup class="mandatory">*</sup>
 			<select class="form-select tbl-select-opt" name="projectName" id="projectName">
-					<option value="select" >-- Select--</option>
-					<% for(String projectName : projectList){%>
-						
-						<option value="<%= projectName%>"><%= projectName%></option>
-						
-					<%} %>
-					
-					
+					<option value="" >--Select Project--</option>		
 			</select>
-	 </div>
+	 </div> 
 	 
       <div class="col-md-3 table-type-div align-self-center">
 			<label>Table Type : </label> 
 			<sup class="mandatory">*</sup>
 			<select class="form-select tbl-type tbl-select-opt" name="tabletype" id="tabletype">
-					<option value="select" >-- Select--</option>
+					<option value="" >--Select--</option>
 					<option value="master">Master</option>
 					<option value="deliverable">Deliverable</option>
 			</select>
@@ -147,7 +184,7 @@ $(document).ready(function () {
 	 
 	 <div class="col-md-3 proj_btn align-self-center">
 	 	<input class="btn btn-primary mx-2 " type = "button" value = "View Structure" onClick="validateTableStruc()"/>	    
-	  	<a href="/uploadExcel"><input class="btn btn-primary" type = "button" value = "Cancel" /></a>
+	  	<a href="/createTable"><input class="btn btn-primary" type = "button" value = "Cancel" /></a>
 	 </div>
   
   </div>
@@ -168,6 +205,7 @@ $(document).ready(function () {
 	 
         
   </form>
+  <% }%> 
   <!-- END -->
   </div>
 </div>

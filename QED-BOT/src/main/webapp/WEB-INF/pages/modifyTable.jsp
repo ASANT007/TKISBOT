@@ -1,3 +1,23 @@
+<%
+	
+	response.setHeader("pragma","no-cache");//HTTP 1.1
+	response.setHeader("Cache-Control","no-cache");
+	response.setHeader("Cache-Control","no-store");
+	response.addDateHeader("Expires", -1);
+	response.setDateHeader("max-age", 0);
+	response.setIntHeader ("Expires", -1); //prevents caching at the proxy server
+	response.addHeader("cache-Control", "private");
+	
+	String userId = checkNull((String)session.getAttribute("userId"));
+	String role = checkNull((String)session.getAttribute("role"));
+	String userName = (String)session.getAttribute("DisplayName");
+	
+	if(userId == null || userId.equals("-1") || userId.equals("")) 
+	{  
+	     response.sendRedirect("login");
+	     return;
+	}
+%>
 <!DOCTYPE HTML>
 <html lang="en-US">
 <head>
@@ -53,11 +73,8 @@ $(document).ready(function () {
 });
 </script>
 </head>
-<%
-	String userName = checkNull((String) session.getAttribute("DisplayName"));
-	String role =  checkNull((String) session.getAttribute("role"));
-%>
-<!--<body onload="recommendation_summary();top_IFA_AUM_base();top_IFA_on_investors_base();topIFAonRecommadation()">-->
+
+
 <body>
 <%@page import="java.util.List" %>
 <!--header start-->
@@ -78,7 +95,7 @@ $(document).ready(function () {
       <li>
       <a  href="/functionalAdminHome">Table Management</a>
       <ul>
-      <li><a  href="/uploadExcel">Create Table</a></li>
+      <li><a  href="/createTable">Create Table</a></li>
       <li><a  href="/modifyTable">Modify Table</a></li>      
       </ul>
       </li>
@@ -90,6 +107,8 @@ $(document).ready(function () {
       	<a  href="/functionalAdminHome">Rule Management</a>
       	<ul>
       		<li><a  href="/createRule">Create Rule</a></li>
+      		<li><a  href="/executeRule">Execute Rule</a></li>
+      		<li><a  href="/viewRulePanel">View Rule</a></li>
       	</ul>
       </li>
       <li><a  href="/logout">Logout</a></li>
@@ -108,9 +127,9 @@ $(document).ready(function () {
   <h2>Modify Table</h2>  
   <div class="content-area">
   <!-- START -->
-  <form   action ="createtable" method = "POST" enctype = "multipart/form-data" id="fileUploadForm" name="fileUploadForm">
+  <form id="modifyTableForm" name="modifyTableForm">
   <div class="row">
-           <div class="col-md-3 align-self-center mdfProjectType">
+     <%-- <div class="col-md-3 align-self-center mdfProjectType">
       <% 
       		List<String> projectList = (List<String>) request.getAttribute("projectList");
       %>
@@ -126,7 +145,34 @@ $(document).ready(function () {
 					
 					
 			</select>
+	 </div> --%>
+	 <div class="col-md-3 align-self-center">
+      		<% 
+      			List<Object[]> deliverabletype = (List<Object[]>) request.getAttribute("deliverableType");
+     		 %>
+     		 <div class="select-action-createRule">
+			<label>Select Deliverable Type : </label>
+			<sup class="mandatory">*</sup>
+			<select class="form-select" name="deliverableType" id="deliverableType" onchange="getProjects(this)">
+					<option value="" selected="selected" >--Select Deliverable--</option>
+					<% for(Object[] dt : deliverabletype){%>
+						
+						<option value="<%= (Number) dt[0]%>"><%= (String) dt[1]%></option>
+						
+					<%} %>
+			</select>
+	 		</div>
+	  </div>
+		  
+       <div class="col-md-3 select-project align-self-center">
+      
+			<label>Select Project : </label> 
+			<sup class="mandatory">*</sup>
+			<select class="form-select tbl-select-opt" name="projectName" id="projectName" onchange="getTablesForSelectedProject(this)">
+					<option value="" >--Select Project--</option>		
+			</select>
 	 </div>
+	 <!-- 
 	 <div class="col-md-3 align-self-center mfdTableType">
 		  <lable>Select Table :</lable>	
 		  <sup class="mandatory">*</sup>
@@ -135,13 +181,26 @@ $(document).ready(function () {
             <option value="" selected="selected" >--Select Table--</option>
            </select>
            </div>
-	 </div>
+	 </div> -->
 	 
+      	<div class="col-md-3 align-self-center">
+		<div class="select-table-createRule">
+  			<lable>Select Table :</lable>	
+	  		<sup class="mandatory">*</sup>		  	
+			  	<select class="form-select" name="tableName" id="tableName">
+	            	<option value="" selected="selected" >--Select Table--</option>
+	           	</select>
+	  		</div>
+	  	</div>
+	  	
 	  <div class="col-md-3 align-self-center mdfRadio">
 	 	<input class="mx-2" type = "radio" id= "viewTableRdo" name = "viewRadioOption" value = "viewtable"/><label>View table</label>    
 	  	<input class="mx-2" type = "radio" id= "viewFileRdo" name = "viewRadioOption"value = "viewfile" /><label>View file</label>
 	 </div>
 	 
+	 </div>
+	 
+	 <div class="row">
 	 <div class="col-md-3 align-self-center mdfButtons">
 	 	<input class="btn btn-primary mx-2 " type = "button" value = "View" onClick="viewTable()"/>	    
 	  	<a href="/modifyTable"><input class="btn btn-primary" type = "button" value = "Cancel" /></a>

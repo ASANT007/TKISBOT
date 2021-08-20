@@ -1,0 +1,197 @@
+CREATE DATABASE QED_BOT_DB;
+
+USE QED_BOT_DB;
+
+
+DROP TABLE project_table_mapping; -- ref md_mappingid and project_id
+DROP TABLE consistency_tracking_table; -- ref md_mappingid
+
+DROP TABLE master_deliverable_mapping; -- No refernce
+
+DROP TABLE user_project_mapping; -- fk projec_id
+
+DROP TABLE repository_details; -- fk projec_id
+DROP TABLE rules_master; -- fk projec_id
+DROP TABLE repository_details; -- fk projec_id 
+DROP TABLE bot_Iteration_Tracking; -- fk projec_id
+DROP TABLE project_master; -- fk deliverabletype_id
+
+DROP TABLE deliverabletype_master ;-- No ref
+
+
+-- Start
+
+CREATE TABLE bot_log_tracking_table (
+
+	sr_no INT IDENTITY(1,1) PRIMARY KEY,
+	file_name VARCHAR(200) NOT NULL,
+	project_name VARCHAR(200) NOT NULL,
+	TABLE_NAME VARCHAR (250) NOT NULL,
+	log_message VARCHAR(50) NOT NULL,
+	log_date DATETIME NOT NULL
+
+);        
+ 
+   
+CREATE TABLE deliverabletype_master(
+	deliverabletype_id INT IDENTITY(1,1) PRIMARY KEY,
+	deliverabletype_shortname VARCHAR(20) NOT NULL,
+	deliverabletype_name VARCHAR(150) NOT NULL,
+	STATUS VARCHAR(20) NOT NULL,
+	created_by VARCHAR(150) NOT NULL,
+	creation_date DATETIME NOT NULL,
+	last_updated_by VARCHAR(150) NULL,
+	last_updation_date DATETIME NULL
+);
+
+CREATE TABLE project_master(
+	project_id INT IDENTITY(1,1) PRIMARY KEY,
+	deliverabletype_id INT NOT NULL, -- Newly Added
+	project_tag VARCHAR(50) NOT NULL,
+	project_name VARCHAR(75) NOT NULL,
+	short_description VARCHAR(250),
+	STATUS VARCHAR(20) NOT NULL,
+	created_by VARCHAR(150) NOT NULL,
+	creation_date DATETIME NOT NULL,
+	last_updated_by VARCHAR(150) NULL,
+	last_updation_date DATETIME NULL,
+	CONSTRAINT fk_project_master_deliverabletype_id FOREIGN KEY (deliverabletype_id) REFERENCES deliverabletype_master (deliverabletype_id) 
+);
+
+CREATE TABLE bot_Iteration_Tracking(
+	id INT IDENTITY(1,1) PRIMARY KEY,
+	Batchid INT NOT NULL,
+	Tablename VARCHAR(150) NOT NULL,
+	Project_id INT NOT NULL,
+	Insertion_Date DATETIME NOT NULL,
+	CONSTRAINT fk_bot_Iteration_Tracking_project_id FOREIGN KEY (project_id) REFERENCES project_master (project_id)
+);
+
+CREATE TABLE repository_details(
+	repository_id INT  IDENTITY(1,1) PRIMARY KEY,
+	project_id INT NOT NULL,
+	tables_name VARCHAR(250) NOT NULL,
+	tables_types VARCHAR(50) NOT NULL,
+	file_name VARCHAR(200) NOT NULL,
+	created_by VARCHAR(150) NOT NULL,
+	creation_date DATETIME NOT NULL,
+	last_updated_by VARCHAR(150) NULL,
+	last_updation_date DATETIME NULL,
+	CONSTRAINT fk_repository_details_project_id FOREIGN KEY (project_id) REFERENCES project_master (project_id) 
+);
+
+CREATE TABLE master_deliverable_mapping (
+	md_mappingid INT IDENTITY(1,1) PRIMARY KEY,
+	master_table VARCHAR(50) NOT NULL,
+	master_field VARCHAR(50) NOT NULL,
+	deliverable_table VARCHAR(50) NOT NULL,
+	deliverable_field VARCHAR(50) NOT NULL,
+	STATUS VARCHAR(20) NOT NULL,
+	created_by VARCHAR(150) NOT NULL,
+	creation_date DATETIME NOT NULL,
+	last_updated_by VARCHAR (150) NULL,
+	last_updation_date DATETIME NULL
+);
+
+
+CREATE TABLE project_table_mapping(
+	pt_mappingid INT IDENTITY(1,1) PRIMARY KEY,
+	project_id INT NOT NULL,
+	md_mappingid INT NOT NULL,
+	created_by VARCHAR(150) NOT NULL,
+	creation_date DATETIME NOT NULL,
+	last_updated_by VARCHAR (150) NULL,
+	last_updation_date DATETIME NULL,
+	CONSTRAINT fk_project_table_mapping_project_id FOREIGN KEY (project_id) REFERENCES project_master (project_id), 
+	CONSTRAINT fk_project_table_mapping_mi_mappingid FOREIGN KEY (md_mappingid) REFERENCES master_deliverable_mapping (md_mappingid)
+
+);
+
+
+CREATE TABLE user_project_mapping (
+	up_mappingid INT IDENTITY(1,1) PRIMARY KEY,
+	userid VARCHAR(20) NOT NULL,
+	project_id INT NOT NULL,
+	created_by VARCHAR(150) NOT NULL,
+	creation_date DATETIME NOT NULL,
+	last_updated_by VARCHAR (150) NULL,
+	last_updation_date DATETIME NULL,
+	CONSTRAINT fk_user_project_mapping_project_id FOREIGN KEY (project_id) REFERENCES project_master (project_id) 
+);
+
+
+CREATE TABLE consistency_tracking_table(
+	trackingid INT IDENTITY(1,1) PRIMARY KEY,
+	md_mappingid INT NOT NULL,
+	master_field_value VARCHAR(150) NOT NULL,
+	deliverable_field_value VARCHAR(150) NOT NULL,
+	consistency_flag VARCHAR(25) NOT NULL,
+	flagged_by VARCHAR(20) NOT NULL,
+	remarks VARCHAR(150),
+	flagged_date DATETIME NOT NULL,
+	CONSTRAINT fk_consistency_tracking_table_md_mappingid FOREIGN KEY (md_mappingid) REFERENCES master_deliverable_mapping (md_mappingid)
+);
+
+CREATE TABLE rules_master(
+	rule_id INT IDENTITY(1,1) PRIMARY KEY, 
+	project_id INT NOT NULL, 
+	repository_id INT NOT NULL,
+	rule_type VARCHAR(50) NOT NULL,
+	rule_desc VARCHAR(150) NOT NULL,
+	execution_sequence INT NOT NULL,
+	STATUS VARCHAR(20) NOT NULL,
+	created_by VARCHAR(150) NOT NULL,
+	creation_date DATETIME NOT NULL,
+	last_updated_by VARCHAR(150) NULL,
+	last_updation_date DATETIME NULL,
+	CONSTRAINT fk_rules_master_project_id FOREIGN KEY (project_id) REFERENCES project_master (project_id),
+	CONSTRAINT fk_rules_master_repository_id FOREIGN KEY (repository_id) REFERENCES repository_details (repository_id)
+	
+);
+
+
+-- End
+
+-- Sample Data
+INSERT INTO deliverabletype_master VALUES(NULL,'ISO','Isometric','active','ASANT',NOW(),NULL,NULL);
+INSERT INTO deliverabletype_master VALUES(NULL,'EqL','Equipment_List','active','ASANT',NOW(),NULL,NULL);
+INSERT INTO deliverabletype_master VALUES(NULL,'IOL','IO_List','active','ASANT',NOW(),NULL,NULL);
+
+INSERT INTO project_master VALUES (NULL,1,'ISO_Project_001','ProjectISO_001','ISO_PR1','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,1,'ISO_Project_002','ProjectISO_002','ISO_PR2','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,1,'ISO_Project_003','ProjectISO_003','ISO_PR3','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,1,'ISO_Project_004','ProjectISO_004','ISO_PR4','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,1,'ISO_Project_005','ProjectISO_005','ISO_PR5','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,1,'ISO_Project_006','ProjectISO_006','ISO_PR6','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,1,'ISO_Project_007','ProjectISO_007','ISO_PR7','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,1,'ISO_Project_008','ProjectISO_008','ISO_PR8','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+
+INSERT INTO project_master VALUES (NULL,2,'EqL_Project_001','ProjectEqL_001','EqL_PR1','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,2,'EqL_Project_002','ProjectEqL_002','EqL_PR2','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,2,'EqL_Project_003','ProjectEqL_003','EqL_PR3','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,2,'EqL_Project_004','ProjectEqL_004','EqL_PR4','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,2,'EqL_Project_005','ProjectEqL_005','EqL_PR5','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,2,'EqL_Project_006','ProjectEqL_006','EqL_PR6','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,2,'EqL_Project_007','ProjectEqL_007','EqL_PR7','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,2,'EqL_Project_008','ProjectEqL_008','EqL_PR8','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+
+INSERT INTO project_master VALUES (NULL,3,'IOL_Project_001','ProjectIOL_001','IOL_PR1','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,3,'IOL_Project_002','ProjectIOL_002','IOL_PR2','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,3,'IOL_Project_003','ProjectIOL_003','IOL_PR3','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,3,'IOL_Project_004','ProjectIOL_004','IOL_PR4','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,3,'IOL_Project_005','ProjectIOL_005','IOL_PR5','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,3,'IOL_Project_006','ProjectIOL_006','IOL_PR6','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,3,'IOL_Project_007','ProjectIOL_007','IOL_PR7','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+INSERT INTO project_master VALUES (NULL,3,'IOL_Project_008','ProjectIOL_008','IOL_PR8','active','ASANT',CURRENT_TIMESTAMP,NULL,NULL);
+
+/*
+select
+        repository0_.tables_name as col_0_0_ 
+    from
+        repository_details repository0_ 
+    where
+        repository0_.project_id=1
+        
+        `repository_details`
+
+*/

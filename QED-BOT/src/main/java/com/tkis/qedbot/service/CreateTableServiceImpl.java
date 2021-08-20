@@ -33,7 +33,7 @@ import com.tkis.qedbot.dao.CustomTableDao;
 import com.tkis.qedbot.entity.RepositoryDetails;
 
 @Component
-public class FileReaderServiceImpl implements FileReaderService 
+public class CreateTableServiceImpl implements CreateTableService 
 {	
 	
 	private StringBuffer tableDesignBuff = null;
@@ -54,7 +54,7 @@ public class FileReaderServiceImpl implements FileReaderService
 	
 	
 	@Override
-	public String upload(MultipartFile file, String projectName, String tableType, String userId, boolean isSave) {
+	public String upload(MultipartFile file, String projectName, String deliverableTypeName, String tableType, String userId, boolean isSave) {
 		
 		String response = "";
 		
@@ -71,7 +71,7 @@ public class FileReaderServiceImpl implements FileReaderService
 		try 
 		{
 			fileName = file.getOriginalFilename();
-			tableName = getTableName(fileName, projectName, tableType);
+			tableName = getTableName(fileName, projectName, deliverableTypeName, tableType);
 			
 			isPresnt = customTableDao.isTablePresent(tableName);
 			
@@ -81,11 +81,12 @@ public class FileReaderServiceImpl implements FileReaderService
 					System.out.println("#### tableName "+tableName);
 					System.out.println("#### tableType "+tableType);
 					System.out.println("#### userId ["+userId+"]");
+					repoDetails.setProjectId(1);//Hard Coded......
 					repoDetails.setFileName(fileName);
 					repoDetails.setTablesName(tableName);
 		        	repoDetails.setTableTypes(tableType);
-		        	repoDetails.setUserId("ASANT");//get It from session or send via method call
-		        	repoDetails.setDate(new Timestamp(new Date().getTime()));
+		        	repoDetails.setUserId(userId);//get It from session or send via method call
+		        	repoDetails.setCreationDate(new Timestamp(new Date().getTime()));
 				}
 				
 				
@@ -128,7 +129,7 @@ public class FileReaderServiceImpl implements FileReaderService
 	}
 
 	
-	private String getTableName(String fileName, String projectName, String tableType) {
+	private String getTableName(String fileName, String projectName, String deliverableTypeName, String tableType) {
 		
 		String tableName = "";
 		
@@ -154,7 +155,7 @@ public class FileReaderServiceImpl implements FileReaderService
 			    	tableName = tableName.substring(1, lastCharcter);
 			    }
 			    
-				tableName = projectName+"_"+tableType+"_"+tableName;
+				tableName = projectName+"_"+deliverableTypeName+"_"+tableType+"_"+tableName;
 			}
 		} catch (Exception e) {
 			
@@ -414,7 +415,7 @@ public class FileReaderServiceImpl implements FileReaderService
 			tableDesignBuff.append(cellValue);
 			//tableDesignBuff.append("]");// Required to MSSQL
 			tableDesignBuff.append(" ");
-			tableDesignBuff.append("varchar(200),");
+			tableDesignBuff.append("varchar(750),");
               
 		}else {
 			

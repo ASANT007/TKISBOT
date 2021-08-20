@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.tkis.qedbot.entity.RepositoryDetails;
@@ -82,36 +81,25 @@ public class CustomTableDaoImp implements CustomTableDao {
 		//		+ "created_by	VARCHAR (20) NOT NULL,creation_date	DATETIME NOT NULL)";
 
 		//Query query = session.createSQLQuery("create  table IF NOT EXISTS sampletable1(col1 varchar(10),col2 int(10))");
-		
-		//String createTableSQL = createTableSQL;
-		
-		Query query = session.createSQLQuery(createTableSQL);
-		
-
+	
 		try {
-
-				int id =  query.executeUpdate();
-				System.out.println("#### No of Rows Affected ::"+id);
+	
 				
-				RepositoryDetails details2 = null;
-				System.out.println("### "+details.getFileName());
-				System.out.println("### "+details.getTablesName());
-				System.out.println("### "+details.getTableTypes());
-				System.out.println("### "+details.getUserId());
-				System.out.println("### "+details.getDate());
-				System.out.println("### "+details.getId());
-				   
-				
-				  details2 = detailsRepo.save(details);
-				  System.out.println("###  details2"+details2);
-				  if(details2 != null) {
+				  if( detailsRepo.save(details) != null ) 
+				  {	
+					  
+						/*
+						 * Query query = session.createSQLQuery(createTableSQL); int id =
+						 * query.executeUpdate();
+						 */
+					  int i = session.createSQLQuery(createTableSQL).executeUpdate();
+					  System.out.println("#### No of Rows Affected ::"+i);				 
+					 
+					 return true;
 				  
-				  return true;
-				  
-				  }else {
-				  
-					  throw new Exception(); 
-				  
+				  }else 
+				  {				  
+					  throw new Exception(); 				  
 				  }
 				 
 			

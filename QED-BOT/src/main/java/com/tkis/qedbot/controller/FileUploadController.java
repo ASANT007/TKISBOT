@@ -14,10 +14,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.tkis.qedbot.service.FileReaderService;
+import com.tkis.qedbot.service.CreateTableService;
 
 @Controller
 public class FileUploadController {
+	/*
 	
 	@Autowired
 	FileReaderService service;
@@ -43,24 +44,17 @@ public class FileUploadController {
 		
 		userId = checkNull((String) session.getAttribute("userId")); // Not Set Yet
 		
-		// Remove Code START
-		
-		if(userId.length() >0) {
-			
-			userId = "DummyAdminId";
-		}
-		
-		userId = "DummyAdminId";
-		
-		// Remove Code END
 		System.out.println("#### userId "+userId);
-		
-		responseStr = service.upload(file, projectName, tabletype, userId, false);
-		
-		if(checkNull(responseStr).length() == 0) {
+		if(userId.length() > 0) {
 			
-			responseStr = "<div class='py-3 text-center' style='color:red'> Please Check Excel File </div>";
+			responseStr = service.upload(file, projectName, tabletype, userId, false);
+			
+			if(checkNull(responseStr).length() == 0) {
+				
+				responseStr = "<div class='py-3 text-center' style='color:red'> Please Check Excel File </div>";
+			}
 		}
+		
 		
 		System.out.println("#### Upload Response ["+responseStr+"]");	
 		
@@ -73,17 +67,18 @@ public class FileUploadController {
 	  MultipartFile file,@RequestParam("projectName") String projectName,
 	  @RequestParam("tabletype") String tabletype, RedirectAttributes redirectAttributes, HttpSession session) 
 	{
-		String responseStr = "<div class='py-3 text-center' style='color:red'> Please Check Excel File </div>";
-		
+		//String responseStr = "<div class='py-3 text-center' style='color:red'> Please Check Excel File </div>";
+		String responseStr = "";
 		String userId = "";
 		
 		userId = checkNull((String) session.getAttribute("userId")); // Not Set Yet
 		
 		if(userId.length() >0) {
-			userId = "DummyAdminId";
+			
+			responseStr = service.upload(file, projectName, tabletype, userId, true);
 		}
 		
-		responseStr = service.upload(file, projectName, tabletype, userId, true);
+		
 				
 		return responseStr;
 		
@@ -98,4 +93,5 @@ public class FileUploadController {
         
         return input.trim();    
     }
+    */
 }

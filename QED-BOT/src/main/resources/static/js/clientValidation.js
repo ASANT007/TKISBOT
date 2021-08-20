@@ -33,9 +33,24 @@ function validateUser(){
 /* login validation end*/
 
 /* Table Creation start */
-
+function getProjects(obj){
+	
+	var deliverabletype = obj.value;
+	
+	if(checkNull(deliverabletype).length > 0){
+		
+		getProjectsServerCall(deliverabletype);
+	}
+	
+}
 function validateTableStruc(){
 	
+	//var deliverableType = $("#deliverableType option:selected").text();
+	
+	//var projectName = $("#projectName option:selected").text();
+	
+	//var file = $('#file')[0].files[0];
+	//alert(file);
 	
 	$("#result").html('');
 	$("#errorDiv").html('');
@@ -51,12 +66,16 @@ function validateTableStruc(){
 	}
 	
 	//alert(fileExt);
-	if(($('#projectName').val() == "select") || ($('#projectName').val() == "")){
+	if($('#deliverableType').val().length == 0){
+		
+		$("#errorDiv").html('Please select Deliverable Type');
+	}
+	else if($('#projectName').val().length == 0){
 		
 		//alert('Please select Project');
 		$("#errorDiv").html('Please select Project');
 		
-	}else if(($('#tabletype').val() == "select") || ($('#tabletype').val() == "")){
+	}else if($('#tabletype').val().length == 0){
 		
 		//alert('Please select Table Type');
 		$("#errorDiv").html('Please select Table Type');
@@ -80,16 +99,21 @@ function validateTableStruc(){
 
 function showTable(){
 	
+	var deliverableType = $("#deliverableType option:selected").text();
+	
+	var projectName = $("#projectName option:selected").text();
 	
 	var form = $('#fileUploadForm')[0];
- 
-    var data = new FormData(form);
+ 	
+    var formdata = new FormData(form);
+	formdata.append("deliverableTypeName",deliverableType);
+	formdata.append("projectname",projectName);
 	
 	$.ajax({
         type: "POST",
         enctype: 'multipart/form-data',
         url: "/uploadFile",
-        data: data,
+        data: formdata,
  
         // prevent jQuery from automatically transforming the data into a query string
         processData: false,
@@ -118,16 +142,20 @@ function showTable(){
 function createTable(){
 	
 	console.log('createTable');
+	var deliverableType = $("#deliverableType option:selected").text();	
+	var projectName = $("#projectName option:selected").text();
 	
 	var form = $('#fileUploadForm')[0];
  
-    var data = new FormData(form);
+    var formdata = new FormData(form);
+	formdata.append("deliverableTypeName",deliverableType);
+	formdata.append("projectname",projectName);
 	
 	$.ajax({
         type: "POST",
         enctype: 'multipart/form-data',
-        url: "/createtable",
-        data: data,
+        url: "/saveTable",
+        data: formdata,
  
         // prevent jQuery from automatically transforming the data into a query string
         processData: false,
@@ -154,6 +182,11 @@ function createTable(){
 /* Table Creation end */
 
 /* Table Modification START */
+
+// Use getTablesForSelectedProject(),  it is present in serverValidation.js have changed on 16-08-2021
+// change in modifyTable.jsp
+//getTablesForSelectedProject() is Using
+/*
 function getAllTables(obj){
 
 	
@@ -191,11 +224,7 @@ function getAllTables(obj){
 				{
 					var displayTableName = '';
 					var tbleName = response[i];
-					/*
-					alert(tbleName);
-					alert(tbleName.indexOf(pattern)+8);
-					alert(tbleName.lenght);
-					alert(tbleName.substr(tbleName.indexOf(pattern),tbleName.lenght));*/
+					
 					if(tbleName.includes(pattern)){
 						
 						displayTableName = tbleName.substr(tbleName.indexOf(pattern)+8,tbleName.lenght);
@@ -215,14 +244,17 @@ function getAllTables(obj){
 
 }
 
+*/
+
 function viewTable(){
 	
 	//alert('viewTable');
 	$("#colAddResult").empty();
 	$("#result").empty();	
 	var projectName = $('#projectName').val();
-	var tableName = $('#tableName').val();
+	//var tableName = $('#tableName').val();
 	
+	var tableName = $('#tableName option:selected').text();
 	//alert(tableName);
 	//Move belowcode in serverValidation.js
 	if(projectName == ''){
@@ -254,6 +286,7 @@ function viewTable(){
 				contentType : "application/x-www-form-urlencoded",
 		        success: function(response) 
 				{
+					//alert('----------');
 					//$("#colAddResult").empty();
 					$('#currentTableName').empty();
 					$('#currentTableName').val(tableName);
@@ -267,7 +300,9 @@ function viewTable(){
 		        type: "POST",
 		        data: {
 			
-		            tableName : encodeURIComponent(tableName)
+		            //tableName : encodeURIComponent(tableName)
+					//send repository id
+					repositoryId : encodeURIComponent($('#tableName').val())
 		            
 		        },
 		        dataType: "text",		
@@ -303,7 +338,7 @@ function getUpdatedFileName(fileName,tableName){
 	$("#colAddResult").empty();
 	
 	//var oldFileName = $('#oldFileName').text();// IMP
-	var tableName = $('#tableName').val();
+	//var tableName = $('#tableName').val();
 	
 	var newFileName = checkNull($("#newFileName").val());
 	
@@ -348,7 +383,8 @@ function getUpdatedFileName(fileName,tableName){
         data: {
 			
 			fileName : encodeURIComponent(newFileName),
-            tableName : encodeURIComponent(tableName)
+            //tableName : encodeURIComponent(tableName)
+			repositoryId : encodeURIComponent($('#tableName').val())
 			
             
         },
@@ -356,6 +392,7 @@ function getUpdatedFileName(fileName,tableName){
 		contentType : "application/x-www-form-urlencoded",
         success: function(response) 
 		{	
+			alert(response);
 			$("#colAddResult").append("<div class='py-3 text-center'>New File Name <span style='color:green'>"+ newFileName +" </span> Changed Successfully</div>");				
         }
     });
@@ -440,8 +477,7 @@ function getValidColumnName(columnName){
 
 function getnewlyAddedColumn(tableName,columnName)
 {
-	
-	
+		
 	$.ajax({
         url: "/alterTable",
         type: "POST",
@@ -467,8 +503,10 @@ function clearColAddResult(){
 	
 	$('#colAddResult').empty();
 }
+/* Not working properly */
 function showAllCoumns(response){
 	
+	alert('***********');
 	
 	$("#result").empty();	
 	
@@ -480,8 +518,9 @@ function showAllCoumns(response){
 	trHTML = trHTML+"<div class='col-md-4 mb-3' style='text-align:right'><input id ='addColumn' name = 'addColumn' class='btn btn-primary mx-2' type ='button' value ='Add Column' onClick='window.validateNewColumn()'/></div></div>";				
 	trHTML = trHTML+"<table id='currentTable' name='currentTable' class='table table-responsive table-bordered table-striped'><tr><th style='width:15%; text-align:center;'>Sr No</th><th>Field Name</th></tr>";
 	
-	for (var i = 0; i < response.length; i++) 
+	for (var i = 1; i < response.length; i++) 
 	{	
+		
 		srNo ++;		
 		trHTML += '<tr><td>' + srNo + '</td><td>' + response[i] + '</td></tr>';
 		
@@ -496,55 +535,19 @@ function showAllCoumns(response){
 
 
 /* Rule Management  Start*/
+/*
 function showRuleMgmntPanel(obj){
-	//alert(obj);
-	getAllTables(obj);
+	
+	//var projectName = $(':selected').html();
+	//alert(projectName);
+	var projectId = $('#projectName').val();
+	getTablesForSelectedProject(projectId);
 	$('#ruleMgmntPanel').show();
 	$('#createRuleBtnDiv').show();
 }
+*/
 
-function getTargetFields(obj){
-	//alert(obj);
-	var tableName = $('#tableName').val();
-	$.ajax({
-		        url: "/getTableStructure",
-		        type: "POST",
-		        data: {
-			
-		            tableName : encodeURIComponent(tableName)
-		            
-		        },
-		        dataType: "json",		
-				contentType : "application/x-www-form-urlencoded",
-		        success: function(response) 
-				{					
-						$("#targetFieldName").empty();
-						$("#source").empty();
-						if (response.length == 0) {
-							$("#targetFieldName").attr("autocomplete", "OFF");				
-							$("#targetFieldName").append('<option value="" selected="selected" >--Select Table--</option>');
-							$("#source").attr("autocomplete", "OFF");				
-							$("#source").append('<option value="" selected="selected" >--Select Table--</option>');
-						} 
-						else
-						{				
-					
-							$("#targetFieldName").append('<option value="" selected="selected" >--Select Field--</option>');
-							$("#source").append('<option value="" selected="selected" >--Select Source--</option>');
-							for (var i = 1; i < response.length; i++) 
-							{								
-								
-								$("#targetFieldName").append("<option value='" + response[i] + "'>" + response[i] + "</option>");
-								$("#source").append("<option value='" + response[i] + "'>" + response[i] + "</option>");
-			
-							}
-					
-						}
-		        }
-		    });
-}
-
-function getActionOperations(obj){
+function showHideFieldsForActions(obj){
 	
 	//alert(checkNull(obj.value));
 	
@@ -554,7 +557,7 @@ function getActionOperations(obj){
 		
 		$('#targetStringDiv').show();	$('#replaceByDiv').show();
 		
-		$('#operatorDiv').hide();	$('#sourceDiv').hide();		$('#fromDiv').hide();		$('#toDiv').hide();
+		$('#operatorDiv').hide();	$('#sourceDiv').hide();		$('#fromDiv').hide();		$('#toDiv').hide();		$('#valueDiv').hide(); 
 		
 	}
 	else if(action =='concatenate' || action =='mid' || action =='left' || action =='right' || action =='delete'){
@@ -563,15 +566,15 @@ function getActionOperations(obj){
 		
 		if(action =='mid'){
 			
-			$('#operatorDiv').hide();	$('#sourceDiv').show();		$('#fromDiv').show();		$('#toDiv').show();
+			$('#operatorDiv').hide();	$('#sourceDiv').show();		$('#fromDiv').show();		$('#toDiv').show();  $('#valueDiv').hide(); 
 			
 		}else if(action =='left' || action =='right'){
 						
-			$('#operatorDiv').hide();	$('#sourceDiv').show();		$('#fromDiv').show();		$('#toDiv').hide();
+			$('#operatorDiv').hide();	$('#sourceDiv').show();		$('#fromDiv').show();		$('#toDiv').hide();  $('#valueDiv').hide(); 
 			
 		}else if( action =='delete' ){
 			
-			$('#operatorDiv').show();	$('#sourceDiv').show();		$('#fromDiv').hide();		$('#toDiv').hide();
+			$('#operatorDiv').show();	$('#sourceDiv').hide();		$('#fromDiv').hide();		$('#toDiv').hide();		$('#valueDiv').show(); 
 			
 		}
 		
@@ -581,50 +584,59 @@ function getActionOperations(obj){
 }
 
 function createRule(){
-	
+	$('#errorDiv').html();
+	$('#successDiv').html('');
+	$('#errorDiv').hide();
+	$('#successDiv').hide();
 	$('#result').html('');
-	
+	var projectName = $('#projectName').val();
 	var action = $('#action').val();
-	var tableName = $('#tableName').val();
+	var tableName =  $('#tableName option:selected').text();//Changed on 20-08-2021
 	var targetFieldName = $('#targetFieldName').val();
 	
-	var query = '';
-	
-	if(checkNull(action).length == 0){
+	var shortDesc = '';
+	if(checkNull(projectName).length == 0){
+		$('#errorDiv').show();
+		$('#errorDiv').html('Please Select Project');
 		
+	}
+	else if(checkNull(action).length == 0){
+		$('#errorDiv').show();
 		$('#errorDiv').html('Please Select Action');
-		//$('#errorDiv').css('color','red');
-	}else if(checkNull(tableName).length == 0){
 		
+	}else if(checkNull(tableName).length == 0){
+		$('#errorDiv').show();
 		$('#errorDiv').html('Please Select Table');
-		//$('#errorDiv').css('color','red');
+		
 	}
 	else if(checkNull(targetFieldName).length == 0){
-		
+		$('#errorDiv').show();
 		$('#errorDiv').html('Please Select Table Field');
-		//$('#errorDiv').css('color','red');
+		
 	}	
 	else if( action =='replace'){
 		
 		var replaceBy = $('#replaceBy').val();		
 		var targetString = $('#targetString').val();
 		
-		if(checkNull(replaceBy).length == 0){		
-			$('#errorDiv').html('Please Enter Replace by');
-			//$('#errorDiv').css('color','red');
-		}else if(checkNull(targetString).length == 0){
-		
+		if(checkNull(targetString).length == 0){
+			$('#errorDiv').show();
 			$('#errorDiv').html('Please Enter Target String');
-			//$('#errorDiv').css('color','red');
+			
+		}
+		else if(checkNull(replaceBy).length == 0){	
+			$('#errorDiv').show();	
+			$('#errorDiv').html('Please Enter Replace by');
+			
 		}else{
 			
-			$('#errorDiv').html('');
-			
+			$('#errorDiv').html('');$('#errorDiv').hide();			
 			targetString = "'"+targetString+"'";
-			query = 'update table '+tableName+' set ['+targetFieldName+'] = Replace(['+targetFieldName+'],'+targetString+','+replaceBy+')';
+			shortDesc = 'update '+tableName+' set ['+targetFieldName+'] = Replace(['+targetFieldName+'],'+targetString+','+replaceBy+')';
 			//update table tablename set [f1] = Replace([f1],'TERELAC','');
 			$('#saveRuleDiv').show();
-			$('#result').html('Query : '+query);
+			$('#result').html(shortDesc);
+			
 		}
 		
 		
@@ -633,6 +645,7 @@ function createRule(){
 		
 		$('#result').html('');
 		
+		
 	}else if( action =='mid'){
 		
 		var source = $('#source').val();
@@ -640,24 +653,27 @@ function createRule(){
 		var to = $('#to').val();
 		
 		if(checkNull(source).length == 0){
-			
+			$('#errorDiv').show();
 			$('#errorDiv').html('Please Select Source Field');
 			
 		}else if(checkNull(from).length == 0){
-			
-			$('#errorDiv').html('Please Enter From value');
+			$('#errorDiv').show();
+			$('#errorDiv').html('Please Enter Starting Position value');
 			
 		} else if(checkNull(to).length == 0){	
-			
-			$('#errorDiv').html('Please Enter To value');		
+			$('#errorDiv').show();
+			$('#errorDiv').html('Please Enter Up To value');		
 			
 		}else{
 			$('#errorDiv').html('');
-			query = 'update table '+tableName+' set ['+targetFieldName+'] = Mid(['+source+'],'+from+','+to+')';
+			$('#errorDiv').hide();
+			shortDesc = 'update '+tableName+' set ['+targetFieldName+'] = Mid(['+source+'],'+from+','+to+')';
 			//update table tablename set [f2] = Mid([f3],14,1); start from 14 end take 1 char after 14
 			// e.g. SELECT SUBSTRING('SQL Tutorial', 1, 3) AS ExtractString; // OP : SQL
 			$('#saveRuleDiv').show();
-			$('#result').html('Query : '+query);
+			
+			$('#result').html(shortDesc);
+			
 		}
 		
 		
@@ -669,71 +685,112 @@ function createRule(){
 		
 		
 		if(checkNull(source).length == 0){
-			
+			$('#errorDiv').show();
 			$('#errorDiv').html('Please Select Source Field');
 			
 		}else if(checkNull(from).length == 0){
-			
-			$('#errorDiv').html('Please Enter From value');
+			$('#errorDiv').show();
+			$('#errorDiv').html('Please Enter Starting Position value');
 			
 		}else{
-			
 			$('#errorDiv').html('');
+			$('#errorDiv').hide();
 		
 			if(action =='left'){
 				
-				query = 'update table '+tableName+' set ['+targetFieldName+'] = Left(['+source+'],'+from+')';;
+				shortDesc = 'update '+tableName+' set ['+targetFieldName+'] = Left(['+source+'],'+from+')';;
 				//update table tablename set [f1]	= Left([f1/f2],13); 
 				// e.g SELECT LEFT('SQL Tutorial', 3) AS ExtractString; // OP : SQL
 			
 			}else{
 					
-				query = 'update table '+tableName+' set ['+targetFieldName+'] = Right(['+source+'],'+from+')';
+				shortDesc = 'update '+tableName+' set ['+targetFieldName+'] = Right(['+source+'],'+from+')';
 			}
 			
 			$('#saveRuleDiv').show();
-			$('#result').html('Query : '+query);
+			//$('#result').html('Query : '+shortDesc);
+			$('#result').html(shortDesc);
+			//saveRule(projectId, shortDesc, executionSequence);
 		}
 		
 		
 		
-	}/*else if( action =='right'){
-		
-		//SELECT RIGHT('SQL Tutorial', 3) AS ExtractString;
-		//OP : ial
-		
-		
-	}*/else if( action =='delete'){
-		var source = $('#source').val();
+	}else if( action =='delete'){
 		var operator = $('#operator').val();
-		if(checkNull(source).length == 0){
-			
-			$('#errorDiv').html('Please Select Source Field');
-			
-		}else if(checkNull(operator).length == 0){
-			
+		var value = $('#value').val();
+		
+		if(checkNull(operator).length == 0){
+			$('#errorDiv').show();
 			$('#errorDiv').html('Please Select Operator Field');
 			
+		}else if(checkNull(value).length == 0){
+			$('#errorDiv').show();
+			$('#errorDiv').html('Please Enter value');
+			
 		}else{
+			value = "'"+value+"'";
 			$('#errorDiv').html('');
-			query = 'delete * from '+tableName+' where ['+targetFieldName+'] '+operator+' ['+source+']';			
+			$('#errorDiv').hide();
+			shortDesc = 'delete from '+tableName+' where ['+targetFieldName+'] '+operator+' '+value+'';	// For SQL Server 	
 			$('#saveRuleDiv').show();
-			$('#result').html('Query : '+query);
+			//$('#result').html('Query : '+shortDesc);
+			$('#result').html(shortDesc);			
+			
+			
 		}
 		
 		// delete * from table where sr_no = source;
 		
 	}
 	
+}
+function saveRule()
+{
+	var projectId = $('#projectName').val();	
+	var shortDesc = $('#result').text();
+	var repositoryId = $('#tableName').val();
+	var ruleType = $('#action option:selected').val();
 	
+	//alert('saveRule : projectId'+ projectId);//
+	//alert('saveRule : shortDesc'+ shortDesc);
 	
+	$('#errorDiv').html('');
+	$('#errorDiv').hide('');
+	saveRuleServerCall(projectId,repositoryId, shortDesc, ruleType);
 	
 }
 
-function saveRule(){
+/* Rule Management Create Rule End*/
+
+/* Rule Management Execute Rule Start */
+
+/* Rule Management Execute Rule End */
+
+/* Rule Management View/ Modify Rule Start */
+function viewRules()
+{
+	//alert()
+	var deliverableType = $('#deliverableType').val();
+	var projectId = $('#projectName').val();
+	if(checkNull(deliverableType).length == 0)
+	{
+		$('#errorDiv').show();
+		$('#errorDiv').html('Please Select Deliverable Type');
+		
+	}else if(checkNull(projectId).length == 0)
+	{
+		$('#errorDiv').show();
+		$('#errorDiv').html('Please Select Project');
+	}else
+	{	
+		$('#errorDiv').html('');	
+		$('#errorDiv').hide();			
+		viewRulesServerCall(projectId);
+	}
 	
 }
-/* Rule Management  End*/
+
+/* Rule Management View/ Modify Rule End */
 
 function checkNull(value) {
     if (typeof value !== 'string') {

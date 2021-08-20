@@ -15,8 +15,12 @@ public class RepositoryDetails {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
+    @Column(name = "repository_id")
+    private int repositoryId;
+	
+	@Column(name = "project_id")
+	private int projectId;
+	
 	
 	@Column(name = "tables_name")
 	private String tablesName;
@@ -31,77 +35,136 @@ public class RepositoryDetails {
 	private String userId;
 	
 	@Column(name = "creation_date")
-	private Timestamp date;
+	private Timestamp creationDate;
+	
+	@Column(name = "last_updated_by")
+	private String lastUpdatedBy;	
+	
+	@Column(name = "last_updation_date")
+	private Timestamp lastUpdationDate;
+	
 	
 	public RepositoryDetails() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
-	public RepositoryDetails(int id, String tablesName, String tableTypes, String fileName, String userId,
-			Timestamp date) {
+
+	public RepositoryDetails(int repositoryId, int projectId, String tablesName, String tableTypes, String fileName,
+			String userId, Timestamp creationDate, String lastUpdatedBy, Timestamp lastUpdationDate) {
 		super();
-		this.id = id;
+		this.repositoryId = repositoryId;
+		this.projectId = projectId;
 		this.tablesName = tablesName;
 		this.tableTypes = tableTypes;
 		this.fileName = fileName;
 		this.userId = userId;
-		this.date = date;
+		this.creationDate = creationDate;
+		this.lastUpdatedBy = lastUpdatedBy;
+		this.lastUpdationDate = lastUpdationDate;
 	}
 
-	public int getId() {
-		return id;
+	public int getRepositoryId() {
+		return repositoryId;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+
+	public void setRepositoryId(int repositoryId) {
+		this.repositoryId = repositoryId;
 	}
+
+
+	public int getProjectId() {
+		return projectId;
+	}
+
+
+	public void setProjectId(int projectId) {
+		this.projectId = projectId;
+	}
+
 
 	public String getTablesName() {
 		return tablesName;
 	}
 
+
 	public void setTablesName(String tablesName) {
 		this.tablesName = tablesName;
 	}
+
 
 	public String getTableTypes() {
 		return tableTypes;
 	}
 
+
 	public void setTableTypes(String tableTypes) {
 		this.tableTypes = tableTypes;
 	}
+
 
 	public String getFileName() {
 		return fileName;
 	}
 
+
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
+
 
 	public String getUserId() {
 		return userId;
 	}
 
+
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
-	public Timestamp getDate() {
-		return date;
+
+	public Timestamp getCreationDate() {
+		return creationDate;
 	}
 
-	public void setDate(Timestamp date) {
-		this.date = date;
+
+	public void setCreationDate(Timestamp creationDate) {
+		this.creationDate = creationDate;
 	}
+
+
+	public String getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
+
+
+	public void setLastUpdatedBy(String lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
+	}
+
+
+	public Timestamp getLastUpdationDate() {
+		return lastUpdationDate;
+	}
+
+
+	public void setLastUpdationDate(Timestamp lastUpdationDate) {
+		this.lastUpdationDate = lastUpdationDate;
+	}
+
 
 	@Override
 	public String toString() {
-		return "RepositoryDetails [id=" + id + ", tablesName=" + tablesName + ", tableTypes=" + tableTypes
-				+ ", fileName=" + fileName + ", userId=" + userId + ", date=" + date + "]";
+		return "RepositoryDetails [repositoryId=" + repositoryId + ", projectId=" + projectId + ", tablesName=" + tablesName
+				+ ", tableTypes=" + tableTypes + ", fileName=" + fileName + ", userId=" + userId + ", creationDate="
+				+ creationDate + ", lastUpdatedBy=" + lastUpdatedBy + ", lastUpdationDate=" + lastUpdationDate + "]";
 	}
+
+
+	
+
+	
 	
 	
 	

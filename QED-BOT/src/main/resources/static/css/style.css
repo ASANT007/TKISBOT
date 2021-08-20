@@ -466,6 +466,15 @@ table.table.tbl-report.table-bordered.table-striped.user-dashboard {
     width: 50%;
 	margin:0 auto;
 }
+
+.btn {
+    padding: 5px 13px;
+    font-size: 14px;
+
+}
+.mdfRuleBtnClass{
+	  padding: 5px 18px;
+}
 @media only screen and (max-width:576px) {
  .form-container {
 padding-bottom: 15px;
@@ -589,7 +598,7 @@ p.product-heading-cg {
     vertical-align: top;
 	}
 	.select-table-createRule select {
-		width: 166px;
+		width: 145px;
     display: inline-block;
     vertical-align: middle;
 	}
@@ -600,7 +609,7 @@ p.product-heading-cg {
     vertical-align: top;
 	}
 	.select-field-createRule select {
-		width: 160px;
+		width: 148px;
     display: inline-block;
 	}
 	.select-tarrgetString-createRule{
@@ -614,7 +623,7 @@ p.product-heading-cg {
 	}
 	.select-replace-createRule{
 		width: 100%;
-    max-width: 184px;
+    max-width: 190px;
     display: inline-block;
 	}
 	.select-replace-createRule input {
@@ -622,6 +631,28 @@ p.product-heading-cg {
     display: inline-block;
 	}
 	
+	
+.select-source-createRule select, .select-operator-createRule select{
+	width: 133px;
+    display: inline-block;
+}	
+.select-from-createRule input, .select-to-createRule input, .select-value-createRule input{
+		width: 133px;
+    display: inline-block;
+}	
+
+.select-deliverable-type{
+	width: 100%;
+    max-width:391px;
+    display: inline-block;
+    vertical-align: top;
+}
+	
+.select-deliverable-type select {
+	width: 157px;
+   	display: inline-block;
+}
+
 }
 
 

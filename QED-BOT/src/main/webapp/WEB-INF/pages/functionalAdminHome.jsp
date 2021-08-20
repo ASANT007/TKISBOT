@@ -1,3 +1,23 @@
+<%
+	
+	response.setHeader("pragma","no-cache");//HTTP 1.1
+	response.setHeader("Cache-Control","no-cache");
+	response.setHeader("Cache-Control","no-store");
+	response.addDateHeader("Expires", -1);
+	response.setDateHeader("max-age", 0);
+	response.setIntHeader ("Expires", -1); //prevents caching at the proxy server
+	response.addHeader("cache-Control", "private");
+	
+	String userId = checkNull((String)session.getAttribute("userId"));
+	String role = checkNull((String)session.getAttribute("role"));
+	String userName = (String)session.getAttribute("DisplayName");
+	
+	if(userId == null || userId.equals("-1") || userId.equals("")) 
+	{  
+	     response.sendRedirect("login");
+	     return;
+	}
+%>
 <!DOCTYPE HTML>
 <html lang="en-US">
 <head>
@@ -57,8 +77,8 @@ $(document).ready(function () {
 <body>
 <%@page import="java.util.List" %>
 <%
-	String userName = checkNull((String) session.getAttribute("DisplayName"));
-	String role =  checkNull((String) session.getAttribute("role"));
+	//String userName = checkNull((String) session.getAttribute("DisplayName"));
+	//String role =  checkNull((String) session.getAttribute("role"));
 %>
 <!--header start-->
 <div class="header-top">
@@ -79,7 +99,7 @@ $(document).ready(function () {
       <li>
       	<a  href="/functionalAdminHome">Table Management</a>
       <ul>
-      	<li><a  href="/uploadExcel">Create Table</a></li>
+      	<li><a  href="/createTable">Create Table</a></li>
       	<li><a  href="/modifyTable">Modify Table</a></li> 
       </ul>
       </li>
@@ -88,6 +108,8 @@ $(document).ready(function () {
       	<a  href="/functionalAdminHome"">Rule Management</a>
       	<ul>
       		<li><a  href="/createRule">Create Rule</a></li>
+      		<li><a  href="/executeRule">Execute Rule</a></li>
+      		<li><a  href="/viewRulePanel">View Rule</a></li>
       	</ul>
       </li>
       

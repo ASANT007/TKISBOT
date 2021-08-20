@@ -18,15 +18,24 @@ public interface RepositoryDetailsCRUD extends CrudRepository<RepositoryDetails,
 		// ERROR : org.hibernate.hql.internal.ast.QuerySyntaxException: repository_details is not mapped.
 		
 		// We should use entity name rather than table name.
-		@Query("SELECT tablesName FROM RepositoryDetails WHERE  tablesName LIKE :filterTableNames% ")
-		public List<String> getAllTablesName(@Param("filterTableNames") String filterTableNames);
-		
-		
-		@Transactional
-		@Modifying(clearAutomatically = true)
-	    @Query("UPDATE RepositoryDetails rd SET rd.fileName = :fileName WHERE rd.tablesName = :tableName")
-	    int updateFileName(@Param("fileName") String fileName, @Param("tableName") String tableName);
-		
-		@Query("SELECT rd.fileName FROM RepositoryDetails rd WHERE rd.tablesName = :tableName")
-		public String getFileName(@Param("tableName") String tableName);
+		/*
+		 * @Query("SELECT tablesName FROM RepositoryDetails WHERE  tablesName LIKE :filterTableNames% "
+		 * ) public List<String> getAllTablesName(@Param("filterTableNames") String
+		 * filterTableNames);
+		 * 
+		 * @Query("select tablesName from RepositoryDetails where projectId = :projectId"
+		 * ) public List<String> getAllTablesByProjectId(@Param("projectId") int
+		 * projectId);
+		 * 
+		 * @Transactional
+		 * 
+		 * @Modifying(clearAutomatically = true)
+		 * 
+		 * @Query("UPDATE RepositoryDetails rd SET rd.fileName = :fileName WHERE rd.tablesName = :tableName"
+		 * ) int updateFileName(@Param("fileName") String fileName, @Param("tableName")
+		 * String tableName);
+		 * 
+		 * @Query("SELECT rd.fileName FROM RepositoryDetails rd WHERE rd.tablesName = :tableName"
+		 * ) public String getFileName(@Param("tableName") String tableName);
+		 */
 }
