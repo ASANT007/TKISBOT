@@ -146,8 +146,8 @@ $(document).ready(function () {
       	<a  href="/functionalAdminHome">Rule Management</a>
       	<ul>
       		<li><a  href="/createRule">Create Rule</a></li>
-      		<li><a  href="/executeRule">Execute Rule</a></li>
       		<li><a  href="/viewRulePanel">View Rule</a></li>
+      		<li><a  href="/executeRule">Execute Rule</a></li>
       	</ul>
       </li>
       <li><a  href="/logout">Logout</a></li>
@@ -163,7 +163,7 @@ $(document).ready(function () {
       <div class="login_user">Welcome <span class="user-name"><%=userName %></span>. You  are logged in as <span  class="user-name"><%=role %></span> </div>
     </div>
   </div>
-  <h2>View Rule</h2>  
+  <h2>Execute Rule</h2>  
   <div class="content-area">
   <!-- START -->
   <%if(message.length() > 0) {%>
@@ -173,15 +173,15 @@ $(document).ready(function () {
       </div>
   </div>
   <% }else{%>
-  <form id="execRulesFrm" name="execRulesFrm">
+  <form id="executeRulesFrm" name="executeRulesFrm">
   
   <div class="row">
 	  
-	  <div class="col-md-3 align-self-center">
+	  <div class="col-md-4 align-self-center">
       		<% 
       			List<Object[]> deliverabletype = (List<Object[]>) request.getAttribute("deliverableType");
      		 %>
-     		 <div class="select-action-createRule">
+     		 <div class="select-deliverable-type">
 			<label>Select Deliverable Type : </label>
 			<sup class="mandatory">*</sup>
 			<select class="form-select" name="deliverableType" id="deliverableType" onchange="getProjects(this)">
@@ -195,41 +195,58 @@ $(document).ready(function () {
 	 		</div>
 	  </div>
 		  
-	  <div class="col-md-3 select-project align-self-center">     
+	  <div class="col-md-4 select-project align-self-center">
+     
 		<label>Select Project : </label> 
 		<sup class="mandatory">*</sup>
-		<select class="form-select tbl-select-opt" name="projectName" id="projectName">
+		<!-- <select class="form-select tbl-select-opt" name="projectName" id="projectName" onchange="getTablesForSelectedProject(this)"> -->
+		<select class="form-select tbl-select-opt" name="projectName" id="projectName" onchange="getTablesForSelectedProject(this)">
 				<option value="" >--Select Project--</option>		
 		</select>
  	 </div> 
- 	 		
-	<div class="col-md-3  align-self-center">
-         <input class="btn btn-primary " type = "button" value = "View Rules" onClick="viewRules()"/>
-         <a href="/viewRule">
-         <input class="btn btn-primary" type = "button" value = "Cancel" />
-         </a>
-	</div>	
-			
-  </div>  
-       
- </form>
-      
-      <div class="row text-center">
-        <div id="errorDiv" name="errorDiv"  class="alert alert-danger mx-auto mt-3" role="alert" style="display:none"></div>
+ 	 <div class="col-md-4  align-self-center">
+          <input class="btn btn-primary " type = "button" value = "View Rules" onClick="viewRulesForExecution()"/>
+          <a href="/viewRulePanel">
+          <input class="btn btn-primary" type = "button" value = "Cancel" />
+          </a>
+		</div>		
+    
+    </div>  
+            
+	  <!-- Show Hide Part START -->
+	  		
+	  <!-- Show Hide Part END -->		
+	  		
+	  		
+	  			
+	<div class="row text-center my-3">
+        <div id="errorDiv" name="errorDiv"  class="alert alert-danger mx-auto" role="alert" style="display:none"></div>
       </div>
       
+      <div class="row text-center my-3">
+        <div id="successDiv" name="successDiv"  class="alert alert-success mx-auto" role="alert" style="display:none"></div>
+      </div>	
+      
+      <div class="row" >
+        <div class="col-md-12" id="executeRuleDiv" name="executeRuleDiv">
+        	<input class="btn btn-primary " type = "button" value = "Execute Rules" onClick="executeRules()"/>        
+        </div>
+      </div>
+      
       <div class="row text-center">
-        <div id="successDiv" name="successDiv"  class="alert alert-success mx-auto mt-3" role="alert" style="display:none"></div>
-      </div>
-      <div class="row mt-2  justify-content-center" id="saveRuleDiv" style="display:none">
-        <div class="col-md-9 result-left">
-          <strong>Generated Query:</strong>
-          <div id="result" name="result"></div>
-        </div>
-        <div class="col-md-2  result-btn">
-          <input class="btn btn-primary mx-2  save-rule" type = "button" value = "Save Rule" onClick="saveRule()" />
-        </div>
-      </div>
+        <div id="ruleListDiv" name="ruleListDiv"></div>
+      </div>    
+      
+            
+      <!-- Below field are used on modify rules START -->
+      <input type="hidden" id="ruleId" name="ruleId"/>
+      <input type="hidden" id="tableName" name="tableName"/>
+      <input type="hidden" id="action" name="action"/>
+      <input type="hidden" id="targetFieldNameHidden" name="targetFieldNameHidden"/>
+      <!-- END -->
+      </form>
+      
+      
       
      <% }%> 
       

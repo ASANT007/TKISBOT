@@ -10,7 +10,8 @@ import org.springframework.stereotype.Repository;
 import com.tkis.qedbot.entity.ProjectMaster;
 
 @Repository
-public interface ProjectMasterRepo extends JpaRepository<ProjectMaster, Integer>{
+public interface ProjectMasterRepo extends JpaRepository<ProjectMaster, Integer>
+{
 
 	@Query("select projectId, projectName from ProjectMaster where deliverableTypeId = :deliverableTypeId")
 	public List<Object[]> getProjectIdAndName(@Param("deliverableTypeId") int deliverableTypeId);

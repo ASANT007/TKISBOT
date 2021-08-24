@@ -11,7 +11,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "project_master")
-public class ProjectMaster {
+public class ProjectMaster 
+{
 
 
 	@Id

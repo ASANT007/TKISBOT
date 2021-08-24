@@ -1,12 +1,11 @@
 package com.tkis.qedbot.service;
 
-import java.util.List;
-
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface RepositoryDetailsService {
+public interface RepositoryDetailsService 
+{
 	
 	
 	//public List<String> getAllTablesName(@Param("filterTableNames") String filterTableNames) throws Exception;

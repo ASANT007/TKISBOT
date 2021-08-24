@@ -2,7 +2,8 @@ package com.tkis.qedbot.service;
 
 import java.util.List;
 
-public interface TableModificationService {
+public interface TableModificationService 
+{
 	
 	//public List<String> getTableNames(String projectName, String tableTpye, String tableName);
 	

@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component;
 import com.tkis.qedbot.dao.CustomTableDao;
 
 @Component
-public class TableModificationServiceImpl implements TableModificationService {
+public class TableModificationServiceImpl implements TableModificationService 
+{
 	
 	
 	@Autowired

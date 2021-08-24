@@ -9,7 +9,8 @@ import com.tkis.qedbot.entity.ProjectMaster;
 import com.tkis.qedbot.repo.ProjectMasterRepo;
 
 @Component
-public class ProjectMasterServiceImpl implements ProjectMasterService {
+public class ProjectMasterServiceImpl implements ProjectMasterService 
+{
 	
 	@Autowired
 	ProjectMasterRepo projectMasterRepo;

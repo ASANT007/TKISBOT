@@ -15,10 +15,14 @@ import com.tkis.qedbot.repo.RuleMasterRepo;
 
 
 @Component
-public class RuleMasterServiceImpl implements RuleMasterService {
+public class RuleMasterServiceImpl implements RuleMasterService 
+{
 	
 	@Autowired
 	RuleMasterRepo ruleMasterRepo;
+	
+	@Autowired
+	RuleExecutionService ruleExecutionService;
 	
 	//RuleMaster ruleMaster = null;
 	@Override
@@ -116,6 +120,46 @@ public class RuleMasterServiceImpl implements RuleMasterService {
 		
 		return response;
 	}
+	@Override
+	public String executeRules(String ruleIdList) {
+		
+		JSONArray arr = new JSONArray();
+		JSONObject obj = null;
+		
+		String ruleIdListArray [] = ruleIdList.split(",");
+		for(String ruleId : ruleIdListArray) 
+		{
+			String ruleDesc = "";
+			int Id = 0;
+			try 
+			{
+				Id = Integer.valueOf(ruleId);
+				
+				ruleDesc = ruleMasterRepo.getRuleDescById(Id);				
+				System.out.println("#### ruleDesc "+ruleDesc);
+				
+				obj = new JSONObject();
+	            obj.put("ruleId",Id);
+				
+				int row = ruleExecutionService.executeRule(ruleDesc);
+				
+				System.out.println("#### row"+row);
+				
+			} catch (Exception e) {
+				
+				//e.printStackTrace();
+				obj.put("message",e.toString());
+				System.out.println("#### Exception :: ruleId"+ruleId+" Error : "+e.toString());
+			}
+			
+			arr.add(obj);
+		}
+		
+		return arr.toString();
+		
+		
+	}
+	
 	
 
 }

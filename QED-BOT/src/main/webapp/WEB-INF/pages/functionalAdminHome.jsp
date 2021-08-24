@@ -108,8 +108,8 @@ $(document).ready(function () {
       	<a  href="/functionalAdminHome"">Rule Management</a>
       	<ul>
       		<li><a  href="/createRule">Create Rule</a></li>
-      		<li><a  href="/executeRule">Execute Rule</a></li>
       		<li><a  href="/viewRulePanel">View Rule</a></li>
+      		<li><a  href="/executeRule">Execute Rule</a></li>
       	</ul>
       </li>
       

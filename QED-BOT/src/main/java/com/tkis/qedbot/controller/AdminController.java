@@ -625,6 +625,27 @@ public class AdminController {
 	}
 	//Rule Management Added View Rule on 10-08-2021 End
 	
+	//Rule Management Added View Rule on 24-08-2021 START	
+	@ResponseBody
+	@RequestMapping("/ruleExecution")
+	public String ruleExecution(@RequestParam ("ruleArray") String ruleArray) {
+	//public String ruleExecution(@RequestParam ("ruleArray") String[] ruleArray) {
+		String response = "";
+		String ruleIdList = "";
+		try {
+			ruleIdList = URLDecoder.decode(ruleArray, "UTF-8");
+			System.out.println("#### ruleArray "+ruleIdList);
+			response = ruleMasterService.executeRules(ruleIdList);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return response;
+		
+	}
+	//Rule Management Added View Rule on 24-08-2021 END
+	
 	private String checkNull(String input)
     {
 	    if(input == null || "null".equalsIgnoreCase(input) || "undefined".equalsIgnoreCase(input)) {

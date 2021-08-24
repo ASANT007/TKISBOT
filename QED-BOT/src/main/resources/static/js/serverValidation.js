@@ -321,6 +321,7 @@ function getTargetFields(tableName,forModifyRule){
 	$.ajax({
 		        url: "/getTableStructure",
 		        type: "POST",
+				async: false,
 		        data: {
 			
 		            tableName : encodeURIComponent(tableName)
@@ -636,21 +637,24 @@ function showHideActionPanelForModifyRules (action,descText){
 		//$(`#targetFieldName option[value='${tar}']`).prop('selected', true);
 		//$('#targetFieldName select').val(filedArray[0].replaceAll("]",""));
 		//$('#targetFieldName').val(filedArray[0].replaceAll("]",""));
-		$('targetFieldName option[value= "+tar+"]').attr("selected",true);
+		//$('targetFieldName option[value= "+tar+"]').attr("selected",true);
 		//$('#targetFieldName').val(filedArray[0].replaceAll("]",""));
-		$('#targetString').val(filedArray[1].replaceAll("'",""));
-		$('#replaceBy').val(filedArray[2]); 
 			
 		$('#targetFieldNameDiv').show(); $('#targetStringDiv').show();	$('#replaceByDiv').show();
 		$('#operatorDiv').hide();	$('#sourceDiv').hide();		$('#fromDiv').hide();		$('#toDiv').hide();		$('#valueDiv').hide();
+		//alert('Selected Val'+tar);
+		$("#targetFieldName > [value=" + tar + "]").attr("selected", "true");
+		$('#targetString').val(filedArray[1].replaceAll("'",""));
+		$('#replaceBy').val(filedArray[2]); 
 		 
 	}else if(action == 'concatenate'){
 		alert('Concatenate Not Done Yet');
 	}
 	else if(action == 'mid'){
 		var source = filedArray[0].replaceAll("]","");
-		$('source option[value= "+source+"]').attr("selected",true);
-		//$('#source').val(source);
+		//alert('Source Val'+source);
+		$("#source option[value= "+source+"]").attr("selected",true);
+		//$("#source > [value=" + source + "]").attr("selected", "true");
 		$('#from').val(filedArray[1].replaceAll("'",""));
 		$('#to').val(filedArray[2]);
 		
@@ -661,7 +665,9 @@ function showHideActionPanelForModifyRules (action,descText){
 		
 		var source = filedArray[0].replaceAll("]","");
 		
-		$('#source').val(source);$('#from').val(filedArray[1]);
+		$('#source').val(source);
+		$('#from').val(filedArray[1]);
+		
 		$('#targetFieldNameDiv').hide(); $('#targetStringDiv').hide();	$('#replaceByDiv').hide();
 		$('#operatorDiv').hide();	$('#sourceDiv').show();		$('#fromDiv').show();		$('#toDiv').hide();  $('#valueDiv').hide();
 		 
@@ -670,6 +676,7 @@ function showHideActionPanelForModifyRules (action,descText){
 		const array = descText.substring(descText.lastIndexOf("[")+1,descText.length-1).split(' ');
 		 
 		$('#operator').val(array[1]);
+		
 		$('#value').val(array[2].replaceAll("'",""));
 		
 		$('#targetFieldNameDiv').hide(); $('#targetStringDiv').hide();	$('#replaceByDiv').hide();
@@ -957,6 +964,207 @@ function updateRuleStatus(ruleId,status){
 		}
     });
 }
+
+/* Rule Management Execute Rule Start */
+
+function showRulesServerCall(projectId){
+	
+	$('#errorDiv').html();
+	$('#successDiv').html('');
+	$('#errorDiv').hide();
+	$('#successDiv').hide();
+	$('#result').html('');
+	$('#saveRuleDiv').hide();
+	$('#ruleListDiv').empty();
+	var tableAttr = "<table class='table table-responsive table-bordered table-striped'><tr><th style='width:5%; text-align:center;'>Sr No</th><th style='width:7%'>Rule Type</th><th>Rule Description</th><th><input type='checkbox' id='selectAllRules'  name = 'checkAllRule' onclick='selectAllCheckBoxes()'>Select All</th><th>Status</th><th>Status Description</th></tr>";
+	//var tableRow = "";
+	$.ajax({
+        url: "/getRules",
+        type: "POST",
+        data: {
+	
+            projectId : encodeURIComponent(projectId)					
+            
+        },
+        dataType: "json",		
+		contentType : "application/x-www-form-urlencoded",
+        success: function(response) 
+		{	
+			
+			var srno = 0;
+			response.forEach(obj => {
+				var ruleId = '';
+				var repositoryId = '';
+				var ruleType = '';
+				var statusAction ='';
+				var statusVal = '';
+				var ruledesc = ''; 
+				
+				var btnClass = '';
+				srno ++;
+		        Object.entries(obj).forEach(([key, value]) => {
+		            //console.log(`${key} ${value}`);
+					
+					
+					if(`${key}` == 'ruleId'){
+						ruleId = `${value}`;
+					}else if(`${key}` == 'repositoryId'){
+						repositoryId = `${value}`;
+					}else if(`${key}` == 'ruleType'){
+						ruleType = `${value}`;
+					}else if(`${key}` == 'status'){					
+						//statusVal = `${value}`;
+					}else if(`${key}` == 'ruleDesc'){
+						ruledesc = `${value}`;
+					}
+					
+		        });
+
+				tableAttr +="<tr><td align='center'>"+srno+"</td><td id='ruleType_"+ruleId+"'>"+ruleType+"<input type='hidden' value = '"+repositoryId+"' id='repositoryId_"+ruleId+"'></td><td id='rule_description_" + ruleId + "'>"+ruledesc+"</td><td><input type='checkbox' name = 'checkRule' id='selectRule_"+ruleId+"'  value='"+ruleId+"'><label for='selectRule_"+ruleId+"'> Select </label></td><td id='ruleStatus_"+ruleId+"'></td><td id='ruleExeDesc_"+ruleId+"'></td></tr>";
+		        
+		    });
+			
+			if(srno == 0){
+				tableAttr= tableAttr +"<tr><td colspan='6'>No Data Found</td></tr>";
+			}
+			
+			
+			tableAttr = tableAttr +"</table>";
+			
+			$('#ruleListDiv').show();
+			$('#ruleListDiv').append(tableAttr);			
+			
+			
+        },
+		error : function(response){
+			$('#errorDiv').show();
+			$('#errorDiv').html(response);
+			
+		}
+    });
+	
+}
+
+function selectAllCheckBoxes(){
+	
+	//alert($("#selectAllRules").prop('checked'));
+	
+	
+	var ele=document.getElementsByName('checkRule');  
+    for(var i=0; i<ele.length; i++){  
+        if(ele[i].type=='checkbox'){
+            //ele[i].checked=true;
+			if($("#selectAllRules").prop('checked')){
+				ele[i].checked=true;
+			}else{
+				ele[i].checked=false;
+			}
+
+		}
+			  
+    }  
+
+}
+
+function executeRules(){
+	//var checkedValue = document.querySelector('.selectAllRules:checked').value;
+	//alert('executeRules');
+	if(isRuleNotCheck() == false){
+		$('#errorDiv').show();
+		$('#errorDiv').html('Please Select Rule to Execute');
+			
+	}else{
+		var ruleArray = [];
+		$('#errorDiv').hide();
+		$('#errorDiv').html('');
+		var checkedValue = null; 
+		var inputElements = document.getElementsByName('checkRule');
+		for(var i=0; inputElements[i]; ++i){
+		      if(inputElements[i].checked){
+		           checkedValue = inputElements[i].value;
+				   
+					ruleArray.push(checkedValue);
+				   //alert(checkedValue);
+		           //break;
+		      }
+		}
+		//alert(ruleArray);
+		executeRulesServerCall(ruleArray);
+		
+	}
+	
+}
+
+function isRuleNotCheck(){
+	var isCheck = false;
+	var checkedValue = null; 
+		var inputElements = document.getElementsByName('checkRule');
+		for(var i=0; inputElements[i]; ++i){
+		      if(inputElements[i].checked){
+		           checkedValue = inputElements[i].value;
+				   isCheck = true;
+		           break;
+		      }
+		}
+	return isCheck;
+}
+
+function executeRulesServerCall(ruleArray){
+	
+	$.ajax({
+        url: "/ruleExecution",
+        type: "POST",
+		async: false,
+        data: {
+				
+				ruleArray : encodeURIComponent(ruleArray)	
+		},
+        dataType: "json",		
+		contentType : "application/x-www-form-urlencoded",
+        success: function(response) 
+		{	
+			alert('Success '+response);
+			displayRuleExecutionStatus(response);
+        },
+		error : function(response){			
+			alert('error '+response);
+		}
+    });
+	
+}
+
+function displayRuleExecutionStatus(response){
+	
+	
+	alert('displayRuleExecutionStatus');
+	response.forEach(obj => {
+		var ruleId = '';
+		var message = '';
+		
+		Object.entries(obj).forEach(([key, value]) => {
+	        console.log(`${key} ${value}`);
+
+			if(`${key}` == 'ruleId'){
+				ruleId = `${value}`;
+				
+			}else if(`${key}` == 'message'){
+				message = `${value}`;
+				if(checkNull(message).length > 0){
+					$('#ruleStatus_'+ruleId).text('Execution Fail');
+					$('#ruleExeDesc_'+ruleId).text(message);
+				
+				}else{
+				$('#ruleStatus_'+ruleId).text('Executed');
+				$('#ruleExeDesc_'+ruleId).text();
+				}
+			}
+				
+        });
+	});
+}
+
+
+/* Rule Management Execute Rule End */
 function checkNull(value) {
     if (typeof value !== 'string') {
         return "";

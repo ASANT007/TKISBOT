@@ -5,7 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface RuleMasterService {
+public interface RuleMasterService 
+{
 	
 	public String save(int projectId, int repositoryId, String shortDesc, String ruleType, String userId) throws Exception;
 	
@@ -17,6 +18,6 @@ public interface RuleMasterService {
 	
 	public String getJSONRuleById(int projectId) throws Exception;
 
+	public String executeRules(String ruleIdList);
 	
-
 }

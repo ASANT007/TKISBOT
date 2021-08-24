@@ -11,7 +11,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "repository_details")
-public class RepositoryDetails {
+public class RepositoryDetails
+{
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

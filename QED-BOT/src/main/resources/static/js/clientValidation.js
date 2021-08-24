@@ -791,6 +791,30 @@ function viewRules()
 }
 
 /* Rule Management View/ Modify Rule End */
+/* Rule Management Execute Rule Start */
+function viewRulesForExecution(){
+	
+	var deliverableType = $('#deliverableType').val();
+	var projectId = $('#projectName').val();
+	if(checkNull(deliverableType).length == 0)
+	{
+		$('#errorDiv').show();
+		$('#errorDiv').html('Please Select Deliverable Type');
+		
+	}else if(checkNull(projectId).length == 0)
+	{
+		$('#errorDiv').show();
+		$('#errorDiv').html('Please Select Project');
+	}else
+	{	
+		$('#errorDiv').html('');	
+		$('#errorDiv').hide();			
+		showRulesServerCall(projectId);
+	}
+}
+
+/* Rule Management Execute Rule End */
+
 
 function checkNull(value) {
     if (typeof value !== 'string') {

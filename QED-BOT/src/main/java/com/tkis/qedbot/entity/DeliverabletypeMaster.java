@@ -11,7 +11,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "deliverabletype_master")
-public class DeliverabletypeMaster {
+public class DeliverabletypeMaster 
+{
 	
 
 	@Id

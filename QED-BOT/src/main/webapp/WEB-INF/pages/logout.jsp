@@ -3,5 +3,4 @@
 	session.removeAttribute("role");	
 	session.invalidate();
 	response.sendRedirect("/");
-
 %>

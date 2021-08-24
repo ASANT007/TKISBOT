@@ -69,8 +69,8 @@ public class CustomTableDaoImp implements CustomTableDao {
 		
 	@Override
 	@Transactional(rollbackOn = Exception.class)
-	public boolean createTable(String createTableSQL, RepositoryDetails details) {
-		
+	public boolean createTable(String createTableSQL, RepositoryDetails details) 
+	{		
 		
 		Session session = null;
 		if (entityManager == null || (session = entityManager.unwrap(Session.class)) == null) {
@@ -82,27 +82,25 @@ public class CustomTableDaoImp implements CustomTableDao {
 
 		//Query query = session.createSQLQuery("create  table IF NOT EXISTS sampletable1(col1 varchar(10),col2 int(10))");
 	
-		try {
-	
+		try 
+		{
 				
-				  if( detailsRepo.save(details) != null ) 
-				  {	
-					  
-						/*
-						 * Query query = session.createSQLQuery(createTableSQL); int id =
-						 * query.executeUpdate();
-						 */
-					  int i = session.createSQLQuery(createTableSQL).executeUpdate();
-					  System.out.println("#### No of Rows Affected ::"+i);				 
-					 
-					 return true;
+			  if( detailsRepo.save(details) != null ) 
+			  {	
 				  
-				  }else 
-				  {				  
-					  throw new Exception(); 				  
-				  }
+					/*
+					 * Query query = session.createSQLQuery(createTableSQL); int id =
+					 * query.executeUpdate();
+					 */
+				  int i = session.createSQLQuery(createTableSQL).executeUpdate();
+				  System.out.println("#### No of Rows Affected ::"+i);				 
 				 
-			
+				 return true;
+			  
+			  }else 
+			  {				  
+				  throw new Exception(); 				  
+			  }
 			
 		} catch (Exception e) {
 			log.error("exception in createTable():", e);

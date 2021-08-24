@@ -12,7 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import com.tkis.qedbot.entity.RepositoryDetails;
 @Repository
-public interface RepositoryDetailsRepo extends JpaRepository<RepositoryDetails,Integer>{
+public interface RepositoryDetailsRepo extends JpaRepository<RepositoryDetails,Integer>
+{
 
 		// We should use entity name rather than table name.
 		/*

@@ -11,7 +11,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "rules_master")
-public class RuleMaster {
+public class RuleMaster 
+{
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

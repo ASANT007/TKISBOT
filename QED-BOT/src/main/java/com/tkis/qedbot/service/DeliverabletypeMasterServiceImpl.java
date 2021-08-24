@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component;
 import com.tkis.qedbot.repo.DeliverabletypeMasterRepo;
 
 @Component
-public class DeliverabletypeMasterServiceImpl implements DeliverabletypeMasterService {
+public class DeliverabletypeMasterServiceImpl implements DeliverabletypeMasterService 
+{
 
 	@Autowired
 	DeliverabletypeMasterRepo deliverabletypeMasterRepo;

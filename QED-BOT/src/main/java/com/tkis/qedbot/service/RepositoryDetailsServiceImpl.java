@@ -10,7 +10,8 @@ import org.springframework.stereotype.Component;
 import com.tkis.qedbot.repo.RepositoryDetailsRepo;
 
 @Component
-public class RepositoryDetailsServiceImpl implements RepositoryDetailsService {
+public class RepositoryDetailsServiceImpl implements RepositoryDetailsService 
+{
 	
 	@Autowired
 	RepositoryDetailsRepo repositoryDetailsRepo;
