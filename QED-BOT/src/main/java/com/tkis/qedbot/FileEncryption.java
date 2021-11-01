@@ -66,9 +66,11 @@ public class FileEncryption
   {
   FileEncryption fe = new FileEncryption();
   String encryptedString = null;
-  encryptedString = fe.Encrypt("runBOT@tk1s");
+  //encryptedString = fe.Encrypt("runBOT@tk1s");
+  //String decryptedString = fe.Decrypt("cnVuQk9UQHRrMXM=");//root
+  encryptedString = fe.Encrypt("SSzcr^?7d");
   System.out.println("encryptedString:  "+encryptedString); 
-  String decryptedString = fe.Decrypt("cnVuQk9UQHRrMXM=");//root
+  String decryptedString = fe.Decrypt("U1N6Y3JePzdk");//root
   System.out.println("#### decryptedString:  "+decryptedString);
 
 }
