@@ -312,7 +312,7 @@ li.topnav-first {
 	padding: 9px 0;
 }
 .form-horizontal .form-control {
-	color: #524f4f;
+	color: #b5b5b5;
 	background-color: transparent;
 	font-size: 14px;
 	letter-spacing: 1px;
@@ -466,37 +466,7 @@ table.table.tbl-report.table-bordered.table-striped.user-dashboard {
     width: 50%;
 	margin:0 auto;
 }
-/* Integration of DeliverableTypeMaster and ProjectMaster Added on 28-10-2021 START*/
-.pop-up-window .col-md-6{
-margin-bottom: 8px;
-}
-.select-popup {
- width: 160px;	
-	
-}
 
-.change-pass {
-    width: 617px;
-    border: 1px solid #4499c3;
-    padding: 30px;
-}
-
-.pass-innner-box{
-    width: 403px;
-    margin: 0 auto;	
-}
-.change-pass label {
-    width: 182px !important;
-}
-
-.pass-innner-box .form-control{
-	margin-bottom: 15px;
-}
-.pop-up-window {
-    border: 1px solid #00a0f0;
-    padding: 20px;
-}
-/* Integration of DeliverableTypeMaster and ProjectMaster Added on 28-10-2021 END */
 .btn {
     padding: 5px 13px;
     font-size: 14px;
@@ -504,14 +474,6 @@ margin-bottom: 8px;
 }
 .mdfRuleBtnClass{
 	  padding: 5px 18px;
-}
-sup {
-    margin-right: 5px;
-}
-.generateQuery{
-	padding-top: 10px;
-    padding-bottom: 5px;
-    font-weight:bold;
 }
 @media only screen and (max-width:576px) {
  .form-container {
@@ -577,10 +539,10 @@ p.product-heading-cg {
  color: #fff;
 }
 .col-md-3.select-project.align-self-center {
-	width: 23%;
+	width: 26%;
 }
 .table-type-div{
-    width: 21%;
+    width: 24%;
 }
 .select.form-select.tbl-type.tbl-select-opt {
     width: 146px;
@@ -603,18 +565,6 @@ p.product-heading-cg {
 
  @media only screen and (min-width:960px) {
  
- .select-file {
- 	width:26%;
- }
- .choose-file{
-
-    display: inline-block;
-    width: 217px;
-}
- 
- .select-delivereable-type-createtable{
- 	width:29%;
- }
  .mdfProjectType{
 	 width:26%;
 	}
@@ -624,7 +574,7 @@ p.product-heading-cg {
 	}
 	 
 	 .mdfRadio{
-	 	width:21%;
+	 	width:17%;
 	 }
 	 
 	 .mdfButtons{
@@ -632,35 +582,39 @@ p.product-heading-cg {
 	}
 	.select-action-createRule{
 		width: 100%;
-	    max-width:135px;
+	    max-width: 242px;
 	    display: inline-block;
-	    
+	    vertical-align: top;
 	}
 	.select-action-createRule select {
-	    display: inline-block;
-    
+		width: 133px;
+    display: inline-block;
+    vertical-align: top;
 	}
 	.select-table-createRule{
-    width: 145px;
+		width: 100%;
+    max-width: 278px;
     display: inline-block;
-    
+    vertical-align: top;
 	}
 	.select-table-createRule select {
+		width: 145px;
     display: inline-block;
     vertical-align: middle;
 	}
 	.select-field-createRule{
 		width: 100%;
-    max-width:154px;
+    max-width: 268px;
     display: inline-block;
-    
+    vertical-align: top;
 	}
 	.select-field-createRule select {
+		width: 148px;
     display: inline-block;
 	}
 	.select-tarrgetString-createRule{
 		width: 100%;
-    max-width: 160px;
+    max-width: 242px;
     display: inline-block;
 	}
 	.select-tarrgetString-createRule input {
@@ -677,86 +631,28 @@ p.product-heading-cg {
     display: inline-block;
 	}
 	
-	.select-source-createRule {
-    width: 135px;
+	
+.select-source-createRule select, .select-operator-createRule select{
+	width: 133px;
     display: inline-block;
-	}
-	.select-to-createRule {
-	    display: inline-block;
-	    width: 100px;
-	}
-		
-	.select-from-createRule input, .select-to-createRule input, .select-value-createRule input{
-			width: 133px;
-	    display: inline-block;
-	}	
-	
-	.select-deliverable-type{
-		width: 100%;
-	    max-width:149px;
-	    display: inline-block;
-	   
-	}
-		
-	.select-deliverable-type select {
-	   	display: inline-block;
-	}
-	
-	.select-project-002 {
-	    display: inline-block;
-	    
-		    width: 145px;
-	}
-		
-	
-	.select-project-003 {
-	    display: inline-block;
-	    
-		    width:140px;
-	}
-	
-	.tbl-type{
-	    display: inline-block;
-	    
-		    width:140px;
-	}
-	.select-operator-createRule{
-		width: 100%;
-	    max-width:90px;
-	    display: inline-block;
-	    
-	}	
-	.select-from-createRule {
-    	display: inline-block;
-	}
-	.select-value-createRule {
-    	display: inline-block;
-	}
-	
-/* Integration of DeliverableTypeMaster and ProjectMaster Added on 28-10-2021 START*/
-.projectTag{
-   width: 100%;
+}	
+.select-from-createRule input, .select-to-createRule input, .select-value-createRule input{
+		width: 133px;
     display: inline-block;
-    margin-left: 5px;
-    max-width: 143px;	
-	
-}
+}	
 
-.projectName{
-	   width: 100%;
-    display: inline-block;
-    margin-left: 5px;
-    max-width: 216px;	
-	
-}
-
-.projectDescription {
+.select-deliverable-type{
+	width: 100%;
+    max-width:391px;
     display: inline-block;
     vertical-align: top;
-    width: 100%;
-    max-width: 283px;
 }
-/* Integration of DeliverableTypeMaster and ProjectMaster Added on 28-10-2021 END */
+	
+.select-deliverable-type select {
+	width: 157px;
+   	display: inline-block;
+}
+
 }
 
 
@@ -829,7 +725,7 @@ li .submenu-trigger {
  outline: 0;
 }
 .top_nav_links li > ul > li > ul {
- left: 200px;
+ left: 160px;
  top: 0;
  width: 78%;
 }
@@ -871,8 +767,7 @@ li.has_child.mis_report ul {
  display: inline-block;
 }
 .top_nav_links li > ul > li > ul {
- background: #00a0f0;
- padding-bottom: 0;
+ background: #0a264b;
 }
 li.has_child.mis-menu ul {
  width: 170px;
@@ -914,6 +809,4 @@ li.has_child.mis-menu ul {
 	color:red;
 }
 
-/*Integration of DeliverableTypeMaster and ProjectMaster Added on 28-10-2021 START */
 
-/*Integration of DeliverableTypeMaster and ProjectMaster Added on 28-10-2021 END */

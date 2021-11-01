@@ -14,14 +14,15 @@
 	
 	if(userId == null || userId.equals("-1") || userId.equals("")) 
 	{  
-	     response.sendRedirect("login");
+	     response.sendRedirect("logout");
 	     return;
 	}
+	if(role.equals("User") || role.equals("Functional Admin")){
 %>
 <!DOCTYPE HTML>
 <html lang="en-US">
 <head>
-<title>Thyssenkrupp Industrial Solutions India Pvt Ltd</title>
+<title>thyssenkrupp Industrial Solutions India Pvt Ltd</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no"/>
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
@@ -87,21 +88,11 @@ $(document).ready(function () {
     <div class="col-md-6 col-sm-6 col-6  heading">QED BOT</div></div>
     <!--header end-->
   </div>  </div>
-  <div class="container-fluid p-0"><!-- #BeginLibraryItem "/Library/topnav.lbi" --><div class="top_nav"> <span class="top_nav_trigger">Menu</span>
-  <nav class="top_nav_links">
-    <ul>
-      <li class="topnav-first"><a class="topnav_home" href="dashboard.html">Dashboard</a></li>
-      <li><a  href="project-tracking.html">View Project Details</a></li>
-      <li><a  href="login.html">Logout</a></li>
-    </ul>
-  </nav>
-
-</div><!-- #EndLibraryItem --></div>
-</div>
-
-
-            
-    <div class="container px-4">
+  <div class="container-fluid p-0">
+  	<div id="load_menu"></div>
+  </div>
+  
+<div class="container px-4">
  
 
 <div class="row" style="font-size:16px; padding:5px 2px;">
@@ -182,8 +173,24 @@ $(document).ready(function () {
 </div>
 </div>
 </div>
+<script>		        
+       $(document).ready(function () {
+           $.ajax({
+               url: "menu/usermenu.html", success: function (result) {
+
+                   $("#load_menu").html(result);
+
+               }
+           });
+       });		
+</script>
 </body>
 </html>
+<%
+	}else{
+		
+		out.println("You are not authorized to view this page");
+	}%>
 <%!
 	public String checkNull(String input)
 	{

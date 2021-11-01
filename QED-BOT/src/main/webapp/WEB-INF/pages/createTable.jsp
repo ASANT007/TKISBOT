@@ -15,14 +15,15 @@
 	
 	if(userId == null || userId.equals("-1") || userId.equals("")) 
 	{  
-	     response.sendRedirect("login");
+	     response.sendRedirect("logout");
 	     return;
 	}
+	if(role.equals("Functional Admin")){
 %>
 <!DOCTYPE HTML>
 <html lang="en-US">
 <head>
-<title>Thyssenkrupp Industrial Solutions India Pvt Ltd</title>
+<title>thyssenkrupp Industrial Solutions India Pvt Ltd</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no"/>
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
@@ -89,36 +90,9 @@ $(document).ready(function () {
     <!--header end-->
   </div>
 </div>
-<div class="container-fluid p-0"><!-- #BeginLibraryItem "/Library/topnav.lbi" --><div class="top_nav"> <span class="top_nav_trigger">Menu</span>
-  <nav class="top_nav_links">
-    <ul>
-      <li>
-      <a  href="/functionalAdminHome">Table Management</a>
-      <ul>
-      <li><a  href="/createTable">Create Table</a></li>
-      <li><a  href="/modifyTable">Modify Table</a></li> 
-      </ul>
-      </li>
-      
-	  <li>
-      	<a  href="/functionalAdminHome">Mapping Management</a>
-      </li>
-      	
-       <li>
-      	<a  href="/functionalAdminHome">Rule Management</a>
-      	<ul>
-      		<li><a  href="/createRule">Create Rule</a></li>
-      		<li><a  href="/viewRulePanel">View Rule</a></li>
-      		<li><a  href="/executeRule">Execute Rule</a></li>
-      	</ul>
-      </li>
-      <li><a  href="/logout">Logout</a></li>
-      
-    </ul>
-  </nav>
 
-</div><!-- #EndLibraryItem --></div>
-</div>
+<div class="container-fluid p-0"><div id="load_menu"></div></div>
+
 <div class="container px-4">
   <div class="row" style="padding:5px 2px;">
     <div class="col-md-12 col-sm-12" >
@@ -134,18 +108,17 @@ $(document).ready(function () {
         <div id="message" name="message"  class="alert alert-danger mx-auto mt-3" role="alert"><%=message %></div>
       </div>
   </div>
-  <% }else{%>
-  <!-- <form   action ="createtable" method = "POST" enctype = "multipart/form-data" id="fileUploadForm" name="fileUploadForm"> -->
+  <% }else{%> 
   <form  enctype = "multipart/form-data" id="fileUploadForm" name="fileUploadForm">
   <div class="row">
   
-	  <div class="col-md-3 align-self-center">
+	  <div class="col-md-4 select-delivereable-type-createtable align-self-center">
       		<% 
       			List<Object[]> deliverabletype = (List<Object[]>) request.getAttribute("deliverableType");
      		 %>
-     		 <div class="select-action-createRule">
+     		 
 			<label>Select Deliverable Type : </label>
-			<sup class="mandatory">*</sup>
+			<sup class="mandatory">*</sup><div class="select-deliverable-type">
 			<select class="form-select" name="deliverableType" id="deliverableType" onchange="getProjects(this)">
 					<option value="" selected="selected" >--Select Deliverable--</option>
 					<% for(Object[] dt : deliverabletype){%>
@@ -157,38 +130,47 @@ $(document).ready(function () {
 	 		</div>
 	  </div>
 		  
-       <div class="col-md-3 select-project align-self-center">
-      
+       <div class="col-md-3 select-project align-self-center">      
 			<label>Select Project : </label> 
-			<sup class="mandatory">*</sup>
-			<select class="form-select tbl-select-opt" name="projectName" id="projectName">
+			<sup class="mandatory">*</sup><div class="select-project-003">
+			<select class="form-select" name="projectName" id="projectName">
 					<option value="" >--Select Project--</option>		
 			</select>
 	 </div> 
+	 </div>
 	 
-      <div class="col-md-3 table-type-div align-self-center">
+      <div class="col-md-2 table-type-div align-self-center">
 			<label>Table Type : </label> 
-			<sup class="mandatory">*</sup>
-			<select class="form-select tbl-type tbl-select-opt" name="tabletype" id="tabletype">
+			<sup class="mandatory">*</sup><div class="select-action-createRule">
+			<select class="form-select" name="tabletype" id="tabletype">
 					<option value="" >--Select--</option>
 					<option value="master">Master</option>
 					<option value="deliverable">Deliverable</option>
 			</select>
 	 </div>
-	 
-	 <div class="col-md-3 align-self-center">
-		  <lable></lable>
-		  <sup class="mandatory">*</sup>	
-		  <input type = "file" name = "file" id="file" value = "Browse File" accept=".xls,.xlsx,.csv"/>	  
 	 </div>
 	 
-	 <div class="col-md-3 proj_btn align-self-center">
-	 	<input class="btn btn-primary mx-2 " type = "button" value = "View Structure" onClick="validateTableStruc()"/>	    
-	  	<a href="/createTable"><input class="btn btn-primary" type = "button" value = "Cancel" /></a>
+	 <div class="col-md-3 select-file align-self-center">		  
+		  <sup class="mandatory">*</sup><div class="choose-file">	
+		  <input type = "file" name = "file" id="file" value = "Browse File" accept=".xls,.xlsx,.csv"/>	  
+	 </div>
 	 </div>
   
   </div>
   
+  <div class="row mt-2">
+  	<div class="col-md-12 proj_btn align-self-center" style="text-align: center">
+	 	<input class="btn btn-primary mx-2 " type = "button" value = "View Structure" onClick="genrateTableStructure()"/>	    
+	  	<a href="createTable"><input class="btn btn-primary" type = "button" value = "Cancel" /></a>
+	 </div>
+  </div>
+  
+  <div class="row">
+   	<div class="col-md-12">   		
+   		<div id="errorDiv" name="errorDiv" class="pt-3" style="color: red;text-align:center"></div> 		
+   	</div>
+   </div> 
+   
    <div class="row"> 
 	   <div class="col-md-12">
 	  	<div id="result" name="result"></div>
@@ -196,11 +178,7 @@ $(document).ready(function () {
   </div>
   
     
-   <div class="row">
-   	<div class="col-md-12">   		
-   		<div id="errorDiv" name="errorDiv" class="pt-3" style="color: red;text-align:center"></div> 		
-   	</div>
-   </div>     
+       
   </div>
 	 
         
@@ -214,9 +192,26 @@ $(document).ready(function () {
     <div class="footer"> &copy  thyssenkrupp Industrial Solutions India Pvt Ltd </div>
   </div>
 </div>
+<script>
+        
+        $(document).ready(function () {
+            $.ajax({
+                url: "menu/menu.html", success: function (result) {
+
+                    $("#load_menu").html(result);
+
+                }
+            });
+        });	
+		
+    </script>
 </body>
 </html>
-
+<%
+	}else{
+		
+		out.println("You are not authorized to view this page");
+}%>
 <%!
 	public String checkNull(String input)
 	{

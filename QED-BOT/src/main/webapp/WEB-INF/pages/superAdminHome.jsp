@@ -14,7 +14,7 @@
 	
 	if(userId == null || userId.equals("-1") || userId.equals("")) 
 	{  
-	     response.sendRedirect("login");
+	     response.sendRedirect("logout");
 	     return;
 	}
 %>

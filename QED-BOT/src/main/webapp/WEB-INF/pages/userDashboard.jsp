@@ -1,3 +1,6 @@
+<%@page import="org.json.simple.JSONArray"%>
+<%@page import="org.json.simple.JSONObject"%>
+<%@page import="org.json.simple.parser.JSONParser"%>
 <%
 	
 	response.setHeader("pragma","no-cache");//HTTP 1.1
@@ -14,14 +17,15 @@
 	
 	if(userId == null || userId.equals("-1") || userId.equals("")) 
 	{  
-	     response.sendRedirect("login");
+	     response.sendRedirect("logout");
 	     return;
 	}
+	if(role.equals("User") || role.equals("Functional Admin")){
 %>
 <!DOCTYPE HTML>
 <html lang="en-US">
 <head>
-<title>Thyssenkrupp Industrial Solutions India Pvt Ltd</title>
+<title>thyssenkrupp Industrial Solutions India Pvt Ltd</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no"/>
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
@@ -73,7 +77,7 @@ $(document).ready(function () {
 });
 </script>
 </head>
-<!--<body onload="recommendation_summary();top_IFA_AUM_base();top_IFA_on_investors_base();topIFAonRecommadation()">-->
+
 <body>
 <!--header start-->
 <div class="header-top">
@@ -87,22 +91,16 @@ $(document).ready(function () {
     <!--header end-->
   </div>
 </div>
-<div class="container-fluid p-0"><!-- #BeginLibraryItem "/Library/topnav.lbi" --><div class="top_nav"> <span class="top_nav_trigger">Menu</span>
-  <nav class="top_nav_links">
-    <ul>
-      <li class="topnav-first"><a class="topnav_home" href="dashboard.html">Dashboard</a></li>
-      <li><a  href="project-tracking.html">View Project Details</a></li>
-      <li><a  href="login.html">Logout</a></li>
-    </ul>
-  </nav>
 
-</div><!-- #EndLibraryItem --></div>
+<div class="container-fluid p-0">
+	<div id="load_menu"></div>
+</div>
+
 </div>
 <div class="container px-4">
   <div class="row" style="padding:5px 2px;">
     <div class="col-md-12 col-sm-12" >
-      <div class="login_user">Welcome <span class="user-name">Dhananjay
-        Joshi</span>. You  are logged in as <span  class="user-name">User</span> </div>
+      <div class="login_user">Welcome <span class="user-name"><%=userName %></span>. You  are logged in as <span  class="user-name"><%=role %></span> </div>
     </div>
   </div>
   <h2>User Dashboard</h2>  <div class="content-area">
@@ -115,30 +113,63 @@ $(document).ready(function () {
           <th  width="32%" align="center" valign="middle" class="table-heading header">No.of inconsistencies</th>
         </tr>
       </thead>
+      
+      <% String jsonResponse = (String) request.getAttribute("projectConsistency");
+        
+        JSONParser jsonParse = new JSONParser();
+        
+        if(checkNull(jsonResponse).length() > 0){
+        	
+        	JSONObject jsonObject = (JSONObject) jsonParse.parse(jsonResponse);
+        	JSONArray jsonArray = (JSONArray) jsonObject.get("COSISTENCY_COUNT");
+        	System.out.println("***** consistency_count "+jsonArray.size());
+        	
+        	if(jsonArray.size() > 0){
+        		int srNo = 0;
+            	long projectId = 0;
+        		String projectName = ""; long totalConsistency = 0; 
+        		
+            	for(int i = 0; i<jsonArray.size(); i++)
+            	{
+            		
+            		projectId = 0; projectName = ""; totalConsistency = 0;
+            		
+            		srNo = 1+i;
+            		
+            		JSONObject dataObject = (JSONObject) jsonArray.get(i);
+            		
+            		try
+            		{
+            			projectId = (Long) dataObject.get("PROJECT_ID");
+            			projectName = (String) dataObject.get("PROJECT_NAME");
+            			totalConsistency = (Long) dataObject.get("TOTAL_CONSISTENCY");
+            			
+            		}catch(Exception e){
+            			e.printStackTrace();
+            		}%>
+        
       <tr>
       <tr valign="top">
-        <td class="text-center">1</td>
-        <td>PROJECT_001 </td>
-        <td><a href="view-project-details.html">75</a></td>
+        <td class="text-center"><%=srNo%></td>
+        <td align="center"><%=projectName%></td>
+        <%-- <td align="center"><a href="viewProjectDetails/<%=projectId%>/<%=projectName%>"><%=totalConsistency%></a></td> --%>
+       <%--  <td align="center"><a href="viewProjectDetails"><%=totalConsistency%></a></td> --%>
+        <td align="center"><a href="javascript:redirectToViewProjectDetails('<%=projectId%>','<%=projectName%>')"><%=totalConsistency%></a></td>
       </tr>
-      <tr valign="top">
-        <td class="text-center">2</td>
-        <td>PROJECT_002 </td>
-        <td><a href="view-project-details.html">40</a></td>
-      </tr>
-      <tr valign="top">
-        <td class="text-center">3</td>
-        <td>PROJECT_003 </td>
-        <td><a href="view-project-details.html">80</a></td>
-      </tr> <tr valign="top">
-        <td class="text-center">4</td>
-        <td>PROJECT_004 </td>
-        <td><a href="view-project-details.html">100</a></td>
-      </tr> <tr valign="top">
-        <td class="text-center">5</td>
-        <td>PROJECT_005 </td>
-        <td><a href="view-project-details.html">158</a></td>
-      </tr>
+      <%	
+            	}//End of for
+        	}// End of if
+        	else{%>
+        	<tr><tr valign="top">
+        	
+            <td colspan="3" class="text-center">No Project Assigned</td></tr>
+        <% }
+        	
+        }else{%>
+        	<tr><tr valign="top">
+        	
+            <td colspan="3" class="text-center">No Project Assigned</td></tr>
+        <% }%>
     </table>  </div>
   </div>
 </div>
@@ -147,8 +178,47 @@ $(document).ready(function () {
     <div class="footer"> &copy  thyssenkrupp Industrial Solutions India Pvt Ltd </div>
   </div>
 </div>
+<%if(role.equals("Functional Admin")){
+System.out.println("role "+role);
+%>
+
+<script>
+		        
+		        $(document).ready(function () {
+		            $.ajax({
+		                url: "menu/menu.html", success: function (result) {
+
+		                    $("#load_menu").html(result);
+
+		                }
+		            });
+		        });			
+				
+				
+	    </script>		
+<%}else{%>
+<script>
+		        
+		        $(document).ready(function () {
+		            $.ajax({
+		                url: "menu/usermenu.html", success: function (result) {
+
+		                    $("#load_menu").html(result);
+
+		                }
+		            });
+		        });			
+				
+				
+	    </script>	
+<% } %>
 </body>
 </html>
+<%
+	}else{
+		
+		out.println("You are not authorized to view this page");
+	}%>
 <%!
 	public String checkNull(String input)
 	{

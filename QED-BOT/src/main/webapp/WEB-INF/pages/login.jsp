@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Thyssenkrupp Industrial Solutions India Pvt Ltd</title>
+<title>thyssenkrupp Industrial Solutions India Pvt Ltd</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no"/>
 <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
@@ -59,23 +59,31 @@
             <div class="form-user"><i class="fa fa-user-tie"></i></div>
             <h2 class="login-heading">Login Here</h2>
             <div class="form-group"> <span class="input-icon"><i class="fa fa-envelope"></i></span>
-              <input type="text"  id="username" name = "username" class="form-control" placeholder="Login ID" autocomplete="off">
-              <span style="color: red">${error}</span>
+              <input type="text"  id="username" name = "username" class="form-control" placeholder="Login ID" autocomplete="off" onKeyPress="return checkenter(event)">
+              
             </div>
             <div class="form-group"> <span class="input-icon"><i class="fa fa-lock"></i></span>
-              <input class="form-control" id="password" name = "password" type="password" placeholder="Password">
+              <input class="form-control" id="password" name = "password" type="password" placeholder="Password" onKeyPress="return checkenter(event)">
             </div>
             <div class=""> 
-             <select class="form-select" id="domain" name = "domain" >
+             <select class="form-select" id="domain" name = "domain" onKeyPress="return checkenter(event)">
               <option value="">--Select--</option>
-              <option value="STMUDC02">KUMUD02</option>
-              <option value="STMUDC15">KUMUD05</option>
+              <option value="STMUDC02">KUMUD2</option>
+              <option value="STMUDC15">KUMUD5</option>
               </select>
-            </div>
-            <div class="text-center">
+            </div>     
+                   
+            <div class="text-center mt-3">
               <button type="button" class="btn signin" onClick="validateUser()">Login</button>
+              <a href="./">
               <button type="button" class="btn signin">Reset</button>
+              </a>
             </div>
+            
+            <div class="text-center my-3">
+        		<div id="errorDiv" name="errorDiv" style="color:red; font-size:14px"></div>
+      		</div>
+      		
           </form>
         </div>
       </div>

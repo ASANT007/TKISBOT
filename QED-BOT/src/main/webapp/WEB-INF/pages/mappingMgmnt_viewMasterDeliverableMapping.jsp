@@ -75,7 +75,7 @@
 		});
 		</script>
 		</head>
-		<!--<body onload="recommendation_summary();top_IFA_AUM_base();top_IFA_on_investors_base();topIFAonRecommadation()">-->
+		
 		<body>
 		<%@page import="java.util.List" %>
 		<%
@@ -103,10 +103,58 @@
 		      <div class="login_user">Welcome <span class="user-name"><%=userName %></span>. You  are logged in as <span  class="user-name"><%=role %></span> </div>
 		    </div>
 		  </div>
-		  <h2>Admin Dashboard</h2>  
+		  <h2>View Master Deliverable Mapping</h2>  
 		  <div class="content-area">
 		  <!-- START -->
-		  <span style="text-align:center"><h1>Welcome to Functional Admin Dashboard</h1></span>
+	 <div class="row">
+		   <div class="col-md-4 select-delivereable-type-createtable align-self-center">
+      		<% 
+      			List<Object[]> deliverabletype = (List<Object[]>) request.getAttribute("deliverableType");
+     		 %>
+     		 
+			<label>Select Deliverable Type : </label>
+			<sup class="mandatory">*</sup><div class="select-deliverable-type">
+			<select class="form-select" name="deliverableType" id="deliverableType" onchange="getProjects(this)">
+					<option value="" selected="selected" >--Select Deliverable--</option>
+					<% for(Object[] dt : deliverabletype){%>
+						
+						<option value="<%= (Number) dt[0]%>"><%= (String) dt[1]%></option>
+						
+					<%} %>
+			</select>
+	 		</div>
+		  </div>
+			  
+		  <div class="col-md-3 align-self-center">    
+			<label>Select Project : </label> 
+			<sup class="mandatory">*</sup><div class="select-project-003">		
+			<select class="form-select tbl-select-opt" name="projectName" id="projectName" onchange="getTablesForSelectedProject(this)">
+					<option value="" >--Select Project--</option>		
+			</select></div> 	 	 	
+	 	 </div>
+		  
+		<div class="col-md-4  align-self-center">
+          	<input class="btn btn-primary " type = "button" value = "View" onClick="viewMappedMasterDeliverableData()"/>
+          	<a href="viewMappedMasterDeliverablePage">
+          	<input class="btn btn-primary" type = "button" value = "Cancel" />
+          	</a>
+		</div>
+		  
+	  </div>
+	  <div class="row text-center my-3">
+	  		<div class="mx-auto mt-1" name="message" id="message" style="width:37%;"></div>
+	  </div>
+	  
+	  <div class="row mt-3" name="masterDeliverableMappingDiv" id="masterDeliverableMappingDiv" style="display:none">
+	  <div style="text-align:right; margin-bottom:15px;">
+	  	<input class="btn btn-primary" type="button" name="saveMDMappingChangeBtn" id="saveMDMappingChangeBtn" value="Remove Selected" onClick="removeMasterDeliverableMapping()" style="width:12%;display:none">
+	  </div>
+	  
+	  <table class="table table-responsive table-bordered table-striped" id="MDMappingTable" name="MDMappingTable"><tbody><tr>
+		<th style="width:5%; text-align:center;">Sr No</th><th>Master Table</th><th>Master Field</th><th>Deliverable Table</th><th>Deliverable Field</th><th>Remove Selected</th>
+		</tr></tbody></table> 
+	  </div>
+	  
 		  <!-- END -->
 		  </div>
 		</div>
@@ -126,10 +174,11 @@
 
 		                }
 		            });
-		        });			
+		        });
 				
 				
-	    </script>
+				
+		    </script>
 		</body>
 		</html>	
 		
