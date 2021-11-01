@@ -2,9 +2,7 @@ package com.tkis.qedbot.service;
 
 import java.util.List;
 
-import org.springframework.stereotype.Service;
 
-@Service
 public interface RuleMasterService 
 {
 	
@@ -14,10 +12,14 @@ public interface RuleMasterService
 	
 	public String updateRuleStatus(int rule, String status, String userId) throws Exception;
 	
-	public List<Object[]> getRuleById(int projectId) throws Exception;
+	//public List<Object[]> getRuleById(int projectId) throws Exception;
 	
-	public String getJSONRuleById(int projectId) throws Exception;
+	public List<Object[]> getRuleById (int projectId, boolean isView) throws Exception;
+	
+	public String getJSONRuleById(int projectId,  boolean isView) throws Exception;
 
 	public String executeRules(String ruleIdList);
+
+	//public String getJSONRuleByIdForExecute(int projectId) throws Exception;
 	
 }

@@ -10,26 +10,19 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "rules_master")
-public class RuleMaster 
-{
-	
+@Table(name="user_project_mapping")
+public class UserProjectMapping {
+
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rule_id")
-    private int ruleId;
+    @Column(name = "up_mappingid")
+    private int upMappingId;
 	
-	@Column(name = "repository_id")
-    private int repositoryId;
+	@Column(name = "userid")
+    private String userId;
 	
-	@Column(name = "rule_type")
-	private String ruleType;
-	
-	@Column(name = "rule_desc")
-	private String ruleDesc;
-	
-	@Column(name = "execution_sequence")
-    private int executionSequence;
+	@Column(name = "project_id")
+    private int projectId;	
 	
 	@Column(name = "status")
 	private String status;
@@ -46,22 +39,17 @@ public class RuleMaster
 	@Column(name = "last_updation_date")
 	private Timestamp lastUpdationDate;
 
-	
-	public RuleMaster() {
+	public UserProjectMapping() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public RuleMaster(int ruleId, int repositoryId, String ruleType, String ruleDesc,
-			int executionSequence, String status, String createdBy, Timestamp creationDate, String lastUpdatedBy,
-			Timestamp lastUpdationDate) {
+	public UserProjectMapping(int upMappingId, String userId, int projectId, String status, String createdBy,
+			Timestamp creationDate, String lastUpdatedBy, Timestamp lastUpdationDate) {
 		super();
-		this.ruleId = ruleId;
-		
-		this.repositoryId = repositoryId;
-		this.ruleType = ruleType;
-		this.ruleDesc = ruleDesc;
-		this.executionSequence = executionSequence;
+		this.upMappingId = upMappingId;
+		this.userId = userId;
+		this.projectId = projectId;
 		this.status = status;
 		this.createdBy = createdBy;
 		this.creationDate = creationDate;
@@ -69,44 +57,28 @@ public class RuleMaster
 		this.lastUpdationDate = lastUpdationDate;
 	}
 
-	public int getRuleId() {
-		return ruleId;
+	public int getUpMappingId() {
+		return upMappingId;
 	}
 
-	public void setRuleId(int ruleId) {
-		this.ruleId = ruleId;
-	}	
-
-	public int getRepositoryId() {
-		return repositoryId;
+	public void setUpMappingId(int upMappingId) {
+		this.upMappingId = upMappingId;
 	}
 
-	public void setRepositoryId(int repositoryId) {
-		this.repositoryId = repositoryId;
+	public String getUserId() {
+		return userId;
 	}
 
-	public String getRuleType() {
-		return ruleType;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
-	public void setRuleType(String ruleType) {
-		this.ruleType = ruleType;
+	public int getProjectId() {
+		return projectId;
 	}
 
-	public String getRuleDesc() {
-		return ruleDesc;
-	}
-
-	public void setRuleDesc(String ruleDesc) {
-		this.ruleDesc = ruleDesc;
-	}
-
-	public int getExecutionSequence() {
-		return executionSequence;
-	}
-
-	public void setExecutionSequence(int executionSequence) {
-		this.executionSequence = executionSequence;
+	public void setProjectId(int projectId) {
+		this.projectId = projectId;
 	}
 
 	public String getStatus() {
@@ -151,14 +123,11 @@ public class RuleMaster
 
 	@Override
 	public String toString() {
-		return "RuleMaster [ruleId=" + ruleId + ", repositoryId=" + repositoryId
-				+ ", ruleType=" + ruleType + ", ruleDesc=" + ruleDesc + ", executionSequence=" + executionSequence
+		return "UserProjectMapping [upMappingId=" + upMappingId + ", userId=" + userId + ", projectId=" + projectId
 				+ ", status=" + status + ", createdBy=" + createdBy + ", creationDate=" + creationDate
 				+ ", lastUpdatedBy=" + lastUpdatedBy + ", lastUpdationDate=" + lastUpdationDate + "]";
 	}
+	
+	
 
-	
-	
-	
-	
 }

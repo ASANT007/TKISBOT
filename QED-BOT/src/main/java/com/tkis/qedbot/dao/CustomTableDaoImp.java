@@ -69,44 +69,23 @@ public class CustomTableDaoImp implements CustomTableDao {
 		
 	@Override
 	@Transactional(rollbackOn = Exception.class)
-	public boolean createTable(String createTableSQL, RepositoryDetails details) 
-	{		
-		
+	public boolean createTable(String createTableSQL, RepositoryDetails details) throws Exception 
+	{	
 		Session session = null;
 		if (entityManager == null || (session = entityManager.unwrap(Session.class)) == null) {
 			throw new NullPointerException();
 		}
 		
-		//sql="CREATE TABLE IF NOT EXISTS Test (Id	INT(10) PRIMARY KEY,tables_name	VARCHAR (50) NOT NULL,File_name	VARCHAR (150), tables_types	VARCHAR (50) NOT NULL,"
-		//		+ "created_by	VARCHAR (20) NOT NULL,creation_date	DATETIME NOT NULL)";
-
-		//Query query = session.createSQLQuery("create  table IF NOT EXISTS sampletable1(col1 varchar(10),col2 int(10))");
-	
-		try 
-		{
-				
-			  if( detailsRepo.save(details) != null ) 
-			  {	
-				  
-					/*
-					 * Query query = session.createSQLQuery(createTableSQL); int id =
-					 * query.executeUpdate();
-					 */
-				  int i = session.createSQLQuery(createTableSQL).executeUpdate();
-				  System.out.println("#### No of Rows Affected ::"+i);				 
-				 
-				 return true;
-			  
-			  }else 
-			  {				  
-				  throw new Exception(); 				  
-			  }
-			
-		} catch (Exception e) {
-			log.error("exception in createTable():", e);
-			//throw new Exception("Exception "+e.getMessage(),e);
-		}
-		return false;
+		if( detailsRepo.save(details) != null ) 
+		{	
+			int i = session.createSQLQuery(createTableSQL).executeUpdate();
+			System.out.println("#### No of Rows Affected :: "+i);
+			return true;
+		  
+		}else 
+		{				  
+			throw new Exception(); 				  
+		}	
 	}
 	
 	@Override
@@ -129,21 +108,25 @@ public class CustomTableDaoImp implements CustomTableDao {
 
 				// It work in MySQL START
 			
-			  BigInteger result = (BigInteger) query.getSingleResult();
-			  if(result.intValue() > 0) { System.out.println("#### Table is present...");
-			  return true; }
+				/*
+				 * BigInteger result = (BigInteger) query.getSingleResult();
+				 * if(result.intValue() > 0) { System.out.println("#### Table is present...");
+				 * return true; }
+				 */
 			 
 			// It work in MySQL END
 			  
 			// It work in MSSQL
-			/*
-			 * int result = (int) query.getSingleResult();
-			 * 
-			 * System.out.println("#### result "+result);
-			 * 
-			 * if(result > 0) { System.out.println("#### Table is present..."); return true;
-			 * }
-			 */
+			
+			  int result = (int) query.getSingleResult();
+			  
+			  System.out.println("#### result "+result);
+			  
+			  if(result > 0) {
+				  System.out.println("#### Table is present..."); 
+				  return true;
+			  }
+			 
 			 
 			
 			
@@ -167,10 +150,18 @@ public class CustomTableDaoImp implements CustomTableDao {
 		}
 		//tableName = "Project_001_master_test_table";
 		System.out.println("#### findAllColumns : tableName "+tableName);
-		Query query = session.createSQLQuery("DESCRIBE " +tableName);
+		
+		//Query query = session.createSQLQuery("DESCRIBE " +tableName);//MySQL
+		//SQLServer e.g
+		//EXEC sp_columns Project_002_deliverable_big_file_test
+		//table_qualifier, table_owner, table_name, columns_name, data_type_type_name,........
+		//String.valueOf(arr[3]) is columns_name
+		Query query = session.createSQLQuery("EXEC sp_columns " +tableName);//SQLServer
+		
 		List<Object[]> list = query.getResultList();
 		List<String> collect = list.stream().map( arr -> {
-			return String.valueOf(arr[0]);
+			//return String.valueOf(arr[0]);
+			return String.valueOf(arr[3]);
 		}).collect(Collectors.toList());
 		return collect;
 	}
@@ -189,7 +180,9 @@ public class CustomTableDaoImp implements CustomTableDao {
 		List<String> colList = null;
 		int id = 0;
 		
-		String sql = "alter table "+tableName+" add column "+column+" varchar(750)";
+		//String sql = "alter table "+tableName+" add column "+column+" varchar(750)";// My SQL
+		
+		String sql = "alter table "+tableName+" add "+column+" varchar(750)";// SQL Server
 		
 		try
 		{
@@ -208,6 +201,83 @@ public class CustomTableDaoImp implements CustomTableDao {
 		
 		
 		return colList;
+	}
+	
+	@Override
+	public int getRowCount(String tableName) {
+
+		String sql = "";
+		int row = 0;
+		Session session = null;
+		
+		if (entityManager == null || (session = entityManager.unwrap(Session.class)) == null) {
+			throw new NullPointerException();
+		}
+		
+		sql="select count(*) from "+tableName;
+		try 
+		{			
+			
+			Query query = session.createSQLQuery(sql);
+			row = (int) query.getSingleResult();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("#### Exception "+ e.getMessage());
+			
+		}
+		return row;
+	}
+
+	@Override
+	public String getkeyfield(String tableName) {
+		String sql = "", response = "";
+		
+		Session session = null;
+		
+		if (entityManager == null || (session = entityManager.unwrap(Session.class)) == null) {
+			throw new NullPointerException();
+		}
+		
+		sql = "select [key_field] from [repository_details] where tables_name = '"+tableName+"'";
+		try 
+		{			
+			
+			Query query = session.createSQLQuery(sql);
+			response = query.getSingleResult().toString();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("#### Exception "+ e.getMessage());
+			
+		}
+		return response;
+	}
+
+	@Transactional
+	@Modifying
+	@Override
+	public String updateKeyField(String tableName, String keyField) {
+		String sql = "", response = "";
+		
+		Session session = null;
+		
+		if (entityManager == null || (session = entityManager.unwrap(Session.class)) == null) {
+			throw new NullPointerException();
+		}
+		
+		sql = "update [repository_details] set [key_field] = '"+keyField+"' where tables_name = '"+tableName+"'";
+		try 
+		{			
+			
+			Query query = session.createSQLQuery(sql);
+			int i = query.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("#### Exception "+ e.getMessage());
+			
+		}
+		return "success";
 	}
 
 }

@@ -2,16 +2,17 @@ package com.tkis.qedbot.service;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.tkis.qedbot.dao.CustomTableDao;
 
-@Component
-public class TableModificationServiceImpl implements TableModificationService 
-{
+@Service
+public class TableModificationServiceImpl implements TableModificationService {
 	
-	
+	private static final Logger log = LoggerFactory.getLogger(TableModificationServiceImpl.class);
 	@Autowired
 	private CustomTableDao customTableDao;
 
@@ -34,7 +35,7 @@ public class TableModificationServiceImpl implements TableModificationService
 		
 		colName = getCleanColValue(colName);
 		
-		System.out.println("#### cleasn colName "+colName);
+		System.out.println("#### clean colName "+colName);
 		
 		return customTableDao.alterTable(tableName, colName);
 	}
@@ -81,5 +82,18 @@ public class TableModificationServiceImpl implements TableModificationService
         
         return input.trim();    
     }
+
+	@Override
+	public String getkeyfield(String tablename) throws Exception {		
+		
+		return customTableDao.getkeyfield(tablename);
+		
+	}
+
+	@Override
+	public String updateKeyField(String tableName, String keyField) throws Exception {
+		
+		return customTableDao.updateKeyField(tableName,keyField);
+	}
 	
 }

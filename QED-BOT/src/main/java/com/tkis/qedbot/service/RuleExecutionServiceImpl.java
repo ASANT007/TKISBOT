@@ -2,13 +2,15 @@ package com.tkis.qedbot.service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class RuleExecutionServiceImpl implements RuleExecutionService 
 {
 	
@@ -18,6 +20,8 @@ public class RuleExecutionServiceImpl implements RuleExecutionService
 	@PersistenceContext
 	private EntityManager entityManager;
 
+	@Transactional
+	@Modifying
 	@Override
 	public int executeRule(String ruleDesc) throws Exception 
 	{

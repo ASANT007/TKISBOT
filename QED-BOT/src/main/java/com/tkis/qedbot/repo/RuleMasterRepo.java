@@ -18,12 +18,17 @@ public interface RuleMasterRepo extends JpaRepository<RuleMaster, Integer>{
 	
 
 
-	@Query("select ruleId, repositoryId, ruleDesc, ruleType, status from RuleMaster where projectId =:projectId")	
-	public List<Object[]> getRuleById(@Param("projectId") int projectId) throws Exception;
+	//@Query("select ruleId, repositoryId, ruleDesc, ruleType, status from RuleMaster where projectId =:projectId order by ruleId")
+	//public List<Object[]> getRuleById(@Param("projectId") int projectId) throws Exception;
 	
-	@Query("select ruleDesc from RuleMaster where ruleId =:ruleId")	
+	@Query("select ruleDesc from RuleMaster where ruleId =:ruleId order by ruleId")	
 	public String getRuleDescById(@Param("ruleId") int ruleId) throws Exception;
+
+	//@Query("select ruleId, repositoryId, ruleDesc, ruleType, status from RuleMaster where projectId =:projectId and status = 'Active' order by ruleId")
+	//public List<Object[]> getRuleByIdForExecute(int projectId) throws Exception;;
 	
+	@Query("select repositoryId  from RuleMaster where ruleId =:ruleId")
+	public int getRepoIdById(@Param("ruleId") int ruleId) throws Exception;
 	/*
 	 * @Transactional
 	 * 

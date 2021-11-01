@@ -1,5 +1,6 @@
 package com.tkis.qedbot.repo;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -46,9 +47,14 @@ public interface RepositoryDetailsRepo extends JpaRepository<RepositoryDetails,I
 		
 		@Transactional
 		@Modifying(clearAutomatically = true)
-	    @Query("update RepositoryDetails set fileName = :fileName where repositoryId = :repositoryId")
-	    int updateFileName(@Param("fileName") String fileName, @Param("repositoryId") int repositoryId) throws Exception;
+	    @Query("update RepositoryDetails set fileName = :fileName, lastUpdatedBy = :lastUpdatedBy, lastUpdationDate =:lastUpdationDate  where repositoryId = :repositoryId")
+	    int updateFileName(@Param("fileName") String fileName, @Param("lastUpdatedBy") String lastUpdatedBy,  @Param("lastUpdationDate") Timestamp lastUpdationDate, @Param("repositoryId") int repositoryId) throws Exception;
 		
 		@Query("select tablesName from RepositoryDetails where repositoryId = :repositoryId")
-		public String getTableNameFromRepositoryId(int repositoryId) throws Exception;
+		public String getTableNameFromRepositoryId(@Param("repositoryId") int repositoryId) throws Exception;
+
+		@Query("select repositoryId, keyField from RepositoryDetails where tableTypes ='deliverable' and projectId = :projectId")
+		public List<Object[]> findByProjectId(@Param("projectId")int projectId);
+		
+		//public List<RepositoryDetails> findByProjectId(int projectId);
 }

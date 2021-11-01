@@ -1,9 +1,11 @@
 package com.tkis.qedbot.service;
 
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Service;
+import java.sql.Timestamp;
+import java.util.List;
 
-@Service
+import org.springframework.data.repository.query.Param;
+
+
 public interface RepositoryDetailsService 
 {
 	
@@ -11,15 +13,21 @@ public interface RepositoryDetailsService
 	//public List<String> getAllTablesName(@Param("filterTableNames") String filterTableNames) throws Exception;
 	
 	
-	public String getAllTablesByProjectId(@Param("projectId") int projectId) throws Exception;
+	public String getAllTablesByProjectId(int projectId) throws Exception;
 	
 	
-    int updateFileName(@Param("fileName") String fileName, @Param("repositoryId") int repositoryId) throws Exception;
+    int updateFileName(String fileName, String lastUpdatedBy, Timestamp lastUpdationDate, int repositoryId) throws Exception;
 	
 	
-	public String getFileName(@Param("repositoryId") int repositoryId) throws Exception;
+	public String getFileName(int repositoryId) throws Exception;
 
 
 	public String getTableNameFromRepositoryId(int repositoryId) throws Exception;
+	
+	
+	//User START
+	List<Object[]> getKeyFieldByProjectId(int projectId) throws Exception;
+	//User END
+	
 
 }

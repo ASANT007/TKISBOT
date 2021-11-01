@@ -1,7 +1,5 @@
 package com.tkis.qedbot.service;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,28 +17,27 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.monitorjbl.xlsx.StreamingReader;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
-
 import com.tkis.qedbot.dao.CustomTableDao;
 import com.tkis.qedbot.entity.RepositoryDetails;
 
-@Component
+@Service
 public class CreateTableServiceImpl implements CreateTableService 
 {	
-	
+	private static final Logger log = LoggerFactory.getLogger(CreateTableServiceImpl.class);
 	private StringBuffer tableDesignBuff = null;
 		private ArrayList<String> arraylist = null;
 			private ArrayList<String> duplicateColList = null;
 				private ArrayList<String> invalidColList = null;
-					private RepositoryDetails repoDetails = null;
+					
 
 	@Autowired
 	private CustomTableDao customTableDao;
@@ -54,78 +51,46 @@ public class CreateTableServiceImpl implements CreateTableService
 	
 	
 	@Override
-	public String upload(MultipartFile file, String projectName, String deliverableTypeName, String tableType, String userId, boolean isSave) 
+	public String genrateTableStructure(MultipartFile file, String projectName, String deliverableTypeName, String tableType) throws Exception
 	{
 		
-		String response = "";
-		
-		String extension = "", fileName = "", tableName = "";
+		String response = "", extension = "", fileName = "", tableName = "";
 		
 		boolean isPresnt = false;
 		
-		tableDesignBuff = new StringBuffer();
 		arraylist = new ArrayList<>();
 		duplicateColList = new ArrayList<>();
-		invalidColList = new ArrayList<>();
-		repoDetails = new RepositoryDetails();
+		invalidColList = new ArrayList<>();		
+
+		fileName = file.getOriginalFilename();
+		tableName = getTableName(fileName, projectName, deliverableTypeName, tableType);
 		
-		try 
-		{
-			fileName = file.getOriginalFilename();
-			tableName = getTableName(fileName, projectName, deliverableTypeName, tableType);
+		isPresnt = customTableDao.isTablePresent(tableName);
+		
+		if(!isPresnt) 
+		{						
+			startTableDesign(tableName);
 			
-			isPresnt = customTableDao.isTablePresent(tableName);
+			extension = FilenameUtils.getExtension(file.getOriginalFilename());
 			
-			if(!isPresnt) 
-			{
-				if(isSave) {
-					System.out.println("#### tableName "+tableName);
-					System.out.println("#### tableType "+tableType);
-					System.out.println("#### userId ["+userId+"]");
-					repoDetails.setProjectId(1);//Hard Coded......
-					repoDetails.setFileName(fileName);
-					repoDetails.setTablesName(tableName);
-		        	repoDetails.setTableTypes(tableType);
-		        	repoDetails.setUserId(userId);//get It from session or send via method call
-		        	repoDetails.setCreationDate(new Timestamp(new Date().getTime()));
-				}
+			if( extension.equalsIgnoreCase("csv") ) {
 				
+				response = readDataFromCSV(file, tableName, projectName, tableType);
 				
-				startTableDesign(tableName, isSave);
+			}else if( extension.equalsIgnoreCase("xls") || extension.equalsIgnoreCase("xlsx")) {
 				
-				extension = FilenameUtils.getExtension(file.getOriginalFilename());
+				response = readDataFromExcelSheet(file, tableName, projectName, tableType, extension);
+			} 
+			else {
 				
-				if( extension.equalsIgnoreCase("csv") ) {
-					
-					response = readDataFromCSV(file, tableName, projectName, tableType, userId, isSave);
-					
-				}else if( extension.equalsIgnoreCase("xls") ) {
-					
-					response = readDataFromXLS(file, tableName, projectName, tableType, userId, isSave);
-				} 
-				else if( extension.equalsIgnoreCase("xlsx") ) {
-					
-					response = readDataFromXLSX(file, tableName, projectName, tableType, userId, isSave);
-					
-				}else {
-					
-					response = "<div class='py-3 text-center'>Invalid file Type <span style='color:red'>"+extension+"</span></div>";
-				}
-				
-			}else {
-				
-				response =  "<div class='py-3 text-center'>Table <span style='color:red'> "+tableName+"</span> is Already Present</div>";
+				response = "<div class='py-3 text-center'>Invalid file Type <span style='color:red'>"+extension+"</span></div>";
 			}
-		}catch (IllegalArgumentException e) 
-		{			
-			e.printStackTrace();
 			
-		}catch (Exception e) 
-		{			
-			e.printStackTrace();
+		}else {
+			
+			response =  "<div class='py-3 text-center'>Table <span style='color:red'> "+tableName+"</span> is Already Present</div>";
 		}
-		
-		
+				
 		return response;
 	}
 
@@ -168,113 +133,94 @@ public class CreateTableServiceImpl implements CreateTableService
 	}
 
 
-	private String readDataFromCSV(MultipartFile file, String tableName, String projectName, String tableType, String userId, boolean isSave) 
+	private String readDataFromCSV(MultipartFile file, String tableName, String projectName, String tableType) throws IOException, Exception 
 	{
 		String response = "";
 		
 		System.out.print("#### Reading CSV File ");
 		
-		try 
-		{
+		InputStreamReader reader = new InputStreamReader(file.getInputStream());
+		
+		CSVReader csvReader = new CSVReaderBuilder(reader).build();
+		
+		String [] nextRecord;
+		
+		sheetRow:
+		while((nextRecord = csvReader.readNext()) != null) {
 			
-			InputStreamReader reader = new InputStreamReader(file.getInputStream());
-			
-			CSVReader csvReader = new CSVReaderBuilder(reader).build();
-			
-			String [] nextRecord;
-			
-			sheetRow:
-			while((nextRecord = csvReader.readNext()) != null) {
-				
-				int srNo = 0;
-				for(String cellValue : nextRecord) {
-					srNo ++;
-					System.out.println("#### CSV File Row "+cellValue);		
-					
-					validateAndCreateColumns(srNo, cellValue, isSave);
-					
-					
-				}
-				
-				break sheetRow;
+			int srNo = 0;
+			for(String cellValue : nextRecord) {
+				srNo ++;
+				System.out.println("#### CSV File Row "+cellValue);	
+				validateAndCreateColumns(srNo, cellValue);
 			}
 			
-			response = getNewTable(tableName, tableType, userId, isSave); 			
-			
-			
-		} catch (IOException e) {
-			
-			e.printStackTrace();
-			
-		}catch(Exception e) {
-			
-			e.printStackTrace();
+			break sheetRow;
 		}
+			
+		response = getNewTable(tableName, tableType); 			
 		
 		return response;
 	}
 	
-	private String readDataFromXLS(MultipartFile file, String tableName, String projectName, String tableType, String userId, boolean isSave) 
+	private String readDataFromExcelSheet(MultipartFile file, String tableName, String projectName, String tableType, String extension) throws Exception
 	{
 		String response = "";
-		
-		System.out.print("#### readDataFromXLS ");
-		
-		try 
-		{	
+		if(extension.equals("xls")) {
 			Workbook workbook = new HSSFWorkbook(file.getInputStream());
+			response = getExcelReadResponse(workbook, tableName, file.getOriginalFilename(), projectName, tableType);	
+		}else 
+		{
 			
-			String fileName = file.getOriginalFilename();
-			
-			response = getExcelReadResponse(workbook, tableName, fileName, projectName, tableType, userId,isSave);			
-			
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-		}
-		
-		return response;
-	}
-
-	
-
-	private String readDataFromXLSX(MultipartFile file, String tableName, String projectName, String tableType, String userId, boolean isSave)
-	{
-		String response = "";
-		
-		System.out.print("#### readDataFrom XLSX ");
-		try (
-				InputStream fileInputStream = file.getInputStream();
-				Workbook workbook = StreamingReader.builder()
-						.rowCacheSize(10)
-						.bufferSize(4096)
-						.open(fileInputStream)
-				)
-			
+			try (
+					InputStream fileInputStream = file.getInputStream();
+					Workbook workbook = StreamingReader.builder()
+							.rowCacheSize(10)
+							.bufferSize(4096)
+							.open(fileInputStream)
+				)				
 				{
-					String fileName = file.getOriginalFilename();
+					response = getExcelReadResponse(workbook, tableName, file.getOriginalFilename(), projectName, tableType);
 					
-					response = getExcelReadResponse(workbook, tableName, fileName, projectName, tableType, userId, isSave);
-					
-				} catch (FileNotFoundException e) {
-					
+				}catch (FileNotFoundException e) {						
 					e.printStackTrace();
-				} catch (IOException e) {
-					
+				} catch (IOException e) {						
 					e.printStackTrace();
 				}
+		}
+		
 		
 		return response;
 	}
 	
-	private String getExcelReadResponse(Workbook workbook, String tableName, String fileName, String projectName, String tableType, String userId, boolean isSave) 
+	private String getExcelReadResponse(Workbook workbook, String tableName, String fileName, String projectName, String tableType) throws Exception 
 	{
 		
 		String response = "";
 		
 		try 
 		{
-			Sheet sheet = workbook.getSheetAt(0);
+			//Added on 09-09-2021 START
+			Iterator<Sheet> sheetItr = workbook.sheetIterator();
+			Sheet sheet = null;
+			int i = 0;
+			sheetLoop :
+			while(sheetItr.hasNext()) {
+				
+				sheet = sheetItr.next();
+				
+				System.out.println("Sheet name : "+workbook.getSheetName(i)+" Is Sheet Hidden : "+workbook.isSheetVeryHidden(i));
+				if(workbook.isSheetHidden(i) || workbook.isSheetVeryHidden(i)) {
+					
+				}else {					
+					sheet = workbook.getSheetAt(i);
+					break sheetLoop;
+				}
+				
+				i++;
+			}
+			//Added on 09-09-2021 END
+			//Sheet sheet = workbook.getSheetAt(0);
 			
 			Iterator<Row> rowIterator = sheet.rowIterator();
 			
@@ -285,6 +231,7 @@ public class CreateTableServiceImpl implements CreateTableService
 			rowReader:
 			while(rowIterator.hasNext()) 
 			{
+				
 				Row row = rowIterator.next();
 				
 				Iterator<Cell> cellIterator = row.cellIterator();
@@ -299,28 +246,25 @@ public class CreateTableServiceImpl implements CreateTableService
 					
 					System.out.println("#### cellValue "+cellValue);
 					
-					validateAndCreateColumns(srNo, cellValue, isSave);
+					validateAndCreateColumns(srNo, cellValue);
 					
-					//START					
-					//END
 				}
 				
 				break rowReader;
 			}
 			
-			response = getNewTable(tableName, tableType, userId, isSave); //callMethod
+			response = getNewTable(tableName, tableType); //callMethod
 			
-		} catch (Exception e) 
-		{
-			
-			e.printStackTrace();
+		} catch (IOException e) 
+		{			
+			System.out.println("#### Exception :: getExcelReadResponse : "+e);
 		}finally {
 			
 			try {
 				workbook.close();
 			} catch (IOException e) {
 				
-				e.printStackTrace();
+				System.out.println("#### Exception 2 :: getExcelReadResponse : "+e);
 			}
 		}
 		
@@ -328,7 +272,7 @@ public class CreateTableServiceImpl implements CreateTableService
 		return response;
 	}
 	
-	private void validateAndCreateColumns(int srNo, String cellValue, boolean isSave) {	
+	private void validateAndCreateColumns(int srNo, String cellValue) {	
          	
          try 
          {
@@ -362,10 +306,9 @@ public class CreateTableServiceImpl implements CreateTableService
 					if(cellValue.startsWith("_")){
 				   	 
 						cellValue = cellValue.substring(1, lastChar);
-					}					
+					}
 					
-					
-				addTableAttribute(cellValue, srNo, isSave);
+				addTableAttribute(cellValue, srNo);
 				
 			 }
         	  
@@ -377,99 +320,60 @@ public class CreateTableServiceImpl implements CreateTableService
 		
 	}
 
-
-	private void startTableDesign(String tableName, boolean isSave) {
-
-		if(isSave) {
-			
-			tableDesignBuff = new StringBuffer("create table ");
-			tableDesignBuff.append(tableName);
-			//MSSQL Server
-			//tableDesignBuff.append("( ["+tableName+"_id] int identity(1,1) primary key,");
-			//MySQL
-			tableDesignBuff.append("( "+tableName+"_id int PRIMARY KEY AUTO_INCREMENT,");
-			
-		}else {
-			
-			
-			tableDesignBuff.append("<div class='py-3 text-center'>Table ");
-			tableDesignBuff.append("<span class='blue-txt'>"+tableName+"</span>");
-			tableDesignBuff.append(" will be created with following fields </div>");    	
-			tableDesignBuff.append("<div style='width:50%; margin:0 auto;'>");
-			
-		
-			  tableDesignBuff.append("<div class='row'><div class='col-md-12 mb-3' style='text-align:right'>");
-			  tableDesignBuff.append("<input id ='createTable' name = 'createTable' class='btn btn-primary mx-2' type ='button' value ='Create Table' onClick='window.createTable()' />"); 
-			  tableDesignBuff.append("</div></div>");
-			
-			
-			tableDesignBuff.append("<table class='table table-responsive table-bordered table-striped'><tr><th style='width:15%; text-align:center;'>Sr No</th><th>Field Name</th></tr>");
-		}
-		
-	}
-	
-	private void addTableAttribute(String cellValue, int srNo, boolean isSave ) 
+	// Single time
+	private void startTableDesign(String tableName) 
 	{
-		if(isSave) {
-			
-			//tableDesignBuff.append("[");// Required to MSSQL
-			tableDesignBuff.append(cellValue);
-			//tableDesignBuff.append("]");// Required to MSSQL
-			tableDesignBuff.append(" ");
-			tableDesignBuff.append("varchar(750),");
-              
-		}else {
-			
-			tableDesignBuff.append("<tr><td align='center'>");
-			tableDesignBuff.append(srNo);
-			tableDesignBuff.append("</td>");
-			tableDesignBuff.append("<td>");
-			tableDesignBuff.append(cellValue);
-			tableDesignBuff.append("</td></tr>");
-			
-		}
+		tableDesignBuff = new StringBuffer();
+		
+		tableDesignBuff.append("<div class='py-3 text-center'>Table ");
+		tableDesignBuff.append("<span class='blue-txt' id='tablename' name='tablename'>"+tableName+"</span>");
+		tableDesignBuff.append(" will be created with following fields </div>");    	
+		tableDesignBuff.append("<div style='width:50%; margin:0 auto;'>");
+	
+		tableDesignBuff.append("<div class='row'><div class='col-md-12 mb-3' style='text-align:right'>");
+		tableDesignBuff.append("<input id ='createTable' name = 'createTable' class='btn btn-primary mx-2' type ='button' value ='Create Table' onClick='window.saveTableStructure()' />"); 
+		tableDesignBuff.append("</div></div>");
+		
+		tableDesignBuff.append("<table class='table table-responsive table-bordered table-striped'><tr><th style='width:15%; text-align:center;'>Sr No</th><th>Field Name</th><th>Key Field</th></tr>");		
+		
 	}
 	
-	private String getNewTable(String tableName, String tableType, String userId, boolean isSave) {
+	//Code Execute in loop
+	private void addTableAttribute(String cellValue, int srNo ) 
+	{
+			
+		tableDesignBuff.append("<tr><td align='center'>");
+		tableDesignBuff.append(srNo);
+		tableDesignBuff.append("</td>");
+		tableDesignBuff.append("<td>");
+		tableDesignBuff.append(cellValue);
+		tableDesignBuff.append("</td>");
+		tableDesignBuff.append("<td><input type='checkbox'  name = 'keyfieldCheckBox' id='keyfield_"+srNo+"'  value='"+cellValue+"'>");
+		tableDesignBuff.append("</td></tr>");
+	}
+	
+	private String getNewTable(String tableName, String tableType) throws Exception{
 		
-		String responseStr = "";
+		String responseStr = "";	
 		
-		if(isSave) 
-		{			
-        	
-			String createSQL = tableDesignBuff.toString();
-            createSQL = createSQL.substring(0, createSQL.length()-1);
-            createSQL = createSQL+")";
-			if(customTableDao.createTable(createSQL, repoDetails))
-			{ 
-				responseStr = "<div class='py-3 text-center'>Table <span style='color:green'>"+tableName+"</span> Created Successfully</div>";
-			}
+		tableDesignBuff.append("</table></div>"); // Single time
+		System.out.println("#### invalidColList"+invalidColList.size());
+		if(invalidColList.size() > 0 ) {
+			responseStr = "<div class='row py-2'><div class='col-md-2'>Column Size is too large : </div><div class='col-md-10'> <span style='color:red'>"+invalidColList+"</span></div></div>";				
 		}
-		else 
+		if(duplicateColList.size() > 0) 
 		{
-			tableDesignBuff.append("</table></div>");
-			/*
-			tableDesignBuff.append("</table><div class='row'><div class='col-md-12' style='text-align:right'>");
-			tableDesignBuff.append("<input id ='createTable' name = 'createTable' class='btn btn-primary mx-2' type ='button' value ='Create Table' onClick='window.createTable()' />");
-			tableDesignBuff.append("</div></div></div>");
-			*/
+			responseStr = responseStr+"<div  class='row pt-2'><div class='col-md-2'>Duplicate Column : </div><div class='col-md-10'>  <span style='color:red'>"+duplicateColList+"<span></div></div>";				
+		}
+		
+		//Added on 26-10-2021 START
+		if(invalidColList.size() > 0 || duplicateColList.size() > 0) {
+			return responseStr;
+		}//Added on 26-10-2021 END
+		else{
 			
-			if(invalidColList.size() > 0 ) {
-				
-				responseStr = "<div class='row py-2'><div class='col-md-2'>Column Size is too large : </div><div class='col-md-10'> <span style='color:red'>"+invalidColList+"</span></div></div>";
-				//responseStr = "<div  class='row py-3 text-center'>Column Size is too large : <span style='color:red'>"+invalidColList+"<span></div>";
-			}
-			if(duplicateColList.size() > 0) 
-			{
-				
-				responseStr = responseStr+"<div  class='row pt-2'><div class='col-md-2'>Duplicate Column : </div><div class='col-md-10'>  <span style='color:red'>"+duplicateColList+"<span></div></div>";
-				
-			}else {
-				
-				responseStr = tableDesignBuff.toString();
-			}
-			
-		} 
+			responseStr = tableDesignBuff.toString();
+		}
 		
 		return responseStr;
 	}
@@ -483,6 +387,52 @@ public class CreateTableServiceImpl implements CreateTableService
         
         return input.trim();    
     }
-	
 
+
+	@Override
+	public String saveTableStructure(String userId, int projectId, String tableType, String fileName,
+			String tableName, String columnArray, String keyField) throws Exception 
+	{
+		
+		String response = "", createTableSQL = "";
+		
+		RepositoryDetails repoDetails = new RepositoryDetails();
+		
+		repoDetails.setProjectId(projectId); 
+		repoDetails.setFileName(fileName);
+		repoDetails.setTablesName(tableName);
+		repoDetails.setKeyField(keyField);
+    	repoDetails.setTableTypes(tableType);
+    	repoDetails.setCreatedBy(userId); 
+    	repoDetails.setCreationDate(new Timestamp(new Date().getTime()));
+
+
+    	StringBuffer stringBuffer = new StringBuffer("create table ");
+    	stringBuffer.append(tableName);			
+    	stringBuffer.append("( ["+tableName+"_id] int identity(1,1) primary key,");
+		
+		String columnDataArray [] = columnArray.split(",");
+		
+		for(String columnName : columnDataArray) {
+			
+			stringBuffer.append("[");// Required to MSSQL
+			stringBuffer.append(columnName);
+			stringBuffer.append("]");// Required to MSSQL
+			stringBuffer.append(" ");
+			stringBuffer.append("varchar(750),");
+		}
+		
+		createTableSQL = stringBuffer.toString();
+		createTableSQL = createTableSQL.substring(0, createTableSQL.length()-1);
+		createTableSQL = createTableSQL+")";
+		
+		if(customTableDao.createTable(createTableSQL, repoDetails))
+		{ 
+			response = "<div class='py-3 text-center'>Table <span style='color:green'>"+tableName+"</span> Created Successfully</div>";
+		}
+		
+		return response;
+	}
+	
+	
 }

@@ -46,9 +46,17 @@ public class ProjectMaster
 	
 	@Column(name = "last_updation_date")
 	private Timestamp lastUpdationDate;
+	
+	@Column(name = "files_path")
+	private String filesPath;
+	
+	public ProjectMaster() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 	public ProjectMaster(int projectId, int deliverableTypeId, String projectTag, String projectName, String shortDesc,
-			String status, String createdBy, Timestamp creationDate, String lastUpdatedBy, Timestamp lastUpdationDate) {
+			String status, String createdBy, Timestamp creationDate, String lastUpdatedBy, Timestamp lastUpdationDate, String filesPath) {
 		super();
 		this.projectId = projectId;
 		this.deliverableTypeId = deliverableTypeId;
@@ -60,6 +68,7 @@ public class ProjectMaster
 		this.creationDate = creationDate;
 		this.lastUpdatedBy = lastUpdatedBy;
 		this.lastUpdationDate = lastUpdationDate;
+		this.filesPath = filesPath;
 	}
 
 	public int getProjectId() {
@@ -142,12 +151,20 @@ public class ProjectMaster
 		this.lastUpdationDate = lastUpdationDate;
 	}
 
+	public String getFilesPath() {
+		return filesPath;
+	}
+
+	public void setFilesPath(String filesPath) {
+		this.filesPath = filesPath;
+	}
+	
 	@Override
 	public String toString() {
 		return "ProjectMaster [projectId=" + projectId + ", deliverableTypeId=" + deliverableTypeId + ", projectTag="
 				+ projectTag + ", projectName=" + projectName + ", shortDesc=" + shortDesc + ", status=" + status
 				+ ", createdBy=" + createdBy + ", creationDate=" + creationDate + ", lastUpdatedBy=" + lastUpdatedBy
-				+ ", lastUpdationDate=" + lastUpdationDate + "]";
+				+ ", lastUpdationDate=" + lastUpdationDate + ", filesPath=" + filesPath + "]";
 	}
 
 	

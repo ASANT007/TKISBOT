@@ -40,6 +40,13 @@ public class DeliverabletypeMaster
 	
 	@Column(name = "last_updation_date")
 	private Timestamp lastUpdationDate;
+	
+	
+
+	public DeliverabletypeMaster() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 	public DeliverabletypeMaster(int deliverableTypeId, String deliverableTypeShortname, String deliverableTypeName,
 			String status, String createdBy, Timestamp creationDate, String lastUpdatedBy, Timestamp lastUpdationDate) {

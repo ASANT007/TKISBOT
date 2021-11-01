@@ -1,26 +1,24 @@
 package com.tkis.qedbot.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.tkis.qedbot.repo.RepositoryDetailsRepo;
 
-@Component
+@Service
 public class RepositoryDetailsServiceImpl implements RepositoryDetailsService 
 {
-	
+	private static final Logger log = LoggerFactory.getLogger(RepositoryDetailsServiceImpl.class);
 	@Autowired
 	RepositoryDetailsRepo repositoryDetailsRepo;
-
-	/*
-	 * @Override public List<String> getAllTablesName(String filterTableNames)
-	 * throws Exception { // TODO Auto-generated method stub return null; }
-	 */
-
+	
 	@Override
 	public String getAllTablesByProjectId(int projectId) throws Exception {
 		
@@ -45,9 +43,9 @@ public class RepositoryDetailsServiceImpl implements RepositoryDetailsService
 	}
 
 	@Override
-	public int updateFileName(String fileName, int repositoryId) throws Exception {
+	public int updateFileName(String fileName, String lastUpdatedBy, Timestamp lastUpdationDate, int repositoryId) throws Exception {
 		
-		return repositoryDetailsRepo.updateFileName(fileName, repositoryId);
+		return repositoryDetailsRepo.updateFileName(fileName, lastUpdatedBy, lastUpdationDate, repositoryId);
 	}
 
 	@Override
@@ -60,6 +58,13 @@ public class RepositoryDetailsServiceImpl implements RepositoryDetailsService
 	public String getTableNameFromRepositoryId(int repositoryId) throws Exception {
 		
 		return repositoryDetailsRepo.getTableNameFromRepositoryId(repositoryId);
+	}
+
+	@Override
+	public List<Object[]> getKeyFieldByProjectId(int projectId) throws Exception {
+		
+		return repositoryDetailsRepo.findByProjectId(projectId);
+		//return null;
 	}
 	
 	

@@ -10,26 +10,22 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "rules_master")
-public class RuleMaster 
-{
+@Table(name = "ad_service_master")
+public class ADServiceMaster {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rule_id")
-    private int ruleId;
+    @Column(name = "serviceid")
+    private int serviceId;
 	
-	@Column(name = "repository_id")
-    private int repositoryId;
+	@Column(name = "userid")
+	private String userId;
 	
-	@Column(name = "rule_type")
-	private String ruleType;
+	@Column(name = "password")
+	private String password;
 	
-	@Column(name = "rule_desc")
-	private String ruleDesc;
-	
-	@Column(name = "execution_sequence")
-    private int executionSequence;
+	@Column(name = "ldap_url")
+	private String ldapUrl;
 	
 	@Column(name = "status")
 	private String status;
@@ -46,22 +42,18 @@ public class RuleMaster
 	@Column(name = "last_updation_date")
 	private Timestamp lastUpdationDate;
 
-	
-	public RuleMaster() {
+	public ADServiceMaster() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public RuleMaster(int ruleId, int repositoryId, String ruleType, String ruleDesc,
-			int executionSequence, String status, String createdBy, Timestamp creationDate, String lastUpdatedBy,
-			Timestamp lastUpdationDate) {
+	public ADServiceMaster(int serviceId, String userId, String password, String ldapUrl,
+			String status, String createdBy, Timestamp creationDate, String lastUpdatedBy, Timestamp lastUpdationDate) {
 		super();
-		this.ruleId = ruleId;
-		
-		this.repositoryId = repositoryId;
-		this.ruleType = ruleType;
-		this.ruleDesc = ruleDesc;
-		this.executionSequence = executionSequence;
+		this.serviceId = serviceId;
+		this.userId = userId;
+		this.password = password;		
+		this.ldapUrl = ldapUrl;
 		this.status = status;
 		this.createdBy = createdBy;
 		this.creationDate = creationDate;
@@ -69,44 +61,36 @@ public class RuleMaster
 		this.lastUpdationDate = lastUpdationDate;
 	}
 
-	public int getRuleId() {
-		return ruleId;
+	public int getServiceId() {
+		return serviceId;
 	}
 
-	public void setRuleId(int ruleId) {
-		this.ruleId = ruleId;
-	}	
-
-	public int getRepositoryId() {
-		return repositoryId;
+	public void setServiceId(int serviceId) {
+		this.serviceId = serviceId;
 	}
 
-	public void setRepositoryId(int repositoryId) {
-		this.repositoryId = repositoryId;
+	public String getUserId() {
+		return userId;
 	}
 
-	public String getRuleType() {
-		return ruleType;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
-	public void setRuleType(String ruleType) {
-		this.ruleType = ruleType;
+	public String getPassword() {
+		return password;
 	}
 
-	public String getRuleDesc() {
-		return ruleDesc;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
-	public void setRuleDesc(String ruleDesc) {
-		this.ruleDesc = ruleDesc;
+	public String getLdapUrl() {
+		return ldapUrl;
 	}
 
-	public int getExecutionSequence() {
-		return executionSequence;
-	}
-
-	public void setExecutionSequence(int executionSequence) {
-		this.executionSequence = executionSequence;
+	public void setLdapUrl(String ldapUrl) {
+		this.ldapUrl = ldapUrl;
 	}
 
 	public String getStatus() {
@@ -151,14 +135,13 @@ public class RuleMaster
 
 	@Override
 	public String toString() {
-		return "RuleMaster [ruleId=" + ruleId + ", repositoryId=" + repositoryId
-				+ ", ruleType=" + ruleType + ", ruleDesc=" + ruleDesc + ", executionSequence=" + executionSequence
-				+ ", status=" + status + ", createdBy=" + createdBy + ", creationDate=" + creationDate
-				+ ", lastUpdatedBy=" + lastUpdatedBy + ", lastUpdationDate=" + lastUpdationDate + "]";
+		return "ADServiceMaster [serviceId=" + serviceId + ", userId=" + userId + ", password=" + password
+				+ ", ldapUrl=" + ldapUrl + ", status=" + status
+				+ ", createdBy=" + createdBy + ", creationDate=" + creationDate + ", lastUpdatedBy=" + lastUpdatedBy
+				+ ", lastUpdationDate=" + lastUpdationDate + "]";
 	}
 
 	
-	
-	
+
 	
 }
