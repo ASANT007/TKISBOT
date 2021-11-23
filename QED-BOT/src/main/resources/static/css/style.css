@@ -114,6 +114,7 @@ h2 span {
 .form-control, .form-select {
 	padding: 6PX;
 	FONT-SIZE: 13PX;
+	/* width:auto; */
 }label {
    /*  font-weight: bold; */
 }
@@ -641,16 +642,28 @@ p.product-heading-cg {
     
 	}
 	.select-table-createRule{
-    width: 145px;
+     width: 145px;
     display: inline-block;
     
 	}
-	.select-table-createRule select {
+	
+	/*Added by AMOL S on 11-11-2021 START*/
+	.select-table-createRule-add {
+		min-width: 145px;
+		width: auto;		
+	    display: inline-block;
+	    vertical-align: middle;
+	}
+	/* .select-table-createRule select:focus {
+	min-width: 150px;
+    width: auto;    
     display: inline-block;
     vertical-align: middle;
-	}
+	} */
+	/*Added by AMOL S on 11-11-2021 END*/
+	
 	.select-field-createRule{
-		width: 100%;
+	width: 100%;
     max-width:154px;
     display: inline-block;
     
@@ -914,6 +927,10 @@ li.has_child.mis-menu ul {
 	color:red;
 }
 
+.width-auto{
+	width:auto !important;
+	padding-right:25px;
+}
 /*Integration of DeliverableTypeMaster and ProjectMaster Added on 28-10-2021 START */
 
 /*Integration of DeliverableTypeMaster and ProjectMaster Added on 28-10-2021 END */
