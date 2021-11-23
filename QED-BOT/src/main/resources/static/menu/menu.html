@@ -2,6 +2,16 @@
   <nav class="top_nav_links">
     <ul>
       <!-- <li class="topnav-first"><a class="topnav_home" href="adminDashboard.jsp">Dashboard</a></li> -->
+      <!-- Integration of DeliverableTypeMaster and ProjectMaster Added on 28-10-2021 START -->
+      <li class="topnav-first"><a  href="./deliverableDetails"  class="topnav_home" >Manage Deliverable Type</a></li>
+      
+      <li><a >Manage Project Master</a>
+      		<ul>
+      		<li><a  href="./addProjectMaster">Add</a></li>
+            <li><a  href="./viewProjectMaster">View</a></li>
+          </ul>
+      </li>
+      <!-- Integration of DeliverableTypeMaster and ProjectMaster Added on 28-10-2021 END -->
       <li>
       	<a  href="#">Table Management</a>
       <ul>
@@ -37,19 +47,17 @@
       		</li>      		
       	</ul>
       </li> -->
-      <!-- Integration of DeliverableTypeMaster and ProjectMaster Added on 28-10-2021 START -->
-      <li class="topnav-first"><a  href="./deliverableDetails"  class="topnav_home" >Manage Deliverable Type</a></li>
       
-      <li><a >Manage Project Master</a>
+     <li>
+      	<a  href="userDashboard">Inconsistency Check</a>
+     </li>
+     <li><a >Inconsistency Reports</a>
       		<ul>
-      		<li><a  href="./addProjectMaster">Add</a></li>
-            <li><a  href="./viewProjectMaster">View</a></li>
+      		<li><a  href="projectWiseReport">Project Wise</a></li>
+            <li><a  href="fieldWiseReport">Field Wise</a></li>
+            <li><a  href="projectAndDateWiseReport">Project And Date Wise</a></li>
           </ul>
       </li>
-      <!-- Integration of DeliverableTypeMaster and ProjectMaster Added on 28-10-2021 END -->
-      <li>
-      	<a  href="userDashboard">Dashboard</a>
-     </li>
       <li><a  href="logout">Logout</a></li>
     </ul>
   </nav>
