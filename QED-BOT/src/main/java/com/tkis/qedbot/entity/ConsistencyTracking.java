@@ -41,6 +41,9 @@ public class ConsistencyTracking {
 	
 	@Column(name = "flagged_date")
 	private Timestamp flaggedDate;
+	
+	@Column(name="flag_count")
+	private int flagCount;
 
 	public ConsistencyTracking() {
 		super();
@@ -48,7 +51,7 @@ public class ConsistencyTracking {
 	}
 
 	public ConsistencyTracking(int trackingid, int mdMappingid,String keyField, String masterFieldValue, String deliverableFieldValue,
-			String consistencyFlag, String flaggedBy, String remarks, Timestamp flaggedDate) {
+			String consistencyFlag, String flaggedBy, String remarks, Timestamp flaggedDate, int flagCount) {
 		super();
 		this.trackingid = trackingid;
 		this.keyField = keyField;
@@ -59,6 +62,7 @@ public class ConsistencyTracking {
 		this.flaggedBy = flaggedBy;
 		this.remarks = remarks;
 		this.flaggedDate = flaggedDate;
+		this.flagCount = flagCount;
 	}
 
 	public int getTrackingid() {
@@ -132,13 +136,21 @@ public class ConsistencyTracking {
 	public void setFlaggedDate(Timestamp flaggedDate) {
 		this.flaggedDate = flaggedDate;
 	}
+	
+	public int getFlagCount() {
+		return flagCount;
+	}
+
+	public void setFlagCount(int flagCount) {
+		this.flagCount = flagCount;
+	}
 
 	@Override
 	public String toString() {
 		return "ConsistencyTracking [trackingid=" + trackingid + ", keyField=" + keyField + ", mdMappingid="
 				+ mdMappingid + ", masterFieldValue=" + masterFieldValue + ", deliverableFieldValue="
 				+ deliverableFieldValue + ", consistencyFlag=" + consistencyFlag + ", flaggedBy=" + flaggedBy
-				+ ", remarks=" + remarks + ", flaggedDate=" + flaggedDate + "]";
+				+ ", remarks=" + remarks + ", flaggedDate=" + flaggedDate + ", flagCount=" +flagCount+"]";
 	}
 	
 	

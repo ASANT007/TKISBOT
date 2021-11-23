@@ -14,5 +14,7 @@ public interface MasterDeliverableMappingService {
 
 	public boolean isMappingPresent(int projectId, String masterTable, String masterField, String deliverableTable,	String deliverableField);
 
+	public List<String> getMappedDeliverableFieldByKeyField(int projectId, String filterKeyField, String userId);
+
 	//public String getJSONMappingDataByProjectId(int projectId, String userId) throws Exception;
 }

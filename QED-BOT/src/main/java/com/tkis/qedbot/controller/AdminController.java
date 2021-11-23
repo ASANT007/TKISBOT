@@ -1232,7 +1232,55 @@ public class AdminController {
 	
 
 	//Integration of DeliverableTypeMaster and ProjectMaster Added on 27-10-2021 END
+	//Inconsistency Report Added on 03-11-2021 START
+	@RequestMapping("/projectWiseReport")
+	public String projectWiseReport(Model model) 
+	{		
+		try 
+		{
+			model.addAttribute("deliverableType",deliverabletypeMasterService.getDeliverableIdAndShortName());
+			
+		} catch (Exception e) 
+		{
+			
+			model.addAttribute("message", e.toString());
+			e.printStackTrace();
+		}
+		return "projectWiseReport";
+	}
 	
+	@RequestMapping("/fieldWiseReport")
+	public String fieldWiseReport(Model model) 
+	{		
+		try 
+		{
+			model.addAttribute("deliverableType",deliverabletypeMasterService.getDeliverableIdAndShortName());
+			
+		} catch (Exception e) 
+		{
+			
+			model.addAttribute("message", e.toString());
+			e.printStackTrace();
+		}
+		return "fieldWiseReport";
+	}
+	
+	@RequestMapping("/projectAndDateWiseReport")
+	public String projectAndDateWiseReport(Model model) 
+	{		
+		try 
+		{
+			model.addAttribute("deliverableType",deliverabletypeMasterService.getDeliverableIdAndShortName());
+			
+		} catch (Exception e) 
+		{
+			
+			model.addAttribute("message", e.toString());
+			e.printStackTrace();
+		}
+		return "projectAndDateWiseReport";
+	}
+	//Inconsistency Report Added on 03-11-2021 END
 	private String checkNull(String input)
     {
 	    if(input == null || "null".equalsIgnoreCase(input) || "undefined".equalsIgnoreCase(input)) {

@@ -3,8 +3,8 @@ package com.tkis.qedbot.service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,12 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
-
 import com.tkis.qedbot.entity.ConsistencyTracking;
 import com.tkis.qedbot.entity.InconsistencyLogs;
 import com.tkis.qedbot.repo.ConsistencyTrackingRepo;
 import com.tkis.qedbot.repo.InconsistencyLogsRepo;
-import com.tkis.qedbot.repo.MasterDeliverableMappingRepo;
 
 @Service
 public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingService {
@@ -43,57 +41,96 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 	private ConsistencyTrackingRepo consistencyTrackingRepo;
 	
 	@Autowired
-	private MasterDeliverableMappingRepo masterDeliverableMappingRepo;
-	
-	private InconsistencyLogs inconsistencyLogs = null;
-	private HashMap<String,String> consistencyDataHashMap = null;
+	private IterationTrackingService iterationTrackingService;
 	
 	@Override
 	@Transactional(rollbackOn = Exception.class)
-	public void saveConsistency(ConsistencyTracking consistencyTracking, int projectId, String userId) throws Exception {
+	public void saveConsistency(ConsistencyTracking consistencyTracking, int projectId, String userId) throws Exception
+	{		
+		int initialCount = 0, resolvedCount=0, maxSrNo = 0;
 		
-		if(consistencyTrackingRepo.save(consistencyTracking) != null) {			
-			
-			
-			  if("On Hold".equals(consistencyTracking.getConsistencyFlag())) {
+		int batchId = 0; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Remaining >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		
+		String lastLogDate = "";
+		String consistencyFlag = "";
+		consistencyFlag = checkNull(consistencyTracking.getConsistencyFlag());
+		if(consistencyTrackingRepo.save(consistencyTracking) != null)
+		{				
+		
+			System.out.println("##### Consistency Save for Flag["+consistencyFlag+"]");
+			if("On Hold".equals(consistencyFlag)) 
+			{
 			  
-			  }else
-			  if("Ignore Manually".equals(consistencyTracking.getConsistencyFlag())) {
-				
-				int initialCount = 0, resolvedCount=0;
+			}else if("Ignore Manually".equals(consistencyFlag) || "Mark as Alias".equals(consistencyFlag))
+			{		
 				
 				try 
 				{
-					initialCount = inconsistencyLogsRepo.findTopByProjectId(projectId).getInitialCount();
-					resolvedCount = inconsistencyLogsRepo.getLastResolvedCountByProjectId(projectId) + 1;
-				} catch (Exception e) {					
-					System.out.println("#### Exception ConsistencyTrackingService :: saveConsistency 66 : "+e);
+					batchId = inconsistencyLogsService.getMaxBatchIdByProjectId(projectId);// Max batchId
+					
+					//initialCount = inconsistencyLogsRepo.findTopByProjectId(projectId).getInitialCount();
+					initialCount = inconsistencyLogsRepo.findTopByProjectIdAndBatchId(projectId,batchId).getInitialCount();
+					lastLogDate = checkNull(inconsistencyLogsRepo.getDateOfEntryProjectId(projectId));
+					
+					System.out.println("Date Diff ["+lastLogDate);
+					
+					
+					
+					//Update data
+					if(lastLogDate.equals("0")) 
+					{
+						
+						
+						if("Ignore Manually".equals(consistencyFlag)) {
+							//resolvedCount = inconsistencyLogsRepo.getLastResolvedCountByProjectId(projectId) + 1;
+							
+							resolvedCount = inconsistencyLogsRepo.getSumOfResolvedCountByProjectIdAndBatchId(projectId,batchId) + 1;
+						}else {
+							//resolvedCount = inconsistencyLogsRepo.getLastResolvedCountByProjectId(projectId) + consistencyTracking.getFlagCount();
+							resolvedCount = inconsistencyLogsRepo.getSumOfResolvedCountByProjectIdAndBatchId(projectId, batchId) + consistencyTracking.getFlagCount();
+							
+						}
+						
+						maxSrNo = inconsistencyLogsRepo.getMaxSrNoByProjectId(projectId);
+						Optional<InconsistencyLogs> optional = inconsistencyLogsRepo.findById(maxSrNo);
+						if(optional.isPresent()) {
+							
+							InconsistencyLogs inconsistencyLogs = optional.get();
+							inconsistencyLogs.setResolvedCount(resolvedCount);
+							inconsistencyLogsRepo.save(inconsistencyLogs);
+						}
+						
+					}
+					else //Insert Data
+					{
+						
+						if("Ignore Manually".equals(consistencyFlag)) {
+							resolvedCount = 1;
+						}else {
+							resolvedCount = consistencyTracking.getFlagCount();
+						}
+						
+						InconsistencyLogs inconsistencyLogs = new InconsistencyLogs();
+						inconsistencyLogs.setProjectId(projectId); 
+						inconsistencyLogs.setInitialCount(initialCount);
+						inconsistencyLogs.setResolvedCount(resolvedCount); 
+						inconsistencyLogs.setDateOfEntry(new Timestamp(new Date().getTime()));
+						inconsistencyLogs.setBatchId(batchId);
+						inconsistencyLogsRepo.save(inconsistencyLogs);
+						
+					}
+					
+				} 
+				catch (Exception e) {					
+					System.out.println("#### Exception ConsistencyTrackingService :: saveConsistency -- : "+e);
 				}
-				
-				inconsistencyLogs = new InconsistencyLogs();
-				inconsistencyLogs.setProjectId(projectId); 
-				inconsistencyLogs.setInitialCount(initialCount);
-				inconsistencyLogs.setResolvedCount(resolvedCount); 
-				inconsistencyLogs.setDateOfEntry(new Timestamp(new Date().getTime()));
-				
-				inconsistencyLogsRepo.save(inconsistencyLogs);
-				
-				inconsistencyLogs = null;
-				
-			}else {
-				
-				inconsistencyLogs = new InconsistencyLogs();
-				
-				consistencyDataHashMap = new HashMap<>();
-				consistencyDataHashMap.put("KeyField", consistencyTracking.getKeyField());
-				consistencyDataHashMap.put("MdMappingId", String.valueOf(consistencyTracking.getMdMappingid()));
-				consistencyDataHashMap.put("MasterFieldValue", consistencyTracking.getMasterFieldValue());
-				consistencyDataHashMap.put("DeliverableFieldValue", consistencyTracking.getDeliverableFieldValue());
-				
-				getJSONMappingDataByProjectId(projectId,userId, null);
-		
-				}
-			}
+			
+			  }else
+			  {// Ignore By rule
+				  
+			  }								
+			  
+		}
 		
 	}
 	
@@ -112,27 +149,73 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 	{
 		
 		String response = "", jsonResponse = "";
-		int totolConsistency = 0, projectId = 0, lastResolvedCount = 0;
+		int totolConsistency = 0, projectId = 0, initialCount = 0, lastResolvedCount = 0, logTableBatchId = 0, iterationBatchId = 0;
 		JSONObject jsonObject = new JSONObject(); 
 	    JSONArray jsonArray = new JSONArray(); 	    
 		JSONParser jsonParse = new JSONParser();
 		
         try 
         {
-			List<Object[]> projectIdNameList = getProjectIdList(userId, role);
+			List<Object[]> projectIdNameList = getProjectIdList(userId, role); // Change it put in repository
 			System.out.println("Total Project's for inconsistency check ["+projectIdNameList.size()+"]");
 			for(Object [] project : projectIdNameList) {
 				
 				totolConsistency = 0;
 				projectId = (Integer)project[0];
 				System.out.println("#### projectId "+projectId);
+				
+				//Check table has data or not for the given projectId no need of batchId.
 				if( inconsistencyLogsTableCount(projectId) > 0){
-					lastResolvedCount = getLastResolvedCountByProjectId(projectId);
-					totolConsistency = ((inconsistencyLogsRepo.findTopByProjectId(projectId).getInitialCount()) - lastResolvedCount);
+					
+					//Check for New Iteration Data START
+					logTableBatchId = inconsistencyLogsService.getMaxBatchIdByProjectId(projectId);
+					iterationBatchId = iterationTrackingService.getMaxBatchIdByProjectId(projectId);
+					
+					if(logTableBatchId != iterationBatchId) {
+						
+						//Common Part START						
+						jsonResponse = getJSONMappingDataByProjectId(projectId, userId, null, null, "Dashboard");
+						
+					    if(checkNull(jsonResponse).length() > 0){
+					    	
+					    	JSONObject jsonObject2 = (JSONObject) jsonParse.parse(jsonResponse);
+					    	JSONArray jsonArray2 = (JSONArray) jsonObject2.get("MAPPING_DATA");
+					    	if(jsonArray2 != null) {
+					    		totolConsistency = jsonArray2.size();
+					    		if(totolConsistency != 0) {					    			
+					    			//Insert data for latest batchId in to the inconsistency_logs_table
+					    			inconsistencyLogsService.saveInconsistencyLogsTableData(projectId, totolConsistency, iterationBatchId);
+					    		}
+					    		
+					    	}
+					    	
+					    	
+						}
+					    System.out.println("#### totolConsistency "+totolConsistency);
+					  //Common Part END
+					    
+					}else {
+						//OLD Code
+						//initialCount = inconsistencyLogsRepo.findTopByProjectId(projectId).getInitialCount();
+						initialCount = inconsistencyLogsService.findTopByProjectIdAndBatchId(projectId, logTableBatchId).getInitialCount();
+						System.out.println("#### initialCount "+initialCount);
+						//lastResolvedCount = getLastResolvedCountByProjectId(projectId);
+						lastResolvedCount = inconsistencyLogsService.getSumOfResolvedCountByProjectIdAndBatchId(projectId, logTableBatchId);
+						System.out.println("#### lastResolvedCount "+lastResolvedCount);
+						
+						
+						totolConsistency = (initialCount - lastResolvedCount);
+						System.out.println("#### totolConsistency "+totolConsistency);
+					}
+					//Check for New Iteration Data END
+					
+					
 					
 				}else 
 				{
-					jsonResponse = getJSONMappingDataByProjectId(projectId, userId, null);
+					//Common Part START
+					iterationBatchId = iterationTrackingService.getMaxBatchIdByProjectId(projectId);
+					jsonResponse = getJSONMappingDataByProjectId(projectId, userId, null, null, "Dashboard");
 					
 				    if(checkNull(jsonResponse).length() > 0){
 				    	
@@ -140,21 +223,23 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 				    	JSONArray jsonArray2 = (JSONArray) jsonObject2.get("MAPPING_DATA");
 				    	if(jsonArray2 != null) {
 				    		totolConsistency = jsonArray2.size();
-				    		if(totolConsistency !=0) {
-				    			insertIntoInconsistencyLogsTable(projectId, totolConsistency);
+				    		if(totolConsistency != 0) {
+				    			inconsistencyLogsService.saveInconsistencyLogsTableData(projectId, totolConsistency, iterationBatchId);
 				    		}
 				    		
 				    	}
 				    	
 				    	
 					}	
+				  //Common Part END
 				}				
 				
-				if(totolConsistency !=0) {
+				if(totolConsistency != 0) {
 					
 					JSONObject jsonObjectVal = new JSONObject();
 					jsonObjectVal.put("PROJECT_ID",projectId);
 					jsonObjectVal.put("PROJECT_NAME",(String)project[1]);
+					jsonObjectVal.put("DELIVERABLE_TYPE",(String)project[2]);
 					jsonObjectVal.put("TOTAL_CONSISTENCY",totolConsistency);
 					jsonArray.add(jsonObjectVal);
 				}
@@ -175,11 +260,11 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 	private List<Object[]> getProjectIdList(String userId, String role) 
 	{
 		String sql = "";
-		//String sql = "select pm.project_id,pm.project_name from [project_master] pm inner join [user_project_mapping] upm on pm.project_id = upm.project_id and upm.userid ='"+userId+"' and upm.status='Active'";
+		
 		if(role.equals("User")) {
-			sql = "select pm.project_id,pm.project_name from [project_master] pm inner join [user_project_mapping] upm on pm.project_id = upm.project_id and upm.userid ='"+userId+"' and pm.status= upm.status and upm.status='Active' inner join [deliverabletype_master] dtm on pm.[deliverabletype_id] = dtm.[deliverabletype_id] and dtm.status='Active'";
+			sql = "select pm.project_id,pm.project_name, dtm.deliverabletype_shortname from [project_master] pm inner join [user_project_mapping] upm on pm.project_id = upm.project_id and upm.userid ='"+userId+"' and pm.status= upm.status and upm.status='Active' inner join [deliverabletype_master] dtm on pm.[deliverabletype_id] = dtm.[deliverabletype_id] and dtm.status='Active'";
 		}else {
-			sql = "select distinct (pm.project_id),pm.project_name from [project_master] pm inner join [master_deliverable_mapping] mdm on pm.project_id = mdm.project_id and pm.status = mdm.status and pm.status='Active'  inner join [deliverabletype_master] dtm on  pm.[deliverabletype_id] = dtm.[deliverabletype_id] and dtm.status='Active'";
+			sql = "select distinct (pm.project_id),pm.project_name, dtm.deliverabletype_shortname from [project_master] pm inner join [master_deliverable_mapping] mdm on pm.project_id = mdm.project_id and pm.status = mdm.status and pm.status='Active'  inner join [deliverabletype_master] dtm on  pm.[deliverabletype_id] = dtm.[deliverabletype_id] and dtm.status='Active'";
 		}
 		
 		
@@ -204,34 +289,41 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 		return dataList;
 	}
 
+	//Only check table have data or not.
 	private int inconsistencyLogsTableCount(int projectId) 
 	{		
-		//int count = inconsistencyLogsService.getInconsistencyLogsTableCount(projectId);
 		int count = inconsistencyLogsService.getInconsistencyLogsTableCountByProjectId(projectId);
 		System.out.println("#### initialcount "+count);
 		return count;
 	}
 	
+	//Commented on 19-11-2021
+	/*
 	private int getLastResolvedCountByProjectId(int projectId) 
 	{
 		int count = inconsistencyLogsService.getLastResolvedCountByProjectId(projectId);
 		System.out.println("#### getLastResolvedCountByProjectId "+count);
 		return count;		
 	}
-
-	private void insertIntoInconsistencyLogsTable(int projectId, int totolConsistency) {
+	*/
+	
+	//Commented on 19-11-2021
+	/*
+	private void insertIntoInconsistencyLogsTable(int projectId, int totolConsistency, int iterationBatchId) {
 		
 		InconsistencyLogs inconsistencyLogs = new InconsistencyLogs();
 		inconsistencyLogs.setProjectId(projectId);
 		inconsistencyLogs.setInitialCount(totolConsistency);
-		inconsistencyLogs.setResolvedCount(0);
-		inconsistencyLogs.setDateOfEntry(new Timestamp(new Date().getTime()));		
+		inconsistencyLogs.setResolvedCount(0); // Check for this...
+		inconsistencyLogs.setDateOfEntry(new Timestamp(new Date().getTime()));
+		inconsistencyLogs.setBatchId(iterationBatchId);//Added on 19-11-2021
 		inconsistencyLogsRepo.save(inconsistencyLogs);
 	}
+	*/
 	
 	@Override
 	@Transactional
-	public String getJSONMappingDataByProjectId(int projectId, String userId, String filterKeyField) throws Exception{
+	public String getJSONMappingDataByProjectId(int projectId, String userId, String filterKeyField, String deliverableColumn, String callFrom) throws Exception{
 		
 		String response = "";
 		String inserSQL = "insert into temp_consistency_tracking_table_"+userId+"(key_field, mappingid, deliverable_name, master_data, deliverable_data) values(?,?,?,?,?)";
@@ -241,6 +333,8 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 		JSONArray jsonConsistentData = null;
 		
 		List<Integer> mappingIdList = new ArrayList<Integer>();
+		
+		deliverableColumn = checkNull(deliverableColumn);
 		
 		int mappingId = 0, maxLoop = 0; 
 		String masterKeyField = "", deliverableKeyField = "", masterTable = "", masterField = "",	deliverableTable = "", deliverableField = "";
@@ -263,17 +357,14 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 			masterField = (String) mapping[3]; deliverableTable = (String) mapping[4]; deliverableField = (String) mapping[5];			
 			
 			mappingIdList.add(mappingId);
-			
-			//Used to maintain inconsistency_los_tables 
-			if( consistencyDataHashMap != null && consistencyDataHashMap.get("MdMappingId").equals(String.valueOf(mappingId)) && checkNull(consistencyDataHashMap.get("deliverableName")).length() == 0) {
-				consistencyDataHashMap.put("deliverableName", deliverableField);
-				System.out.println("#### consistencyDataHashMap "+consistencyDataHashMap);
-			}
+						
 			//m2
 			masterKeyField = getMasterKeyField(masterTable, projectId);
 			
 			//m3
 			masterDeliverableValList = getMasterAndDeliverableValByKeyField(masterField,masterTable,masterKeyField,deliverableTable,deliverableField,deliverableKeyField);
+			
+			System.out.println("Row Data Size ==> "+masterDeliverableValList.size());
 			
 			if(masterDeliverableValList != null && masterDeliverableValList.size() > 0) {
 				
@@ -284,9 +375,20 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 					masterDataVal = (String) masterDeliverableVal[1];	deliverableDataVal = (String) masterDeliverableVal[2];					
 					
 					if(!masterDataVal.equalsIgnoreCase(deliverableDataVal)) {
-						//Storing master and deliverable inconsistent value into temporary table. Later distinct record is taken from temporary table
-						entityManager.createNativeQuery(inserSQL).setParameter(1,(String) masterDeliverableVal[0]).setParameter(2, mappingId).setParameter(3,deliverableField )
-						  .setParameter(4,(String) masterDataVal).setParameter(5,(String) deliverableDataVal ).executeUpdate();
+						
+						//Storing master and deliverable inconsistent value into temporary table. Later distinct record is taken from temporary table		
+						if(deliverableColumn.length() > 0 ) {
+							//added on 16-11-2021 Deliverable name wise filter data.
+							if(deliverableColumn.equals(deliverableField)) {
+								entityManager.createNativeQuery(inserSQL).setParameter(1,(String) masterDeliverableVal[0]).setParameter(2, mappingId).setParameter(3,deliverableField )
+								  .setParameter(4,(String) masterDataVal).setParameter(5,(String) deliverableDataVal ).executeUpdate();
+							}
+							
+						}else {
+							entityManager.createNativeQuery(inserSQL).setParameter(1,(String) masterDeliverableVal[0]).setParameter(2, mappingId).setParameter(3,deliverableField )
+							  .setParameter(4,(String) masterDataVal).setParameter(5,(String) deliverableDataVal ).executeUpdate();
+						}
+						
 					}
 					
 					  
@@ -295,12 +397,7 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 			
 			
 		}		
-		
-		//Used to maintain inconsistency_los_tables insert record for mark as alias and ignore by rule.
-		if( inconsistencyLogs != null) {			
-			saveDataForInconsistencyLogs(projectId, userId);			
-		}
-	
+				
 		//m4 It will be empty if no inconsistency mark yet.
 		List<Object[]> trackingdataList = getTrackingData(userId, projectId);
 		
@@ -319,13 +416,14 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 				
 				//On Hold --> fetching when data is present in tracking table
 				//m7
-				jsonConsistentData = getHoldConsistentTrackingData(holdtrackingIdList, userId, projectId, mappingIdList); 
+				// Send column filter here
+				jsonConsistentData = getHoldConsistentTrackingData(holdtrackingIdList, userId, projectId, mappingIdList, deliverableColumn); 
 			}
 			
 		}
 				
 		//m8
-		response = getRawTempTableData(jsonConsistentData,userId);
+		response = getRawTempTableData(jsonConsistentData,userId, callFrom);
 		
 		return response;
 	}
@@ -429,55 +527,7 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 		return dataList;
 		
 		
-	}
-	
-	//On submit of inconsistency (Mark as Alias and Ignore by rule) data is inserted into log table.
-	private void saveDataForInconsistencyLogs(int projectId, String userId) {
-		int initialCount = 0, resolvedCount = 0;
-		try 
-		{
-			initialCount = inconsistencyLogsRepo.findTopByProjectId(projectId).getInitialCount();
-			resolvedCount = inconsistencyLogsRepo.getLastResolvedCountByProjectId(projectId) + getResolvedCount(projectId, userId);
-		} catch (Exception e) {
-			System.out.println("#### Exception ConsistencyTrackingService :: saveDataForInconsistencyLogs :"+e);
-		}
-		
-		inconsistencyLogs.setProjectId(projectId); 
-		inconsistencyLogs.setInitialCount(initialCount);
-		inconsistencyLogs.setResolvedCount(resolvedCount); 
-		inconsistencyLogs.setDateOfEntry(new Timestamp(new Date().getTime()));
-		
-		inconsistencyLogsRepo.save(inconsistencyLogs);
-		
-		inconsistencyLogs = null;	consistencyDataHashMap = null;		
-	}
-
-	private int getResolvedCount(int projectId, String userId) 
-	{
-		
-		Session session = null;
-		if (entityManager == null || (session = entityManager.unwrap(Session.class)) == null) {
-			throw new NullPointerException();
-		}
-		
-		int count = 0;
-		
-		String sql = "select count(*) from temp_consistency_tracking_table_"+userId+" where mappingid ='"+consistencyDataHashMap.get("MdMappingId")+"' and deliverable_name ='"+consistencyDataHashMap.get("deliverableName")+"' and master_data ='"+consistencyDataHashMap.get("MasterFieldValue")+"' and deliverable_data = '"+consistencyDataHashMap.get("DeliverableFieldValue")+"'";
-		try 
-		{
-			Query query = session.createNativeQuery(sql);			
-			if(query.getSingleResult() != null) {
-				count = (int) query.getSingleResult();
-			}		
-			
-		} catch (Exception e) {			
-			System.out.println("#### Exception ConsistencyTrackingService :: getResolvedCount : "+e);
-		}
-		System.out.println("#### getResolvedCount "+count);
-		return count;
-	}
-
-	
+	}	
 	
 	//Select Submitted tracking data for particular project and user. So It will be removed from UI.
 	//It will be empty if no inconsistency mark yet.
@@ -489,10 +539,7 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 		if (entityManager == null || (session = entityManager.unwrap(Session.class)) == null) {
 			throw new NullPointerException();
 		}
-		
-		//String sql = "select ct.key_field,ct.md_mappingid,md.deliverable_field,ct.master_field_value,ct.deliverable_field_value,ct.consistency_flag from [consistency_tracking_table] ct, "
-		//		+ "  [master_deliverable_mapping] md where ct.md_mappingid = md.md_mappingid  and ct.flagged_by='"+userId+"' and md.status='Active' and md.project_id="+projectId;
-		
+				
 		//Changed on 29-10-2021. All User can see only clean data.
 		String sql = "select ct.key_field,ct.md_mappingid,md.deliverable_field,ct.master_field_value,ct.deliverable_field_value,ct.consistency_flag from [consistency_tracking_table] ct, "
 				+ "  [master_deliverable_mapping] md where ct.md_mappingid = md.md_mappingid  and md.status='Active' and md.project_id="+projectId;
@@ -507,7 +554,7 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 		}
 		
 		System.out.println("##### getTrackingData "+dataList.size());
-		//System.out.println("##### dataList "+dataList);
+		
 		return dataList;
 		
 	}
@@ -574,7 +621,7 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 
 	}
 		
-	private JSONArray getHoldConsistentTrackingData(List<Integer>trackingIdList, String userId, int projectId, List<Integer> mappingIdList) 
+	private JSONArray getHoldConsistentTrackingData(List<Integer>trackingIdList, String userId, int projectId, List<Integer> mappingIdList, String deliverableColumn) 
 	{
 					
 		String sql = "";		
@@ -583,7 +630,7 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 		List<Object[]> data = null;	
 		Session session = null;
 		Query query = null;
-		
+		deliverableColumn = checkNull(deliverableColumn);
 		if (entityManager == null || (session = entityManager.unwrap(Session.class)) == null) {
 			throw new NullPointerException();
 		}		
@@ -592,85 +639,59 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 		{	
 			//Added on 29-10-2021 START
 			if(mappingIdList.size() > 0) {
+				
 				for(Integer mappingId : mappingIdList) {
 					
 					for( Integer trackingId : trackingIdList) {
-						
-						//Commented and Changed on 29-10-2021 START
-						/*
-						  sql = "select ct.key_field, ct.md_mappingid,md.deliverable_field,ct.master_field_value,ct.deliverable_field_value,ct.consistency_flag,ct.remarks from [consistency_tracking_table] ct, [master_deliverable_mapping] md "				  
-						  +", repository_details rd where ct.md_mappingid = "+mappingId+" and rd.tables_name = md.deliverable_table and ct.consistency_flag='On Hold' and ct.flagged_by='"
-						  +userId+"' and md.status='Active' and md.project_id="+projectId+" and ct.trackingid  ="+trackingId;
-						  */
-						
-						sql = "select ct.key_field,ct.md_mappingid,md.deliverable_field,ct.master_field_value,ct.deliverable_field_value,ct.consistency_flag, ct.remarks   from [consistency_tracking_table] ct inner join [master_deliverable_mapping] md   on ct.md_mappingid = md.md_mappingid and  md.md_mappingid="+mappingId+" and ct.consistency_flag='On Hold' and ct.flagged_by='"+userId+"' and ct.trackingid="+trackingId;;
-						//Commented on 29-10-2021 END
-						   query = session.createNativeQuery(sql);
-						   data = query.getResultList();
+						if(deliverableColumn.length() > 0) {
 							
-							  data = query.getResultList(); 
-							  if(data != null) { 
-								  for(Object [] d : data) {
-									  
-								    jsonObjectVal = new JSONObject();			
-										
-									jsonObjectVal.put("KEY_FIELD",(String) d[0]);
-									jsonObjectVal.put("MAPPING_ID",String.valueOf((Integer) d[1]));
-									jsonObjectVal.put("DELIVERABLE_NAME",(String) d[2]);
-									jsonObjectVal.put("MASTER_DATA", (String) d[3]);
-									jsonObjectVal.put("DELIVERABLE_DATA",(String) d[4]);
-									jsonObjectVal.put("CONSISTENCY_FLAG",(String) d[5]);
-									jsonObjectVal.put("REMARK",(String) d[6]);
-								    consistentJsonArray.add(jsonObjectVal);
-								  } 
-					 } 
+							sql = "select ct.key_field,ct.md_mappingid,md.deliverable_field,ct.master_field_value,ct.deliverable_field_value,ct.consistency_flag, ct.remarks   from [consistency_tracking_table] ct inner join [master_deliverable_mapping] md   on ct.md_mappingid = md.md_mappingid and  md.md_mappingid="+mappingId+" and ct.consistency_flag='On Hold' and ct.flagged_by='"+userId+"' and md.deliverable_field='"+deliverableColumn+"' and ct.trackingid="+trackingId;
+
+						}else {
+							
+							sql = "select ct.key_field,ct.md_mappingid,md.deliverable_field,ct.master_field_value,ct.deliverable_field_value,ct.consistency_flag, ct.remarks   from [consistency_tracking_table] ct inner join [master_deliverable_mapping] md   on ct.md_mappingid = md.md_mappingid and  md.md_mappingid="+mappingId+" and ct.consistency_flag='On Hold' and ct.flagged_by='"+userId+"' and ct.trackingid="+trackingId;							
+						}
+								
+					    query = session.createNativeQuery(sql);
+					    data = query.getResultList();
+									
+					    data = query.getResultList(); 
+					    if(data != null) { 
+					    	
+						   for(Object [] d : data) {
+							  
+						    jsonObjectVal = new JSONObject();			
+								
+							jsonObjectVal.put("KEY_FIELD",(String) d[0]);
+							jsonObjectVal.put("MAPPING_ID",String.valueOf((Integer) d[1]));
+							jsonObjectVal.put("DELIVERABLE_NAME",(String) d[2]);
+							jsonObjectVal.put("MASTER_DATA", (String) d[3]);
+							jsonObjectVal.put("DELIVERABLE_DATA",(String) d[4]);
+							jsonObjectVal.put("CONSISTENCY_FLAG",(String) d[5]);
+							jsonObjectVal.put("REMARK",(String) d[6]);
+						    consistentJsonArray.add(jsonObjectVal);
+						  } 
+						   
+					   } 
 						 
 					}
 					
 				}
 			}
 			
-			//Added on 29-10-2021 END
-			
-			/*
-			  for( Integer trackingId : trackingIdList) {
-			  
-			  sql =
-			  "select ct.key_field, ct.md_mappingid,md.deliverable_field,ct.master_field_value,ct.deliverable_field_value,ct.consistency_flag,ct.remarks from [consistency_tracking_table] ct, [master_deliverable_mapping] md "
-			  +", repository_details rd where ct.md_mappingid = md.md_mappingid and rd.tables_name = md.deliverable_table and ct.consistency_flag='On Hold' and ct.flagged_by='"
-			  +userId+"' and md.status='Active' and md.project_id="+projectId+" and ct.trackingid  ="+trackingId;
-			  
-			  query = session.createNativeQuery(sql); data = query.getResultList();
-			  
-			  data = query.getResultList(); if(data != null) { for(Object [] d : data) {
-			  
-			  jsonObjectVal = new JSONObject();
-			  
-			  jsonObjectVal.put("KEY_FIELD",(String) d[0]);
-			  jsonObjectVal.put("MAPPING_ID",String.valueOf((Integer) d[1]));
-			  jsonObjectVal.put("DELIVERABLE_NAME",(String) d[2]);
-			  jsonObjectVal.put("MASTER_DATA", (String) d[3]);
-			  jsonObjectVal.put("DELIVERABLE_DATA",(String) d[4]);
-			  jsonObjectVal.put("CONSISTENCY_FLAG",(String) d[5]);
-			  jsonObjectVal.put("REMARK",(String) d[6]);
-			  consistentJsonArray.add(jsonObjectVal); } }
-			  
-			  }
-			 */
-			
+			//Added on 29-10-2021 END	
 			
 		} catch (Exception e) {
 			
 			System.out.println("#### Exception :: ConsistencyTrackingService  : getHoldConsistentTrackingData :"+e);
 		}			
-		//System.out.println("####### On Hold Data Size  "+consistentJsonArray.size());
-		
+				
 		return consistentJsonArray;
 	
 	}
 		
 
-	private String getRawTempTableData(JSONArray consistentJsonArray, String userId)
+	private String getRawTempTableData(JSONArray consistentJsonArray, String userId, String callFrom)
 	{
 		System.out.println("#### getRawTempTableData");
 		String response = "";
@@ -711,10 +732,17 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 					jsonArray.add(arrayObj);
 				}
 			}
+			System.out.println("#### Data Size "+jsonArray.size());
+			if(callFrom != null) {
+				//Used to parse JSON in Java Code. To show incosistency count in Dashboard
+				jsonObject.put("MAPPING_DATA", jsonArray);			
+				response = jsonObject.toString();
+			}else {
+				//Used to parse Json in JavaScript (ajax call), when checking inconsistency data
+				response = jsonArray.toString();
+			}
 			
-			jsonObject.put("MAPPING_DATA", jsonArray);	
 			
-			response = jsonObject.toString();
 			
 		} catch (Exception e) {			
 			System.out.println("#### Exception ConsistencyTrackingService :: getTempTableData: "+e);
@@ -790,14 +818,44 @@ public class ConsistencyTrackingServiceImpl implements ConsistencyTrackingServic
 		return dataList;
 	}
 	
-	public String checkNull(String input)
+	private String checkNull(String input)
     {
 		System.out.println("#### Input String ["+input+"]");
         if(input == null || "null".equalsIgnoreCase(input) || "undefined".equalsIgnoreCase(input))
         input = "";
         return input.trim();    
     }
-	
-	
+			
+	@Override
+	public String getFieldWiseReportData(int projectId, String userId) {
+		
+		String response = "", fieldName = "", consistencyCheckCount = "";		
+		JSONObject mainJsonObject = new JSONObject();
+		List<Object[]> fieldWiseDataList = null;
+		
+		fieldWiseDataList = consistencyTrackingRepo.getFieldWiseReportData(projectId);
+		
+		if(fieldWiseDataList != null && fieldWiseDataList.size() >0) {
+			
+			for(Object [] data : fieldWiseDataList) {
+				fieldName = fieldName+","+(String)data[0];
+				consistencyCheckCount = consistencyCheckCount+","+(int)data[1];
+			}		
+			
+			mainJsonObject.put("FIELDS", fieldName.substring(1));
+			mainJsonObject.put("CONSIS_CHK", consistencyCheckCount.substring(1));
+			
+		}
+		
+		response = mainJsonObject.toString();
+		System.out.println("#### getFieldWiseReportData "+response);
+		return response;
+	}
+
+	@Override
+	public String getProjectAndDateWiseReportData(int deliverableTypeId, String userId) {
+		
+		return inconsistencyLogsService.getProjectAndDateWiseReportData(deliverableTypeId,userId);
+	}
 	
 }

@@ -9,9 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import io.micrometer.core.annotation.Counted;
+
 @Entity
 @Table(name="inconsistency_logs_table")
-
 public class InconsistencyLogs {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,19 +30,23 @@ public class InconsistencyLogs {
 	
 	@Column(name = "date_of_entry")
 	private Timestamp dateOfEntry;
+	
+	@Column(name="batchid")
+	private int batchId;
 
 	public InconsistencyLogs() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public InconsistencyLogs(int srNo, int projectId, int initialCount, int resolvedCount, Timestamp dateOfEntry) {
+	public InconsistencyLogs(int srNo, int projectId, int initialCount, int resolvedCount, Timestamp dateOfEntry, int batchId) {
 		super();
 		this.srNo = srNo;
 		this.projectId = projectId;
 		this.initialCount = initialCount;
 		this.resolvedCount = resolvedCount;
 		this.dateOfEntry = dateOfEntry;
+		this.batchId = batchId;
 	}
 
 	public int getSrNo() {
@@ -83,11 +88,19 @@ public class InconsistencyLogs {
 	public void setDateOfEntry(Timestamp dateOfEntry) {
 		this.dateOfEntry = dateOfEntry;
 	}
+	
+	public int getBatchId() {
+		return batchId;
+	}
+
+	public void setBatchId(int batchId) {
+		this.batchId = batchId;
+	}
 
 	@Override
 	public String toString() {
 		return "InconsistencyLogs [srNo=" + srNo + ", projectId=" + projectId + ", initialCount=" + initialCount
-				+ ", resolvedCount=" + resolvedCount + ", dateOfEntry=" + dateOfEntry + "]";
+				+ ", resolvedCount=" + resolvedCount + ", dateOfEntry=" + dateOfEntry + ", batchId=" + batchId +"]";
 	}
 	
 	

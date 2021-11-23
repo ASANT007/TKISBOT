@@ -2,6 +2,7 @@ package com.tkis.qedbot.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.tkis.qedbot.entity.ConsistencyTracking;
 import com.tkis.qedbot.repo.ProjectMasterRepo;
 import com.tkis.qedbot.service.ConsistencyTrackingService;
+import com.tkis.qedbot.service.InconsistencyLogsService;
 import com.tkis.qedbot.service.MasterDeliverableMappingService;
 import com.tkis.qedbot.service.ProjectMasterService;
 import com.tkis.qedbot.service.RepositoryDetailsService;
@@ -40,6 +42,9 @@ public class UserController {
 	
 	@Autowired
 	ConsistencyTrackingService consistencyTrackingService;
+	
+	@Autowired
+	InconsistencyLogsService inconsistencyLogsService;
 	
 	//Added on 15-09-2021 START	
 	@RequestMapping("/userDashboard")
@@ -120,7 +125,7 @@ public class UserController {
 	//Added on 15-09-2021 END
 	
 	//Added on 11-10-2021 START
-	
+	/*
 	@PostMapping("/viewConsistencyByKeyField")	
 	public ModelAndView viewConsistencyByKeyField(ModelAndView modelAndView,HttpSession session, 
 			@RequestParam("filterKeyField") String filterKeyField) {
@@ -138,14 +143,13 @@ public class UserController {
 					modelAndView.addObject("projectId",projectId);
 					modelAndView.addObject("keyField",repositoryDetailsService.getKeyFieldByProjectId(projectId));
 					modelAndView.addObject("fiterKeyField",filterKeyField);
-					//modelAndView.addObject("projectName",projectMasterService.findById(projectId));			
-					//modelAndView.addObject("projectName",projectMasterRepo.findById(projectId).get().getProjectName());				
+									
 					modelAndView.addObject("projectName",projectName);				
 					modelAndView.addObject("projectdata",consistencyTrackingService.getJSONMappingDataByProjectId(projectId, userId, filterKeyField));
-					//modelAndView.addObject("projectdata",consistencyTrackingService.getJSONMappingDataByKeyField(filterKeyField,projectId, userId));
+					
 					
 				} catch (Exception e) {
-					//modelAndView.addObject("message",e.getMessage());
+					
 					System.out.println("#### Exception UserController :: viewConsistencyByKeyField: "+e);
 				}
 				modelAndView.setViewName("viewProjectDetails");
@@ -154,7 +158,51 @@ public class UserController {
 			}
 			return modelAndView;
 		}
-
+	*/
+	@ResponseBody
+	@PostMapping("/getMappedDeliverableFieldByKeyField")
+	public List<String> getMappedDeliverableFieldByKeyField(@RequestParam("projectId") int projectId,
+			@RequestParam("filterKeyField") String filterKeyField,HttpSession session){
+		
+		List<String> response = null;
+		String userId = checkNull((String)session.getAttribute("userId"));
+		try {
+			response = masterDeliverableMappingService.getMappedDeliverableFieldByKeyField(projectId, filterKeyField, userId);
+		} catch (Exception e) {			
+			e.printStackTrace();
+		}
+		return response;
+	}
+	@ResponseBody
+	@PostMapping("/getInConsistencyDataByFilter")
+	public String getInConsistencyDataByFilter(@RequestParam("filterKeyField") String filterKeyField, 
+			@RequestParam("deliverableColumn") String deliverableColumn, @RequestParam("projectId") int projectId, HttpSession session )
+	{
+		
+		String response = "";
+		String userId = checkNull((String)session.getAttribute("userId"));
+		
+		try {
+			if(userId.length() > 0) {
+				filterKeyField = checkNull(URLDecoder.decode(filterKeyField, "UTF-8"));
+				deliverableColumn = checkNull(URLDecoder.decode(deliverableColumn, "UTF-8"));
+				
+				System.out.println("#### filterKeyField"+filterKeyField);
+				System.out.println("#### deliverableColumn"+deliverableColumn);
+				
+				response = consistencyTrackingService.getJSONMappingDataByProjectId(projectId, userId, filterKeyField, deliverableColumn,null);
+			}
+			
+		}catch (UnsupportedEncodingException e1) {			
+			e1.printStackTrace();
+		}catch (Exception e) {				
+			e.printStackTrace();
+		}
+		
+		return response;
+		
+	}
+	
 	/*
 	 * @GetMapping(
 	 * "viewConsistencyByKeyField/filterKeyField/{filterKeyField}/projectId/{projectId}")
@@ -229,6 +277,149 @@ public class UserController {
 	}
 	*/
 	//Added on 01-10-2021 END
+	
+	//Inconsistency Report Added on 02-11-2021 START
+	/*
+	@RequestMapping("/projectWiseReport")
+	public ModelAndView projectWiseReport(ModelAndView modelAndView,HttpSession session) {
+		//ModelAndView modelAndView = new ModelAndView();
+		System.out.println("#### userDashboard");
+		String userId = checkNull((String)session.getAttribute("userId"));
+		String role = checkNull((String)session.getAttribute("role"));//Added on 29-10-2021
+		if(userId.length() > 0) {
+			modelAndView.setViewName("projectWiseReport");
+			try {
+				//modelAndView.addObject("projectConsistency",consistencyTrackingService.getConsistencyCountForAllProjects(userId,role));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}else {
+			modelAndView.setViewName("logout");
+		}
+		
+		return modelAndView;
+	}
+	@RequestMapping("/fieldWiseReport")
+	public ModelAndView fieldWiseReport(ModelAndView modelAndView,HttpSession session) {
+		//ModelAndView modelAndView = new ModelAndView();
+		System.out.println("#### userDashboard");
+		String userId = checkNull((String)session.getAttribute("userId"));
+		String role = checkNull((String)session.getAttribute("role"));//Added on 29-10-2021
+		if(userId.length() > 0) {
+			modelAndView.setViewName("fieldWiseReport");
+			try {
+				modelAndView.addObject("projectConsistency",consistencyTrackingService.getConsistencyCountForAllProjects(userId,role));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}else {
+			modelAndView.setViewName("logout");
+		}
+		
+		return modelAndView;
+	}
+	@RequestMapping("/projectAndDateWiseReport")
+	public ModelAndView projectAndDateWiseReport(ModelAndView modelAndView,HttpSession session) {
+		//ModelAndView modelAndView = new ModelAndView();
+		System.out.println("#### userDashboard");
+		String userId = checkNull((String)session.getAttribute("userId"));
+		String role = checkNull((String)session.getAttribute("role"));//Added on 29-10-2021
+		if(userId.length() > 0) {
+			modelAndView.setViewName("projectAndDateWiseReport");
+			try {
+				//modelAndView.addObject("projectConsistency",consistencyTrackingService.getConsistencyCountForAllProjects(userId,role));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}else {
+			modelAndView.setViewName("logout");
+		}
+		
+		return modelAndView;
+	}*/
+	
+	@ResponseBody
+	@RequestMapping("/getProjectWiseReportData")	
+	public String getProjectWiseReportData(@RequestParam("deliverableTypeId") int deliverableTypeId, @RequestParam("projectId") String projectIdStr, HttpSession session) {
+		System.out.println("#### UserController :: getProjectWiseReportData ");
+		String response = "";
+		String userId = checkNull((String)session.getAttribute("userId"));
+		
+		if(userId.length() > 0) {			
+			
+			try {
+				int projectId = 0;
+				String pId = checkNull(URLDecoder.decode(projectIdStr, "UTF-8"));
+				if(pId.length() > 0) {
+					projectId = Integer.valueOf(pId);
+				}				
+				//response =  consistencyTrackingService.getProjectWiseReportData(deliverableTypeId, projectId, userId);
+				response = inconsistencyLogsService.getProjectWiseReportData(deliverableTypeId, projectId, userId);
+			} catch (Exception e) {				
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return response;
+	}
+	
+	@ResponseBody
+	@RequestMapping("/getFieldWiseReportData")	
+	public String getFieldWiseReportData(@RequestParam("projectId") String projectIdStr, HttpSession session) {
+		System.out.println("#### UserController :: getProjectWiseReportData ");
+		String response = "";
+		String userId = checkNull((String)session.getAttribute("userId"));
+		
+		if(userId.length() > 0) {			
+			
+			try {
+				int projectId = 0;
+				String pId = checkNull(URLDecoder.decode(projectIdStr, "UTF-8"));
+				if(pId.length() > 0) {
+					projectId = Integer.valueOf(pId);
+				}				
+				response =  consistencyTrackingService.getFieldWiseReportData(projectId, userId);
+			} catch (Exception e) {				
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return response;
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping("/getProjectAndDateWiseReportData")	
+	public String getProjectAndDateWiseReportData(@RequestParam("deliverableTypeId") int deliverableTypeId, HttpSession session) {
+		System.out.println("#### UserController :: getProjectWiseReportData ");
+		String response = "";
+		String userId = checkNull((String)session.getAttribute("userId"));
+		
+		if(userId.length() > 0) {			
+			
+			try {
+				/*
+				 * int deliverableTypeId = 0; String dId =
+				 * checkNull(URLDecoder.decode(deliverableTypeIdStr, "UTF-8")); if(dId.length()
+				 * > 0) { deliverableTypeId = Integer.valueOf(dId); }
+				 */				
+				response =  consistencyTrackingService.getProjectAndDateWiseReportData(deliverableTypeId, userId);
+				
+			} catch (Exception e) {				
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return response;
+	}
+	//Inconsistency Report Added on 02-11-2021 END
+	
 	
 	public String checkNull(String input)
     {
