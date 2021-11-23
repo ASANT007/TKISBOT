@@ -21,25 +21,13 @@
 	     return;
 	}
 	if(role.equals("User") || role.equals("Functional Admin")){
-	String projectIdStr = "", fiterKeyField = "", visibility = "Display:none",  projectName = "", selectedkeyField = "";
-	//projectIdStr = (String) request.getAttribute("projectId");
-	/* if(checkNull(projectIdStr).length() >0){
-		projectId = Integer.parseInt(projectIdStr);
-	} */
+	
 	
 	int projectId = 0;
-	
+	String fiterKeyField = "", projectName = "";
 	projectId = (Integer) session.getAttribute("projectId");
 	projectName = (String) request.getAttribute("projectName");
-	fiterKeyField = (String) request.getAttribute("fiterKeyField");
-	
-	System.out.println("JSP: projectId"+projectId+"fiterKeyField ["+fiterKeyField+"] projectName ["+projectName+"]");
-	
-	if(checkNull(fiterKeyField).length() > 0){
-		visibility = "Display:block";
-		//selectedkeyField = (String) request.getAttribute("selectedkeyField");
-	}
-	
+		
 %>
 <!DOCTYPE HTML>
 <html lang="en-US">
@@ -99,16 +87,19 @@ body {
       <div class="login_user">Welcome <span class="user-name"><%=userName %></span>. You  are logged in as <span  class="user-name"><%=role %></span> </div>
     </div>
   </div>
-  <div class="row"><div class="col-md-12">
-  			<% 
+  <div class="row">
+  
+  <div class="col-md-12">  
+  <div style="display:inline-block;vertical-align: middle;">
+  <% 
       			List<Object[]> keyFieldList = (List<Object[]>) request.getAttribute("keyField");
      		 %>
- 	<label>Select Key Field</label>
-  <form  name ="viewConsistencyFrm" action="viewConsistencyByKeyField" method="post" style="display:inline-block"> 
-  	<select name='dropDownkeyField' id='dropDownkeyField'  class="form-select" style="width:250px;margin:0 10px 10px 10px;display:inline-block">
+ 	<label>Select Key Field</label>  
+  	<select name='dropDownkeyField' id='dropDownkeyField'  class="form-select width-auto" style="width:250px;margin:0 10px 10px 10px;display:inline-block" onchange="getMappedDeliverableFieldByKeyField('<%=projectId%>')">
   			<option value="" selected="selected" >--Select Key Field--</option>
 					<% for(Object[] kfRow : keyFieldList){
 						if(checkNull((String) kfRow[1]).length() >0){
+							//Change below code
 							if(checkNull(fiterKeyField).equals((String) kfRow[1])){ %>
 							<option value="<%= (Number) kfRow[0]%>" selected><%= (String) kfRow[1]%></option>
 							<% }else{ %>
@@ -119,115 +110,33 @@ body {
 						
 					} %>
            
-        </select>
-        <input type="hidden" id="filterKeyField" name="filterKeyField" val="<%=fiterKeyField%>"/>
-        <input type="hidden" id="projectId" name="projectId" val="<%=projectId%>"/>
-        <input id="goBttn" type="button" class="btn btn-primary done" value="Submit" onClick="viewConsistencyByKeyField('<%=projectId%>')"/>
-  </form>
+        </select> 
+  </div>
+   
+  
+  	<div style="display:inline-block; vertical-align: middle;">	  	
+  			<lable>Select Field :</lable>
+  			<sup class="mandatory">*</sup>
+  			<select class="form-select width-auto" style="display: inline-block;" name="filterDeliverableField" id="filterDeliverableField" >
+	            	<option value="" selected="selected" >--Select Field--</option>
+	        </select>	  		
+	  		 
+  	</div>
+  
+  
+  <div style="display:inline-block;vertical-align: middle;">
+  	<input id="goBttn" type="button" class="btn btn-primary done" value="Submit" onClick="getInConsistencyDataByFilter('<%=userId%>','<%=projectId%>')"/>
   </div>
   </div>
-  <div class="content-area" style="padding:10px 20px 10px 20px">
-  <div id="KeyField1" class="KeyField1" > <h2>Inconsistency for Project: <span><%=projectName%></span> </h2>
-  <div id="rec-report-table" style="<%=visibility%>"><div class="content-inner">
-      <table width="100%" border="0" align="left" cellpadding="0" cellspacing="0" class="table tbl-report table-bordered table-striped">
-        <thead style="position: sticky;top: 0" class="thead-dark">
-          <tr>
-            <th style="width:50px;" align="center" valign="middle" class="table-heading header">Sr.No</th>
-            <!-- <th align="center" valign="middle" class="table-heading header">Mapping Id</th> -->
-            <th align="center" valign="middle" class="table-heading header">Key Field</th>
-            <th  align="center" valign="middle" class="table-heading header">Field Name</th>
-            <th  align="center" valign="middle" class="table-heading header">Master Data</th>
-            <th  align="center" valign="middle" class="table-heading header">Deliverable Data</th>
-            <th  align="center" valign="middle" class="table-heading header">Set flag as</th>
-            <th width=15% align="center" valign="middle" class="table-heading header">Remarks</th>
-            <th  align="center" valign="middle" class="table-heading header">Action</th>
-          </tr>
-        </thead>
-        
-        <% 
-        String jsonResponse = (String) request.getAttribute("projectdata");
-        
-        JSONParser jsonParse = new JSONParser();
-        
-        if(checkNull(jsonResponse).length() > 0){
-        	
-        	JSONObject jsonObject = (JSONObject) jsonParse.parse(jsonResponse);
-        	JSONArray jsonArray = (JSONArray) jsonObject.get("MAPPING_DATA");
-        	System.out.println("***** Data Size "+jsonArray.size());
-        	
-        	if(jsonArray.size() > 0){
-        		int srNo = 0;
-            	//long mappingId = 0; 
-        		String mappingId = "", keyField = "", deliverableField = "", masterData = "", deliverableData ="", consistencyFlag ="", remark=""; 
-        		
-            	for(int i = 0; i<jsonArray.size(); i++){
-            		
-            		//mappingId = 0; 
-            		mappingId = "";keyField = ""; deliverableField = ""; masterData = ""; deliverableData ="";consistencyFlag =""; remark="";
-            		
-            		srNo = 1+i;
-            		
-            		JSONObject dataObject = (JSONObject) jsonArray.get(i);
-            		
-            		try{
-            			
-            			//mappingId = (Long) dataObject.get("MAPPING_ID");
-            			mappingId = (String) dataObject.get("MAPPING_ID");
-            			keyField = (String) dataObject.get("KEY_FIELD");
-                		deliverableField = (String) dataObject.get("DELIVERABLE_NAME");
-                		masterData = (String) dataObject.get("MASTER_DATA");
-                		deliverableData = (String) dataObject.get("DELIVERABLE_DATA");
-                		consistencyFlag = (String) dataObject.get("CONSISTENCY_FLAG");
-                		remark = (String) dataObject.get("REMARK");
-                				
-            		}catch(Exception e){
-            			e.printStackTrace();
-            		}
-            		
-         		%>
-            		
-         <tr><tr valign="top">
-                  <td class="text-center"><%=srNo %><input type='hidden' id='mappingId_<%=srNo %>' value="<%=mappingId %>"/></td>              
-                  <%-- <td id='mappingId_<%=srNo %>'><%=mappingId %></td> --%>
-                  <td id='keyField_<%=srNo %>'><%=keyField %></td>
-    	          <td id='deliverableField_<%=srNo %>'><%=deliverableField %></td>
-    	          <td id='masterData_<%=srNo %>'><%=masterData %></td>
-    	          <td id='deliverableData_<%=srNo %>'><%=deliverableData %></td>
-    	          
-              <td><select class="form-select select-action"  id='consistencyFlag_<%=srNo %>' name='consistencyFlag_<%=srNo %>'>
-                  <option value="" selected="selected" >Select Flag</option>
-                  <option value="Mark as Alias">Mark as Alias </option>
-                  <option value="Ignore by Rule">Ignore by Rule</option>
-                  <option value="Ignore Manually">Ignore Manually</option>
-                  <% if(checkNull(consistencyFlag).equals("On Hold")){%>
-                  <option value="On Hold" selected="selected" >On Hold</option>
-                  <%}else{%>
-                  <option value="On Hold">On Hold</option>
-                  <%}%>
-                  
-                </select></td>
-                
-              <td><textarea class="form-control" id='consistencyRemark_<%=srNo %>'><%=remark %></textarea></td>
-              <td>
-                <input id='submitBtn_<%=srNo %>' type="button" class="btn btn-primary done" value="Submit" onClick="saveConsistency('<%=srNo %>','<%=userId%>','<%=projectId%>')">
-              </td>
-            </tr>
-            	 
-            <%	
-            	}//End of for
-        	}// End of if
-        	else{%>
-        	<tr><tr valign="top">
-            <td colspan="8" class="text-center">No Data Found</td></tr>
-        <% }
-        	
-        }else{%>
-        	<tr><tr valign="top">
-            <td colspan="8" class="text-center">No Data Found</td></tr>
-        <% }%>
-        
-      </table>
-    </div></div></div>
+  </div>
+  
+  <div class="content-area mt-3" style="padding:10px 20px 10px 20px">
+  <div> <h2>Inconsistency for Project: <span><%=projectName%></span> </h2>
+  <div id="rec-report-table">
+  <div class="content-inner" id="inconsistencyCheckDiv" name="inconsistencyCheckDiv">
+   </div>
+   </div>
+ </div>
   
   
   </div>

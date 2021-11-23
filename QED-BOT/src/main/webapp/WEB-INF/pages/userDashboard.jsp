@@ -103,12 +103,14 @@ $(document).ready(function () {
       <div class="login_user">Welcome <span class="user-name"><%=userName %></span>. You  are logged in as <span  class="user-name"><%=role %></span> </div>
     </div>
   </div>
-  <h2>User Dashboard</h2>  <div class="content-area">
+  <h2>Incosistency Check Dashboard</h2>  <div class="content-area">
+  
   <div id="rec-report-table" >
     <table border="0" align="center" cellpadding="0" cellspacing="0" class="table tbl-report table-bordered table-striped user-dashboard">
       <thead style="position: sticky;top: 0" class="thead-dark">
         <tr>
           <th style="width:50px;" align="center" valign="middle" class="table-heading header">Sr.No</th>
+          <th align="center" valign="middle" class="table-heading header">Deliverable Type</th>
           <th align="center" valign="middle" class="table-heading header">Project</th>
           <th  width="32%" align="center" valign="middle" class="table-heading header">No.of inconsistencies</th>
         </tr>
@@ -127,7 +129,7 @@ $(document).ready(function () {
         	if(jsonArray.size() > 0){
         		int srNo = 0;
             	long projectId = 0;
-        		String projectName = ""; long totalConsistency = 0; 
+        		String deliverableType = "", projectName = ""; long totalConsistency = 0; 
         		
             	for(int i = 0; i<jsonArray.size(); i++)
             	{
@@ -141,6 +143,7 @@ $(document).ready(function () {
             		try
             		{
             			projectId = (Long) dataObject.get("PROJECT_ID");
+            			deliverableType = (String) dataObject.get("DELIVERABLE_TYPE");
             			projectName = (String) dataObject.get("PROJECT_NAME");
             			totalConsistency = (Long) dataObject.get("TOTAL_CONSISTENCY");
             			
@@ -151,6 +154,7 @@ $(document).ready(function () {
       <tr>
       <tr valign="top">
         <td class="text-center"><%=srNo%></td>
+        <td class="text-center"><%=deliverableType%></td>
         <td align="center"><%=projectName%></td>
         <%-- <td align="center"><a href="viewProjectDetails/<%=projectId%>/<%=projectName%>"><%=totalConsistency%></a></td> --%>
        <%--  <td align="center"><a href="viewProjectDetails"><%=totalConsistency%></a></td> --%>
@@ -173,6 +177,7 @@ $(document).ready(function () {
     </table>  </div>
   </div>
 </div>
+
 <div class="container-fluid">
   <div class="row">
     <div class="footer"> &copy  thyssenkrupp Industrial Solutions India Pvt Ltd </div>

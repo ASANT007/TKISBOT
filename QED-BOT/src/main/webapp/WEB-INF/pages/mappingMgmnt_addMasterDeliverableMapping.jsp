@@ -114,7 +114,7 @@
      		 
 			<label>Select Deliverable Type : </label>
 			<sup class="mandatory">*</sup><div class="select-deliverable-type">
-			<select class="form-select" name="deliverableType" id="deliverableType" onchange="getProjects(this)">
+			<select class="form-select width-auto" name="deliverableType" id="deliverableType" onchange="getProjects(this)">
 					<option value="" selected="selected" >--Select Deliverable--</option>
 					<% for(Object[] dt : deliverabletype){%>
 						
@@ -128,7 +128,7 @@
 		  <div class="col-md-3 align-self-center">    
 			<label>Select Project : </label> 
 			<sup class="mandatory">*</sup><div class="select-project-003">		
-			<select class="form-select tbl-select-opt" name="projectName" id="projectName" onchange="getTablesForSelectedProject(this)">
+			<select class="form-select tbl-select-opt width-auto" name="projectName" id="projectName" onchange="getTablesForSelectedProject(this)">
 					<option value="" >--Select Project--</option>		
 			</select></div> 	 	 	
 	 	 </div>
@@ -148,19 +148,19 @@
 	  
 	  <div class="row mt-3" name="masterDeliverabletableDiv" id="masterDeliverabletableDiv" style="display:none">
       
-      	<div class="col-md-4 align-self-center">		
+      	<div class="col-md-6 align-self-center">		
   			<lable>Select Master Table :</lable>	
 	  		<sup class="mandatory">*</sup>	<div class="select-table-createRule">		  	
-			  	<select class="form-select" name="mastertables" id="mastertables" onchange="getMasterTableColumns()">
+			  	<select class="form-select width-auto" name="mastertables" id="mastertables" onchange="getMasterTableColumns()">
 	            	<option value="" selected="selected" >--Select Master Table--</option>
 	           	</select>
 	  		</div>	  	
 	  	</div>
 	  	
-	  	<div class="col-md-4 align-self-center">		
+	  	<div class="col-md-6 align-self-center">		
   			<lable>Select Deliverable Table :</lable>	
 	  		<sup class="mandatory">*</sup>	<div class="select-table-createRule">		  	
-			  	<select class="form-select" name="deliverabletables" id="deliverabletables" onchange="getDeliverableTableColumns()">
+			  	<select class="form-select width-auto" name="deliverabletables" id="deliverabletables" onchange="getDeliverableTableColumns()">
 	            	<option value="" selected="selected" >--Select Deliverable Table--</option>
 	           	</select>
 	  		</div>	  	
@@ -168,41 +168,50 @@
 	  	
 	  </div>
 	  
+	  <!-- Added on 14-10-2021 START -->
+	  <div class="row mt-3" name="masterkeyfieldDiv" id="masterkeyfieldDiv" style="display:none">
+	  <div class="col-md-6  align-self-center">
+	  		<lable>Master Table Key Field :</lable> <span class="user-name" name="masterTableKeyfield" id="masterTableKeyfield"></span>	  		
+	  </div>
+	  <div class="col-md-6  align-self-center">	  		
+	  		<lable>Deliverable Table Key Field :</lable> <span class="user-name" name="deliverableTableKeyfield" id="deliverableTableKeyfield"></span>
+	  </div>
+	  </div>
+	  
+	  <!-- <div class="row mt-3" name="deliverablekeyfieldDiv" id="deliverablekeyfieldDiv" style="display:none"> </div-->
+	    
+	  <!-- Added on 14-10-2021 END -->
+	  
 	  <div class="row mt-3" name="masterDeliverablefieldDiv" id="masterDeliverablefieldDiv" style="display:none">
       
-      	<div class="col-md-4 align-self-center">		
+      	<div class="col-md-5 align-self-center">		
   			<lable>Select Master Field :</lable>	
 	  		<sup class="mandatory">*</sup>	<div class="select-table-createRule">		  	
-			  	<select class="form-select" name="masterfields" id="masterfields">
+			  	<select class="form-select width-auto" name="masterfields" id="masterfields">
 	            	<option value="" selected="selected" >--Select Master Field--</option>
 	           	</select>
 	  		</div>	  	
 	  	</div>
 	  	
-	  	<div class="col-md-4 align-self-center">		
+	  	<div class="col-md-5 align-self-center">		
   			<lable>Select Deliverable Field :</lable>	
 	  		<sup class="mandatory">*</sup>	<div class="select-table-createRule">		  	
-			  	<select class="form-select" name="deliverablefields" id="deliverablefields">
+			  	<select class="form-select width-auto" name="deliverablefields" id="deliverablefields">
 	            	<option value="" selected="selected" >--Select Deliverable Field--</option>
 	           	</select>
 	  		</div>	  	
 	  	</div>
 	  	
-	  	<div class="col-md-4  align-self-center">
+	  	<div class="col-md-2  align-self-center">
           	<input class="btn btn-primary" type = "button" value = "Add Mapping" onClick="mapMasterDeliverableFileds()"/>
           	
 		</div>
 		
 	  </div>
-	  <!-- Added on 14-10-2021 START -->
-	  <div class="row mt-3" name="keyfieldDiv" id="keyfieldDiv" style="display:none">
-	  <div class="col-md-12  align-self-center">
-	  		<lable>Key Field :</lable> <span name="keyfield" id="keyfield"></span>
-	  </div>
-	  </div>
-	  <!-- Added on 14-10-2021 END -->
+	  
+	  
 	  <div class="row mt-3" name="masterDeliverableMappingDiv" id="masterDeliverableMappingDiv" style="display:none">
-	   <div style="text-align:right; margin-bottom:15px;">
+	   <div style="text-align:right; margin-bottom:15px;padding-right: 55px;">
 	  	<input class="btn btn-primary" type="button" value="Remove Selected" name="saveMDMappingChangeBtn" id="saveMDMappingChangeBtn" onclick="removeMasterDeliverableMapping()" style="width:12%;">
 	  </div>
 	  

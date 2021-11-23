@@ -158,7 +158,7 @@ $(document).ready(function () {
      		 
 			<label>Select Deliverable Type : </label>
 			<sup class="mandatory">*</sup><div class="select-deliverable-type">
-			<select class="form-select" name="deliverableType" id="deliverableType" onchange="getProjects(this)">
+			<select class="form-select width-auto" name="deliverableType" id="deliverableType" onchange="getProjects(this)">
 					<option value="" selected="selected" >--Select Deliverable--</option>
 					<% for(Object[] dt : deliverabletype){%>
 						
@@ -173,7 +173,7 @@ $(document).ready(function () {
 			<label>Select Project : </label> 
 			<sup class="mandatory">*</sup>
 			<div class="select-project-003">
-			<select class="form-select" name="projectName" id="projectName" onchange="getTablesForSelectedProject(this)">
+			<select class="form-select width-auto" name="projectName" id="projectName" onchange="getTablesForSelectedProject(this)">
 					<option value="" >--Select Project--</option>		
 			</select>
 	 	</div>   
@@ -190,23 +190,31 @@ $(document).ready(function () {
            	  
 	  <!-- Show Hide Part START -->
 	  
-	  <div class="row my-3">
-	  
-	  <div class="col-md-3 align-self-center" id="ruleTypeDiv" name="ruleTypeDiv" style="display:none">	  	
-	  		<label>Rule Type</label><div class="select-action-createRule">
-	  		<lable id="RuleType" name="RuleType"></lable>
+	  <div class="row my-3">	  
+	  <div class="col-md-4 align-self-center" id="ruleTypeDiv" name="ruleTypeDiv" style="display:none">	  	
+	  		<label>Rule Type : </label><span class="user-name" style="margin-left:10px;" id="ruleName" name= "ruleName"></span>	  		
 	  	</div>
-	  	</div>
-	  
-      <div class="col-md-3 align-self-center" id="targetFieldNameDiv" name="targetFieldNameDiv" style="display:none">	  	
+  		  
+      <div class="col-md-6 align-self-center" id="targetFieldNameDiv" name="targetFieldNameDiv" style="display:none">	  	
   			<lable>Select Field :</lable>	
 	  		<sup class="mandatory">*</sup><div class="select-field-createRule">		  
-			  	<select class="form-select" name="targetFieldName" id="targetFieldName" >
+			  	<select class="form-select width-auto" name="targetFieldName" id="targetFieldName" >
 	            	<option value="">--Select Field--</option>
 	           	</select>	  		
 	  	</div>	 
 	  	</div>
 	  	
+	  	<div class="col-md-6  align-self-center" id="sourceDiv" name="sourceDiv" style="display:none">	  	 		  	
+		  		<lable>Select Source :</lable>	
+		  		<sup class="mandatory">*</sup><div class="select-field-createRule">
+		  		<select class="form-select width-auto" name="source" id="source" >
+	            	<option value="">--Select Source--</option>
+	           	</select>
+		  	</div>	  	 
+	  	</div>
+	  </div>
+	  
+	  <div class="row my-3">  	
       <div class="col-md-3 align-self-center" id="targetStringDiv" name="targetStringDiv" style="display:none">	  	  		
 	  		<lable>Target String : </lable>	
 	  		<sup class="mandatory">*</sup><div class="select-tarrgetString-createRule" >	
@@ -223,14 +231,7 @@ $(document).ready(function () {
 	  	</div> 
 	  	</div>
 	  	
-	   <div class="col-md-3  align-self-center" id="sourceDiv" name="sourceDiv" style="display:none">	  	 		  	
-		  		<lable>Select Source :</lable>	
-		  		<sup class="mandatory">*</sup><div class="select-field-createRule">
-		  		<select class="form-select" name="source" id="source" >
-	            	<option value="">--Select Source--</option>
-	           	</select>
-		  	</div>	  	 
-	  	</div> 
+	    
 	  	
 	  	<div class="col-md-3  align-self-center" id="fromDiv" name="fromDiv" style="display:none">	  			  	
 		  		<lable>Starting Position : </lable>	

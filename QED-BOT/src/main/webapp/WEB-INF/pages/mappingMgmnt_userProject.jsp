@@ -214,7 +214,7 @@
 	     		 
 				<label>Select Deliverable Type : </label>
 				<sup class="mandatory">*</sup><div class="select-deliverable-type">
-				<select class="form-select" name="deliverableType" id="deliverableType" onchange="getProjects(this)">
+				<select class="form-select width-auto" name="deliverableType" id="deliverableType" onchange="getProjects(this)">
 						<option value="" selected="selected" >--Select Deliverable--</option>
 						<% for(Object[] dt : deliverabletype){%>
 							
@@ -229,7 +229,7 @@
 			 <label>User Name</label>
 			 <sup class="mandatory">*</sup> 
 			 	<div class="select-tarrgetString-createRule" > 
-					<input class="form-control" type="text" id="mappedUser" name="mappedUser" />
+					<input class="form-control width-auto" type="text" id="mappedUser" name="mappedUser" />
 					<input type="hidden" id="mappedUserId" name="mappedUserId" />
 					<!-- Auto Complete START -->
 					<script>

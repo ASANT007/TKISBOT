@@ -153,14 +153,14 @@ $(document).ready(function () {
  
   <div class="row">
            	
-	  <div class="col-md-4 align-self-center">
+	  <div class="col-md-6 align-self-center">
       		<% 
       			List<Object[]> deliverabletype = (List<Object[]>) request.getAttribute("deliverableType");
      		 %>
      		 
 			<label>Select Deliverable Type : </label>
 			<sup class="mandatory">*</sup><div class="select-deliverable-type">
-			<select class="form-select" name="deliverableType" id="deliverableType" onchange="getProjects(this)">
+			<select class="form-select width-auto" name="deliverableType" id="deliverableType" onchange="getProjects(this)">
 					<option value="" selected="selected" >--Select Deliverable--</option>
 					<% for(Object[] dt : deliverabletype){%>
 						
@@ -171,17 +171,29 @@ $(document).ready(function () {
 	 		</div>
 	  </div>
 		  
-       <div class="col-md-3 select-project align-self-center">      
+       <div class="col-md-6 select-project align-self-center">      
 			<label>Select Project : </label> 
 			<sup class="mandatory">*</sup>
 			<div class="select-project-003">
-			<select class="form-select" name="projectName" id="projectName" onchange="getTablesForSelectedProject(this)">
+			<select class="form-select width-auto" name="projectName" id="projectName" onchange="getTablesForSelectedProject(this)">
 					<option value="" >--Select Project--</option>		
 			</select>
 	 	</div>   
 	  	</div>
+	 </div>
+	 
+	 <div class="row mt-3">
+	 	
+	 	<div class="col-md-6 align-self-center">		
+  			<lable>Select Table :</lable>	
+	  		<sup class="mandatory">*</sup>	<div class="select-table-createRule">		  	
+			  	<select class="form-select width-auto" name="tableName" id="tableName" onchange="getTargetFields('','')">
+	            	<option value="" selected="selected" >--Select Table--</option>
+	           	</select>
+	  		</div>	  	
+	  	</div>
 	  	
-	  	<div class="col-md-4 align-self-center">
+	  	<div class="col-md-6 align-self-center">
 	  	<label>Select Action :</label> 
 			<sup class="mandatory">*</sup>
 			<div class="select-action-createRule">
@@ -197,39 +209,36 @@ $(document).ready(function () {
       
       </div>
       
-      <div class="row mt-3">
-      
-      	<div class="col-md-3 align-self-center">		
-  			<lable>Select Table :</lable>	
-	  		<sup class="mandatory">*</sup>	<div class="select-table-createRule">		  	
-			  	<select class="form-select" name="tableName" id="tableName" onchange="getTargetFields('','')">
-	            	<option value="" selected="selected" >--Select Table--</option>
-	           	</select>
-	  		</div>	  	
-	  	</div>
-	  	
-	  	<div class="col-md-4 align-self-center">	  	
+      <div class="row mt-3">   	  	
+	  	<div class="col-md-6 align-self-center">	  	
   			<lable>Select Field :</lable>
   			<sup class="mandatory">*</sup><div class="select-field-createRule">
-  			<select class="form-select" name="targetFieldName" id="targetFieldName" >
+  			<select class="form-select width-auto" name="targetFieldName" id="targetFieldName">
 	            	<option value="" selected="selected" >--Select Field--</option>
 	           	</select>	  		
 	  	</div>	 
 	  	</div>
 	  
-
+	  <div class="col-md-6  align-self-center" id="sourceDiv" name="sourceDiv" style="display:none">	  		
+		  		<label>Select Source : </label>
+		  		<sup class="mandatory">*</sup>
+		  		<div class="select-source-createRule" > 
+		  		<select class="form-select width-auto" name="source" id="source" >
+	            	<option value="" selected="selected" >--Select Source--</option>
+	           	</select>
+		  		</div>
+	  	</div>
       </div>
       
-      <div class="row mt-3">
-      
-      <div class="col-md-3 align-self-center" id="targetStringDiv" name="targetStringDiv" style="display:none">	  		  	
+      <div class="row mt-3">      
+      <div class="col-md-4 align-self-center" id="targetStringDiv" name="targetStringDiv" style="display:none">	  		  	
 	  		<lable>Target String : </lable>	
 	  		<sup class="mandatory">*</sup><div class="select-tarrgetString-createRule" >
 	  		<input class="form-control" type="text" id="targetString" name="targetString" />	  
 	  	</div>
        </div>
        
-	  	<div class="col-md-3  align-self-center" id="replaceByDiv" name="replaceByDiv" style="display:none">		  	
+	  	<div class="col-md-4  align-self-center" id="replaceByDiv" name="replaceByDiv" style="display:none">		  	
 		  	 <div class="replace">
 		  		<lable>Replace by :</lable>	
 		  		<sup class="mandatory">*</sup><div class="select-replace-createRule">
@@ -237,32 +246,22 @@ $(document).ready(function () {
 		  	</div>
 	  	</div> 
 	  	</div>
-	  	
-	   <div class="col-md-3  align-self-center" id="sourceDiv" name="sourceDiv" style="display:none">	  		
-		  		<label>Select Source : </label>
-		  		<sup class="mandatory">*</sup>
-		  		<div class="select-source-createRule" > 
-		  		<select class="form-select" name="source" id="source" >
-	            	<option value="" selected="selected" >--Select Source--</option>
-	           	</select>
-		  		</div>
-	  	</div> 
-	  	
-	  	<div class="col-md-3  align-self-center" id="fromDiv" name="fromDiv" style="display:none">	  			  	
+	  	  	
+	  	<div class="col-md-4  align-self-center" id="fromDiv" name="fromDiv" style="display:none">	  			  	
 	  		<lable>Starting Position : </lable>	
 	  		<sup class="mandatory">*</sup><div class="select-from-createRule" > 
 	  		<input class="form-control" type="text" id="from" name="from" onkeypress="return onlyNumberKey(event)" />		  	
 	  	</div> 
 	  	</div>
 	  	
-	  	<div class="col-md-3  align-self-center" id="toDiv" name="toDiv" style="display:none">	  			  	
+	  	<div class="col-md-4  align-self-center" id="toDiv" name="toDiv" style="display:none">	  			  	
 	  		<lable>Up To:</lable>	
 	  		<sup class="mandatory">*</sup><div class="select-to-createRule" > 
 	  		<input class="form-control" type="text" id="to" name="to" onkeypress="return onlyNumberKey(event)"/>		  
 	  	</div> 
 	  	</div> 
 	  	
-	  	<div class="col-md-3  align-self-center"  id="operatorDiv" name="operatorDiv" style="display:none">	  		  	
+	  	<div class="col-md-4  align-self-center"  id="operatorDiv" name="operatorDiv" style="display:none">	  		  	
 		  	<label>Operator : </label> 
 				<sup class="mandatory">*</sup>
 				<div class="select-to-createRule" > 
@@ -279,14 +278,14 @@ $(document).ready(function () {
 		  	</div>
 	  	</div>
 	  	  	
-	  	<div class="col-md-3  align-self-center" id="valueDiv" name="valueDiv" style="display:none">	  		  
+	  	<div class="col-md-4  align-self-center" id="valueDiv" name="valueDiv" style="display:none">	  		  
 		  		<lable>Value : </lable>	
 		  		<sup class="mandatory">*</sup><div class="select-value-createRule" > 	
 		  		<input class="form-control" type="text" id="value" name="value" />		  	
 	  	</div> 
 	  	</div>
 	  	
-	  	<div class="col-md-3  align-self-center">
+	  	<div class="col-md-4  align-self-center">
           <input class="btn btn-primary " type = "button" value = "Create SQL" onClick="createRule()"/>
           <a href="createRule">
           <input class="btn btn-primary" type = "button" value = "Cancel" />
@@ -309,7 +308,7 @@ $(document).ready(function () {
           <div id="result" name="result" ></div>
         </div>      
         <div class="col-md-2  mt-3 result-btn  justify-content-center">
-          <input class="btn btn-primary mx-2  save-rule" type = "button" value = "Save Rule" onClick="saveRule()" />
+          <input id="save" name = "save" class="btn btn-primary mx-2  save-rule" type = "button" value = "Save Rule" onClick="saveRule()" />
         </div> 
              
       </div>
