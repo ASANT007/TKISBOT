@@ -552,6 +552,7 @@ function createRule(){
 				$('#errorDiv').html(''); $('#errorDiv').hide();
 				shortDesc = 'delete from '+tableName+' where ['+targetFieldName+'] '+operator+' '+value+'';	// For SQL Server 	
 				$('#saveRuleDiv').show();
+				$('#save').prop('disabled',false);
 				$('#result').html(shortDesc);			
 				
 			}
@@ -568,6 +569,7 @@ function saveRule()
 		var repositoryId = $('#tableName').val(); var ruleType = $('#action option:selected').val();
 		$('#errorDiv').html(''); 	$('#errorDiv').hide('');
 		$('#successDiv').show(); 	loading('successDiv');
+		$('#save').prop('disabled',true);//Disable Button
 		saveRuleServerCall(projectId,repositoryId, shortDesc, ruleType);
 	}
 }
@@ -628,6 +630,9 @@ function viewMappedProjects(){
 	if(checkSession() == 'valid'){
 		
 		var mappedUserId = $('#mappedUserId').val();
+		var userName = $('#mappedUser').val();
+		//alert(userName);
+		//alert($("#mappedUser").attr("data-label"));
 		var deliverableType = $('#deliverableType').val();
 		console.log('mappedUser'+mappedUser);
 		console.log('deliverableType'+deliverableType);
@@ -639,7 +644,17 @@ function viewMappedProjects(){
 			
 		}else if(checkNull(mappedUserId).length == 0){
 			$('#message').addClass('alert alert-danger');
-			$('#message').text('Please select User');
+			$('#message').text('Please select valid User');
+		}else if(userName !== $("#mappedUser").attr("data-label")){
+			$('#message').addClass('alert alert-danger');
+			$('#message').text('Invalid User');
+			var tableBody = $('table tbody');					
+			var noOfRows = 	$("#UPMappingTable tr").length;//jQuery				
+			console.log('noOfRows'+noOfRows);
+			for(var i= noOfRows - 1; i > 0 ; i--){				
+				UPMappingTable.deleteRow(i);
+			}
+			$('#userProjectMappingDiv').hide();
 		}
 		else{
 			$('#message').text('');
@@ -727,7 +742,10 @@ function viewMasterDeliverableTables(){
 	
 	if(checkSession() == 'valid'){
 		
-		$('#message').empty();	$('#masterDeliverabletableDiv').hide();	$('#masterDeliverablefieldDiv').hide(); $('#keyfieldDiv').hide();
+		$('#message').empty();	$('#masterDeliverabletableDiv').hide();	$('#masterDeliverablefieldDiv').hide(); 
+		
+		$('#masterkeyfieldDiv').hide();
+		$('#deliverablekeyfieldDiv').hide();
 		
 		var deliverableType = $('#deliverableType').val();	var projectId = $('#projectName').val();
 		
@@ -839,9 +857,9 @@ function selectAllMapping(){
 
 /*Master Deliverable Mappping END*/
 
-/* Consistency tracking 01-10-2021 START */
+/* Inconsistency tracking 01-10-2021 START */
 
-function viewConsistencyByKeyField(projectId){
+/*function viewConsistencyByKeyField(projectId){
 	
 	if(checkSession().includes('valid')){	
 		
@@ -856,7 +874,26 @@ function viewConsistencyByKeyField(projectId){
 			
 		}
 	}
+}*/
+
+// Not defined  Yet in viewProjectDetails.jsp
+function getInConsistencyDataByFilter(userId, projectId){
+	
+	if(checkSession().includes('valid')){			
+		
+		if(checkNull($('#dropDownkeyField').val()).length == 0){
+			alert('Please Select Key Field');
+		}else{
+			var filterKeyField = checkNull($('#dropDownkeyField option:selected').text());
+			var filterDeliverableField = checkNull($('#filterDeliverableField option:selected').val());
+			//$('#filterKeyField').val(filterKeyField);// Remove after proper coding.
+			console.log('filter column '+filterDeliverableField);
+			getInConsistencyDataByFilterServerCall(userId, projectId, filterKeyField, filterDeliverableField)		
+			
+		}
+	}
 }
+
 function saveConsistency(srNo, userId, projectId){
 	
 	//alert(srNo);
@@ -883,6 +920,32 @@ function saveConsistency(srNo, userId, projectId){
 		}*/else{
 			
 			//Sending single json object
+			var flagCount = 0;
+			if(consistencyFlag =='On Hold'){
+				
+			}else if(consistencyFlag =='Ignore Manually'){
+				flagCount = 1;
+			}else if(consistencyFlag == 'Mark as Alias'){
+				//console.log(consistencyFlag);
+				$("#inconsistencyCheckTbl tr").each(function(){
+					var currentRow=$(this);
+    
+			        /*var col1_value=currentRow.find("td:eq(0)").text();
+			        var col2_value=currentRow.find("td:eq(1)").text();
+			        var col3_value=currentRow.find("td:eq(2)").text();*/
+			        
+			        //console.log('SrNo ['+currentRow.find("td:eq(0)").text()+'] Key Field['+currentRow.find("td:eq(1)").text()+'] Field Name['+currentRow.find("td:eq(2)").text());
+			        //console.log('M D['+currentRow.find("td:eq(3)").text()+'] D D['+currentRow.find("td:eq(4)").text());
+			        
+			        
+			        if(masterData == currentRow.find("td:eq(3)").text() && deliverableData == currentRow.find("td:eq(4)").text()){
+						flagCount ++;
+					}
+				});
+				console.log(flagCount);
+			}
+			//alert(flagCount);
+			
 			var ConsistencyTracking = {
 			"keyField" : keyField,
 			"mdMappingid" : mappingId,
@@ -891,7 +954,8 @@ function saveConsistency(srNo, userId, projectId){
 			"consistencyFlag" : consistencyFlag,
 			"remarks" : consistencyRemark,
 			"flaggedBy" : userId,
-			"flaggedDate" : new Date().getTime()
+			"flaggedDate" : new Date().getTime(),
+			"flagCount" : flagCount
 			};
 			
 		//Sending array of json object
@@ -932,7 +996,7 @@ function saveConsistency(srNo, userId, projectId){
 		$('#submitBtn_'+srNo).val('Submitting...');
 		$('#submitBtn_'+srNo).prop('disabled',true);
 		
-		saveConsistencyServerCall(ConsistencyTracking, filterKeyField, projectId);
+		saveConsistencyServerCall(ConsistencyTracking, filterKeyField, projectId, userId);
 		
 		}
 	}
@@ -940,7 +1004,98 @@ function saveConsistency(srNo, userId, projectId){
 	
 	
 }
-/* Consistency tracking 01-10-2021 END */
+
+/* Inconsistency tracking 01-10-2021 END */
+
+/* Inconsistency Reports 03-11-2021 START*/
+function getProjectWiseReport(){
+	//alert('getProjectWiseReport');
+	if(checkSession().includes('valid')){
+		
+		var deliverableType = $('#deliverableType').val();	
+		var projectId = $('#projectName').val();
+		
+		if(checkNull(deliverableType).length == 0){
+			$('#errorDiv').show();
+			$("#errorDiv").html('Please select Deliverable Type');
+		}
+		/*else if(checkNull(projectId).length == 0){
+			$('#errorDiv').show();
+			$("#errorDiv").html('Please select Project');
+		}*/else{
+			$("#errorDiv").html('');
+			$('#errorDiv').hide();
+			loading('result');
+			$('#heading').show();
+			
+			var deliverableName = $("#deliverableType option:selected").text();	
+			$('#deliverableName').text(deliverableName);
+			
+			getProjectWiseReportServerCall(deliverableType, projectId);
+		}
+	}
+	
+}
+
+function getFieldWiseReport(){
+	//alert('getFieldWiseReport');
+	if(checkSession().includes('valid')){
+		
+		var deliverableType = $('#deliverableType').val();	
+		var projectId = $('#projectName').val();
+		console.log('projectId'+projectId);
+		if(checkNull(deliverableType).length == 0){
+			$('#errorDiv').show();
+			$("#errorDiv").html('Please select Deliverable Type');
+		}
+		else if(checkNull(projectId).length == 0){
+			$('#errorDiv').show();
+			$("#errorDiv").html('Please select Project');
+		}else{
+			$("#errorDiv").html('');
+			$('#errorDiv').hide();
+			loading('result');
+			
+			$('#heading').show();
+			var deliverableName = $("#deliverableType option:selected").text();
+			var projectName = $("#projectName option:selected").text();
+			$('#deliverableName').text(deliverableName);
+			$('#selectedProjectName').text(projectName);
+			
+			getFieldWiseReportServerCall(deliverableType, projectId);
+		}
+	}
+
+}
+
+function getProjectAndDateWiseReport(){
+	//alert('getProjectAndDateWiseReport');
+	if(checkSession().includes('valid')){
+		
+		var deliverableType = $('#deliverableType').val();	
+		var projectId = $('#projectName').val();
+		if(checkNull(deliverableType).length == 0){
+			$('#errorDiv').show();
+			$("#errorDiv").html('Please select Deliverable Type');
+		}
+		/*else if(checkNull(projectId).length == 0){
+			$('#errorDiv').show();
+			$("#errorDiv").html('Please select Project');
+		}*/else{
+			$("#errorDiv").html('');
+			$('#errorDiv').hide();
+			loading('result');
+			
+			$('#heading').show();			
+			var deliverableName = $("#deliverableType option:selected").text();	
+			$('#deliverableName').text(deliverableName);
+			
+			getProjectAndDateWiseReportServerCall(deliverableType, projectId);
+		}	
+	}
+	
+}
+/* Inconsistency Reports 03-11-2021 END*/
 
 function onlyNumberKey(event){
 	

@@ -21,7 +21,8 @@ function checkLogin(username, password) {
 			//document.getElementById('valid').innerHTML = response;
 			if (response == true) {
 				document.getElementById('valid').innerHTML = "";
-				window.location.href = "./deliverableDetails";
+				//window.location.href = "./deliverableDetails";
+				window.location.href = "./viewGroupMaster";
 			} else if (response == false) {
 				document.getElementById('valid').innerHTML = "<div class='error-message'>incorrect username or password</div>";
 				document.frm.username.focus();

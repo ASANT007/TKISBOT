@@ -353,6 +353,9 @@ function changePassword(adminSrNo) {
 
 }
 
+function setAutoToTargetFieldWidth(){
+	$('#targetFieldName').css('width','auto');
+}
 //Added by AMOL S. on 26-10-2021 START
 function checkNull(value) {
 	//alert(value);

@@ -337,6 +337,7 @@ function getTablesForSelectedProject(obj){
 								ruleId = `${value}`;
 							}else if(`${key}` == 'tableName'){
 								tableName = `${value}`;
+								//tableName ='Test AMOL';
 								//Do it later 19-08-2021
 								/*if(tableName.includes(pattern)){
 							
@@ -385,6 +386,8 @@ function getTargetFields(tableName,forModifyRule){
 	
 	if(checkSession() == 'valid'){
 		//Rule Management 
+		//$('#tableName').css('width','auto');
+		
 		if(forModifyRule == 'forModifyRule'){
 			tableName = tableName;
 		}else{
@@ -454,7 +457,8 @@ function saveRuleServerCall(projectId, repositoryId, shortDesc, ruleType){
 			
 			if(checkNull(response) == 'sucess'){				
 				//$('#successDiv').show();
-				$('#successDiv').html('Rule Saved Successfully');	
+				$('#saveRuleBtn').prop('disabled',true);//Disable Button
+				$('#successDiv').html('Rule Saved Successfully');				
 			}else{
 								
 				//$('#errorDiv').show();
@@ -638,13 +642,17 @@ function showHideActionPanelForModifyRules (action,descText){
 
 	const filedArray  = descText.substring(descText.lastIndexOf("[")+1,descText.length-1).split(',');	
 	
-	$('ruleTypeDiv').show(); $('#RuleType').empty(); $('#RuleType').val(action);
+	$('#ruleTypeDiv').show(); $('#RuleType').empty(); $('#ruleType').val(action);
+	
+	$('#ruleName').empty();	$('#ruleName').text(action);//display rule type on UI added on 12-11-2021
 	
 	if(action == 'replace'){			
 		
 		var tar = filedArray[0].replaceAll("]","");
 		$('#targetFieldNameDiv').show(); $('#targetStringDiv').show();	$('#replaceByDiv').show();
 		$('#operatorDiv').hide(); $('#sourceDiv').hide();	$('#fromDiv').hide(); $('#toDiv').hide();		$('#valueDiv').hide();
+		
+		
 		
 		$("#targetFieldName > [value=" + tar + "]").attr("selected", "true");
 		$('#targetString').val(filedArray[1].replaceAll("'",""));
@@ -1049,17 +1057,7 @@ function displayRuleExecutionStatus(response){
 
 /*User Project Mapping START*/
 function viewMappedProjectsServerCall(mappedUser,deliverableTypeId){
-	
-	/*var postData = {
-		 "UserProjectMapping" : {
-			"userId" : "10672205"			
-			},
-		 "DeliverabletypeMaster" : {
-			"deliverableTypeId" : "1"
-			
-			}
-	};*/
-	
+
 	$.ajax({
         url: "getUserProjectMapping",
         type: "POST",
@@ -1225,7 +1223,8 @@ function showMasterDeliverableTablesServerCall(projectId){
 						$('#message').removeClass('alert alert-danger');						
 						$('#masterDeliverabletableDiv').show();
 						$('#masterDeliverablefieldDiv').show();
-						$('#keyfieldDiv').show();
+						$('#masterkeyfieldDiv').show();
+						$('#deliverablekeyfieldDiv').show();
 						
 						$("#mastertables").append('<option value="">--Select Master Table--</option>');	
 						$("#deliverabletables").append('<option value="">--Select Deliverable Table--</option>');
@@ -1297,11 +1296,12 @@ function getMasterTableColumns(){
 					$('#message').text(response);
 				}
 	    });	
-	    getKeyFieldForTable(tableName);
+	    getKeyFieldForMasterTable(tableName);
 	}
 		
 }
-function getKeyFieldForTable(tableName){
+
+function getKeyFieldForMasterTable(tableName){
 	$.ajax({
 	        url: "getkeyfield",
 	        type: "POST",			        
@@ -1312,11 +1312,27 @@ function getKeyFieldForTable(tableName){
 			contentType : "application/x-www-form-urlencoded",
 	        success: function(keyField) 
 			{	
-				$('#keyfield').text(keyField);	
+				$('#masterTableKeyfield').text(keyField);	
 	        }
 	    });
 }
 
+
+function getKeyFieldForDeliverableTable(tableName){
+	$.ajax({
+	        url: "getkeyfield",
+	        type: "POST",			        
+	        data: {
+		        tableName : encodeURIComponent(tableName)
+		    },
+	        dataType: "text",		
+			contentType : "application/x-www-form-urlencoded",
+	        success: function(keyField) 
+			{	
+				$('#deliverableTableKeyfield').text(keyField);	
+	        }
+	    });
+}
 //On selection of deliverable table, show deliverable tables fileds in drop down.
 function getDeliverableTableColumns(){
 	
@@ -1351,7 +1367,7 @@ function getDeliverableTableColumns(){
 					$('#message').text(response);
 				}
 		    });
-		    getKeyFieldForTable(tableName);
+		    getKeyFieldForDeliverableTable(tableName);
 	}
 		
 }
@@ -1521,11 +1537,179 @@ function removeMasterDeliverableMappingServerCall(mappingIdList, projectId){
 		}
     });
 }
-/*Master Deliverable Mappping END*/
+/* Master Deliverable Mappping END*/
 
-/* Consistency tracking 01-10-2021 START */
+/* InConsistency tracking 01-10-2021 START */
+function getMappedDeliverableFieldByKeyField(projectId){
+	
+	if(checkSession() == 'valid'){
+		
+	var	filterKeyField = $('#dropDownkeyField option:selected').text();	
+	console.log('projectId '+projectId); console.log('filterKeyField '+filterKeyField);
+	
+	$.ajax({
+	        url: "getMappedDeliverableFieldByKeyField",
+	        type: "POST",			
+	        data: {
+				projectId : encodeURIComponent(projectId),
+				filterKeyField : encodeURIComponent(filterKeyField)
+			},
+	        dataType: "json",		
+			contentType : "application/x-www-form-urlencoded",
+	        success: function(response) 
+			{	
+				$("#filterDeliverableField").empty();
+				if (response.length == 0) {
+					$("#filterDeliverableField").attr("autocomplete", "OFF");				
+					$("#filterDeliverableField").append('<option value="" selected="selected" >--Select Field--</option>');
+				} 
+				else
+				{	
+					$("#filterDeliverableField").append('<option value="">--Select Field --</option>');							
+					for (var i = 0; i < response.length; i++) 
+					{	
+						$("#filterDeliverableField").append("<option value='" + response[i] + "'>" + response[i] + "</option>");
+					}
+			
+				}
+					
+	        },error: function(response) {
+				alert(response);
+			}
+	    });
+		    
+	}
+}
 
-function saveConsistencyServerCall(ConsistencyTracking, filterKeyField, projectId){
+function getInConsistencyDataByFilterServerCall(userId, projectId, filterKeyField, filterDeliverableField){
+	$.ajax({
+        url: "getInConsistencyDataByFilter",
+        type: "POST",        
+        data: {
+			projectId : encodeURIComponent(projectId),	
+            filterKeyField : encodeURIComponent(filterKeyField),
+			deliverableColumn : encodeURIComponent(filterDeliverableField)
+        },
+        dataType: "json",		
+		contentType : "application/x-www-form-urlencoded; charset=UTF-8",
+        success: function(response) 
+		{
+			showInconsistentDataByFilter(response, userId, projectId);
+	/*		var srno = 0;
+			response.forEach(obj => {
+				var mappingId = ""; var keyField = ""; var deliverableField = ""; var masterData = ""; 
+				var deliverableData = ""; var consistencyFlag = ""; var remark = ""; 
+	 
+				srno ++;
+		        Object.entries(obj).forEach(([key, value]) => {		            
+					
+					if(`${key}` == 'MAPPING_ID'){
+						mappingId = `${value}`;
+					}else if(`${key}` == 'KEY_FIELD'){
+						keyField = `${value}`;						
+					}else if(`${key}` == 'DELIVERABLE_NAME'){
+						deliverableField = `${value}`;											
+					}else if(`${key}` == 'MASTER_DATA'){					
+						masterData = `${value}`;						
+					}else if(`${key}` == 'DELIVERABLE_DATA'){
+						deliverableData = `${value}`;											
+					}else if(`${key}` == 'CONSISTENCY_FLAG'){					
+						consistencyFlag = `${value}`;						
+					}else if(`${key}` == 'REMARK'){					
+						remark = `${value}`;						
+					}
+						
+	     		});	
+		        
+     		});*/
+
+        },
+		error : function(response){	
+			alert('Error '+response);		
+			
+		}
+    });
+}
+
+function showInconsistentDataByFilter(response, userId, projectId){
+	
+	var tableAttr =  "";
+	//trHTML = trHTML+ 
+	tableAttr = tableAttr+"<table id='inconsistencyCheckTbl' name='inconsistencyCheckTbl' width='100%' border='0' align='left' cellpadding='0' cellspacing='0' class='table tbl-report table-bordered table-striped'>";
+	tableAttr = tableAttr+"<thead style='position: sticky;top: 0' class='thead-dark'><tr>";				
+	tableAttr = tableAttr+"<th style='width:50px;' align='center' valign='middle' class='table-heading header'>Sr.No</th>";				
+	tableAttr = tableAttr+"<th align='center' valign='middle' class='table-heading header'>Key Field</th>";				
+	tableAttr = tableAttr+"<th align='center' valign='middle' class='table-heading header'>Field Name</th>";				
+	tableAttr = tableAttr+"<th align='center' valign='middle' class='table-heading header'>Master Data</th>";				
+	tableAttr = tableAttr+"<th align='center' valign='middle' class='table-heading header'>Deliverable Data</th>";				
+	tableAttr = tableAttr+"<th align='center' valign='middle' class='table-heading header'>Set flag as</th>";				
+	tableAttr = tableAttr+"<th width=15% align='center' valign='middle' class='table-heading header'>Remarks</th>";				
+	tableAttr = tableAttr+"<th align='center' valign='middle' class='table-heading header'>Action</th></tr></thead>";	
+	
+	// Iterate JSON HERE
+	
+	var srno = 0;	
+	response.forEach(obj => {
+			var mappingId = ""; var keyField = ""; var deliverableField = ""; var masterData = ""; 
+			var deliverableData = ""; var consistencyFlag = ""; var remark = ""; 
+ 
+			srno ++;
+	        Object.entries(obj).forEach(([key, value]) => {		            
+				
+				if(`${key}` == 'MAPPING_ID'){
+					mappingId = `${value}`;
+				}else if(`${key}` == 'KEY_FIELD'){
+					keyField = `${value}`;						
+				}else if(`${key}` == 'DELIVERABLE_NAME'){
+					deliverableField = `${value}`;											
+				}else if(`${key}` == 'MASTER_DATA'){					
+					masterData = `${value}`;						
+				}else if(`${key}` == 'DELIVERABLE_DATA'){
+					deliverableData = `${value}`;											
+				}else if(`${key}` == 'CONSISTENCY_FLAG'){					
+					consistencyFlag = `${value}`;						
+				}else if(`${key}` == 'REMARK'){					
+					remark = `${value}`;						
+				}
+					
+     		});	
+     
+     tableAttr = tableAttr+"<tr><tr valign='top'>";          
+     tableAttr = tableAttr+"<td class='text-center'>"+srno+"<input type='hidden' id='mappingId_"+srno+"' value='"+mappingId+"'></td>";          
+     tableAttr = tableAttr+"<td id='keyField_"+srno+"'>"+keyField+"</td>";          
+     tableAttr = tableAttr+"<td id='deliverableField_"+srno+"'>"+deliverableField+"</td>";          
+     tableAttr = tableAttr+"<td id='masterData_"+srno+"'>"+masterData+"</td>";          
+     tableAttr = tableAttr+"<td id='deliverableData_"+srno+"'>"+deliverableData+"</td>";          
+     tableAttr = tableAttr+"<td><select class='form-select select-action'  id='consistencyFlag_"+srno+"' name='consistencyFlag_"+srno+"'>";          
+     tableAttr = tableAttr+"<option value='' selected='selected' >Select Flag</option>";          
+     tableAttr = tableAttr+"<option value='Mark as Alias'>Mark as Alias </option>";     
+     /*tableAttr = tableAttr+"<option value='Ignore by Rule'>Ignore by Rule</option>"; */   
+     tableAttr = tableAttr+"<option value='Ignore Manually'>Ignore Manually</option>"; 
+     if( consistencyFlag == 'On Hold'){    
+     	tableAttr = tableAttr+"<option value='On Hold' selected='selected' >On Hold</option>";  
+     }else{   
+     	tableAttr = tableAttr+"<option value='On Hold'>On Hold</option>";
+     }     
+     tableAttr = tableAttr+"</select></td>";     
+     tableAttr = tableAttr+"<td><textarea class='form-control' id='consistencyRemark_"+srno+"'>"+remark+"</textarea></td>";     
+     tableAttr = tableAttr+"<td><input id='submitBtn_"+srno+"' type='button' class='btn btn-primary done' value='Submit' onClick='saveConsistency("+srno+",\""+userId+"\",\""+projectId+"\")'>";     
+          
+     //tableAttr = tableAttr+"<td><input id='submitBtn_"+srno+"' type='button' class='btn btn-primary done' value='Submit' onClick='saveConsistency('"+srno+"')'>";     
+     tableAttr = tableAttr+"</td></tr> "; 
+ 		
+		        
+     });
+     	
+     if(srno == 0){
+		tableAttr = tableAttr +"<tr><tr valign='top'><td colspan='8' class='text-center'>No Data Found</td></tr>";
+	 } 
+     tableAttr = tableAttr+"</table>";     
+     $('#inconsistencyCheckDiv').empty();
+     $('#inconsistencyCheckDiv').append(tableAttr);	
+     
+}
+
+function saveConsistencyServerCall(ConsistencyTracking, filterKeyField, projectId, userId){
 	
 	console.log(ConsistencyTracking);
 	$.ajax({
@@ -1540,7 +1724,8 @@ function saveConsistencyServerCall(ConsistencyTracking, filterKeyField, projectI
 			//document.forms["viewConsistencyFrm"].submit();
 			$('#filterKeyField').val(filterKeyField);
 			$('#projectId').val(projectId);
-			document.viewConsistencyFrm.submit();
+			//document.viewConsistencyFrm.submit();
+			getInConsistencyDataByFilter(userId, projectId);
         },
 		error : function(response){	
 			alert(response);		
@@ -1578,4 +1763,332 @@ function redirectToViewProjectDetails(projectId, projectName){
 	}
 	
 }
-/* Consistency tracking 01-10-2021 END */
+
+/* InConsistency tracking 01-10-2021 END */
+
+/* Inconsistency Reports 03-11-2021 START*/
+function getProjectWiseReportServerCall(deliverableTypeId, projectId){
+	
+	$.ajax({
+        url: "getProjectWiseReportData",
+        type: "POST",
+        data: {
+	
+            deliverableTypeId : encodeURIComponent(deliverableTypeId),
+			projectId : encodeURIComponent(projectId)		
+            
+        },
+        dataType: "json",		
+		contentType : "application/x-www-form-urlencoded",
+        success: function(response) 
+		{
+			showProjectWiseReportData(response);
+        },
+		error : function(response){	
+			alert('Error '+response);		
+			
+		}
+    });	
+    
+}
+
+function getFieldWiseReportServerCall(deliverableTypeId, projectId){
+	
+	$.ajax({
+        url: "getFieldWiseReportData",
+        type: "POST",
+        data: {
+	
+         	//deliverableTypeId : encodeURIComponent(deliverableTypeId),
+			projectId : encodeURIComponent(projectId)		
+            
+        },
+        dataType: "json",		
+		contentType : "application/x-www-form-urlencoded",
+        success: function(response) 
+		{
+			showFieldWiseReportData(response);
+        },
+		error : function(response){	
+			alert('Error '+response);		
+			
+		}
+    });	
+    
+}
+
+function getProjectAndDateWiseReportServerCall(deliverableTypeId, projectId){
+	
+	$.ajax({
+        url: "getProjectAndDateWiseReportData",
+        type: "POST",
+        data: {
+	
+            deliverableTypeId : encodeURIComponent(deliverableTypeId)
+			//projectId : encodeURIComponent(projectId)		
+            
+        },
+        dataType: "json",		
+		contentType : "application/x-www-form-urlencoded",
+        success: function(response) 
+		{			
+			showProjectAndDateWiseReportData(response);
+        },
+		error : function(response){	
+			alert('Error '+response);		
+			
+		}
+    });	
+    
+}
+
+
+function showProjectWiseReportData(response){
+		
+	var projectNameArray = [];
+	var initialCountArray = [];
+	var pendingCountArray = [];
+	
+	var projectList = response['PROJECT_NAME'];
+	var projectListArray = projectList.split(",");
+	for(var i = 0; i<projectListArray.length;i++){
+		projectNameArray.push(projectListArray[i]);
+	}
+	
+	var initialDataList = response['INITIAL_DATA'];
+	var initialDataListArray = initialDataList.split(",");
+	for(var i = 0; i<initialDataListArray.length;i++){
+		initialCountArray.push(initialDataListArray[i]);
+	}
+	
+	var pendingDataList = response['PENDING_DATA'];
+	var pendingDataListArray = pendingDataList.split(",");
+	for(var i = 0; i<pendingDataListArray.length;i++){
+		pendingCountArray.push(pendingDataListArray[i]);
+	}
+	
+	/*response.forEach(obj => {
+				var projectId = ''; var projectName = ''; var initialInconsistency = ''; var pendingInconsistency =''; 
+				//srno ++;
+		        Object.entries(obj).forEach(([key, value]) => {		            
+					
+					if(`${key}` == 'PROJECT_ID'){
+						projectId = `${value}`;
+					}else if(`${key}` == 'PROJECT_NAME'){
+						projectName = `${value}`;
+						projectNameArray.push(projectName);
+					}else if(`${key}` == 'INITIAL_INCONSISTENCY'){
+						initialInconsistency = `${value}`;
+						initialCountArray.push(initialInconsistency);						
+					}else if(`${key}` == 'PENDING_INCONSISTENCY'){					
+						pendingInconsistency = `${value}`;
+						pendingCountArray.push(pendingInconsistency);
+					}
+					
+		        });			
+		        
+		    });*/
+	 
+      var ctx = document.getElementById('myChart').getContext('2d');
+      
+      var myChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            //labels: ["PROJECT_001", "PROJECT_002", "PROJECT_003", "PROJECT_004", "PROJECT_005"],
+            labels: projectNameArray,
+            datasets: [ { 
+                //data: [75,40,80,100,158],
+                //data: ['+initialInconsistency+'],
+                data: initialCountArray,
+                label: "Total Inconsistency",
+                borderColor: "#e74c3c",
+                backgroundColor: "#e74c3c",
+                borderWidth:2
+              }, { 
+                //data: [40,20,40,50,49],
+                data: pendingCountArray,
+                label: "Pending",
+                borderColor: "#4499c3",
+                backgroundColor:"#4499c3",
+                borderWidth:2,
+              }
+            ]
+          }
+		  
+        });
+		    
+}
+
+function showFieldWiseReportData(response){
+		
+	var fieldNameArray = [];
+	var consisChkDataArray = [];	
+	
+	var fieldList = response['FIELDS'];
+	var fieldListArray = fieldList.split(",");
+	for(var i = 0; i<fieldListArray.length;i++){
+		fieldNameArray.push(fieldListArray[i]);
+	}
+	
+	var consisDataList = response['CONSIS_CHK'];
+	var consisDataListArray = consisDataList.split(",");
+	for(var i = 0; i<consisDataListArray.length;i++){
+		consisChkDataArray.push(consisDataListArray[i]);
+	}
+	
+	var ctxb = document.getElementById('myChart2').getContext('2d');
+	var myChart = new Chart(ctxb, {
+          type: 'bar',
+          data: {
+            //labels: ["Size","Process Unit", "Speciality Tag", "Reporting requirement", "Piping Spec"],
+            labels: fieldNameArray,
+            datasets: [{ 
+                //data: [75,40,80,100,158],
+                data: consisChkDataArray,
+                borderColor:[
+                  "#fff",
+                  "#fff",
+                  "#fff",
+				  "#fff",
+				  "#fff",
+                ],
+                backgroundColor: [
+                  "#2ecc71",
+		       	  "#3498db",
+		          "#95a5a6",
+		          "#9b59b6",
+		          "#f1c40f",      
+                ],
+                borderWidth:2,
+              }]
+          },
+		 	options: {
+	    		plugins: {
+	        		legend: {
+	            	display: false
+	        		}
+	    		}
+			}
+		});
+}
+
+function showProjectAndDateWiseReportData(response){
+	
+	//JSON START
+	var projectInconDateWiseArray = [];
+	var projectInconDataArray = [];
+	
+	
+	
+var inconChkDate = response['INCONSISTENCY_DATE'];
+var inconsistencyCheckDates = inconChkDate.split(",");
+for(var i = 0; i<inconsistencyCheckDates.length;i++){
+	projectInconDateWiseArray.push(inconsistencyCheckDates[i]);
+}
+
+console.log('projectInconDataWiseArray'+projectInconDateWiseArray);
+
+var inconDateWise = response['INCONSISTENCY_DATEWISE_DATE'];
+
+inconDateWise.forEach(function(element) {
+	var dates = element['DATE_OF_ENTRY'];
+	var projectName = element['PROJECT_NAME'];
+	var projectData = element['PROJECT_DATA'];
+	
+	var projectDataVal = projectData.split(",");
+	var projectDataValArray = [];
+	for(var i = 0; i<projectDataVal.length;i++){
+		
+		projectDataValArray.push(projectDataVal[i]);
+	}
+	console.log('Project Data '+dates+' '+projectName+' '+projectData);
+	
+	var projectDataJson = {
+			"label" : projectName,
+			"data" : projectDataValArray,
+			"backgroundColor" : "blue",
+			"borderColor" : "lightblue",
+			"fill" : false,
+			"lineTension" : 0,
+			"pointRadius" : 5
+	}
+	projectInconDataArray.push(projectDataJson);
+});
+
+console.log(projectInconDataArray);
+/*for (var i = 0; i < inconDateWise.length; i++) {
+	var elem = inconDateWise[i];	
+	console.log('elem '+elem);
+}*/
+
+	//JSON END
+		//get canvas
+	var ctx = $("#myChart3");
+
+	var data = {
+		//labels : ["10/05/2021", "17/05/2021", "27/05/2021", "02/06/2021", "15/06/2021"],
+		//labels : ["2021-05-10", "2021-05-17", "2021-05-27", "2021-06-02", "2021-06-15"],
+		labels : projectInconDateWiseArray,
+		datasets : projectInconDataArray
+		/*datasets : [
+			{
+				label : "PROJECT_001",
+				data : [150, 121, 80, 40, 15],
+				backgroundColor : "blue",
+				borderColor : "lightblue",
+				fill : false,
+				lineTension : 0,
+				pointRadius : 5
+			},
+			{
+				label : "PROJECT_002",
+				data : [135, 101, 75, 37, 7],
+				backgroundColor : "green",
+				borderColor : "lightgreen",
+				fill : false,
+				lineTension : 0,
+				pointRadius : 5
+			},
+			{
+				label : "PROJECT_003",
+				data : [168, 127, 95, 55, 37],
+				backgroundColor : "#f1c40f",
+				borderColor : "#f1c40f",
+				fill : false,
+				lineTension : 0,
+				pointRadius : 5
+			}
+		]*/
+		
+	};
+
+	var options = {
+		title : {
+			display : true,
+			position : "top",
+			text : "Line Graph",
+			fontSize : 18,
+			fontColor : "#111"
+		},
+		legend : {
+			display : true,
+			position : "bottom"
+		},
+		scales: {
+			yAxes: [{
+				ticks: {
+					max: 80,
+					min: -10,
+					stepSize: 10
+				}
+			}]
+		},
+	};
+
+	var chart = new Chart( ctx, {
+		type : "line",
+		data : data,
+		options : options
+	} );
+	
+}
