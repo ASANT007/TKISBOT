@@ -7,6 +7,33 @@ function ImageLoadingForAdmin(Id) {
 	document.getElementById(Id).innerHTML = '<img alt="loading" src="images/loading.gif"/>';
 }*/
 /* Validate Session Start*/
+function checkAdminSession(){
+	
+	var session = '';
+	
+	$.ajax({
+		url : 'checkAdminSession',
+		type : 'POST',
+		datatype : 'text',
+		contentType : 'text/plain charset=UTF-8',
+		async : false,
+		success : function(response){
+			//alert('session : '+response);
+			if(response.includes('Invalid')){
+				window.location.href="superAdminLogout";
+			}else{
+				session = 'valid';
+			}
+			
+		},error : function(response){
+			$('#message').val(response);
+			$('#message').addClass('alert alert-danger');
+			
+		}
+	});
+	//alert('session : '+session);
+	return session;
+}
 function checkSession(){
 	
 	var session = '';
@@ -55,6 +82,7 @@ function login_validation() {
 		document.frm.password.focus();
 	}
 	else {
+		
 		document.getElementById("valid").innerHTML = "";
 		checkLogin(username, password);
 	}
@@ -168,7 +196,7 @@ function addProjectData() {
 
 function addGroup() {
 
-	if(checkSession().includes('valid')){
+	if(checkAdminSession().includes('valid')){
 		document.getElementById('errormsg').style.color = "red";
 		document.getElementById("errormsg").innerHTML = "";
 		var groupName = document.getElementById("groupName").value.trim();
@@ -192,7 +220,7 @@ function addGroup() {
 
 function editGroupData(groupMasterId) {
 
-	if(checkSession().includes('valid')){
+	if(checkAdminSession().includes('valid')){
 		document.getElementById('errormsg').style.color = "red";
 		var groupName = document.getElementById("groupName").value.trim();
 		var groupRole = document.getElementById("groupRole").value.trim();
@@ -217,7 +245,7 @@ function editGroupData(groupMasterId) {
 
 function editADServiceData(adServiceId) {
 
-	if(checkSession().includes('valid')){
+	if(checkAdminSession().includes('valid')){
 		document.getElementById('errormsg').style.color = "red";
 		var userId = document.getElementById("userId").value.trim();
 		var password = document.getElementById("password").value.trim();
@@ -274,7 +302,7 @@ function editADServiceData(adServiceId) {
 
 function changePassword(adminSrNo) {
 	
-	if(checkSession().includes('valid')){
+	if(checkAdminSession().includes('valid')){
 		document.getElementById('errormsg').style.color = "red";
 		var oldPass = document.getElementById("oldPass").value.trim();
 		var oldPassword = document.getElementById("oldPassword").value.trim();

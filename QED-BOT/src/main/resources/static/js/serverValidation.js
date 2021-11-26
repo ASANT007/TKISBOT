@@ -1845,49 +1845,28 @@ function getProjectAndDateWiseReportServerCall(deliverableTypeId, projectId){
 
 function showProjectWiseReportData(response){
 		
-	var projectNameArray = [];
-	var initialCountArray = [];
-	var pendingCountArray = [];
+	var projectNameArray = []; 	var initialCountArray = []; var pendingCountArray = [];
 	
 	var projectList = response['PROJECT_NAME'];
 	var projectListArray = projectList.split(",");
+	
 	for(var i = 0; i<projectListArray.length;i++){
 		projectNameArray.push(projectListArray[i]);
 	}
 	
 	var initialDataList = response['INITIAL_DATA'];
 	var initialDataListArray = initialDataList.split(",");
+	
 	for(var i = 0; i<initialDataListArray.length;i++){
 		initialCountArray.push(initialDataListArray[i]);
 	}
 	
 	var pendingDataList = response['PENDING_DATA'];
 	var pendingDataListArray = pendingDataList.split(",");
+	
 	for(var i = 0; i<pendingDataListArray.length;i++){
 		pendingCountArray.push(pendingDataListArray[i]);
 	}
-	
-	/*response.forEach(obj => {
-				var projectId = ''; var projectName = ''; var initialInconsistency = ''; var pendingInconsistency =''; 
-				//srno ++;
-		        Object.entries(obj).forEach(([key, value]) => {		            
-					
-					if(`${key}` == 'PROJECT_ID'){
-						projectId = `${value}`;
-					}else if(`${key}` == 'PROJECT_NAME'){
-						projectName = `${value}`;
-						projectNameArray.push(projectName);
-					}else if(`${key}` == 'INITIAL_INCONSISTENCY'){
-						initialInconsistency = `${value}`;
-						initialCountArray.push(initialInconsistency);						
-					}else if(`${key}` == 'PENDING_INCONSISTENCY'){					
-						pendingInconsistency = `${value}`;
-						pendingCountArray.push(pendingInconsistency);
-					}
-					
-		        });			
-		        
-		    });*/
 	 
       var ctx = document.getElementById('myChart').getContext('2d');
       
@@ -1921,19 +1900,22 @@ function showProjectWiseReportData(response){
 
 function showFieldWiseReportData(response){
 		
-	var fieldNameArray = [];
-	var consisChkDataArray = [];	
+	var fieldNameArray = []; var consisChkDataArray = []; var fieldColorArray = [];	
 	
 	var fieldList = response['FIELDS'];
 	var fieldListArray = fieldList.split(",");
+	
 	for(var i = 0; i<fieldListArray.length;i++){
 		fieldNameArray.push(fieldListArray[i]);
+		var fieldColor = getRandomColor();
+		fieldColorArray.push(fieldColor);
 	}
 	
 	var consisDataList = response['CONSIS_CHK'];
 	var consisDataListArray = consisDataList.split(",");
+	
 	for(var i = 0; i<consisDataListArray.length;i++){
-		consisChkDataArray.push(consisDataListArray[i]);
+		consisChkDataArray.push(consisDataListArray[i]);		
 	}
 	
 	var ctxb = document.getElementById('myChart2').getContext('2d');
@@ -1952,13 +1934,14 @@ function showFieldWiseReportData(response){
 				  "#fff",
 				  "#fff",
                 ],
-                backgroundColor: [
+                /*backgroundColor: [
                   "#2ecc71",
 		       	  "#3498db",
 		          "#95a5a6",
 		          "#9b59b6",
 		          "#f1c40f",      
-                ],
+                ],*/
+                backgroundColor: fieldColorArray,
                 borderWidth:2,
               }]
           },
@@ -1978,48 +1961,46 @@ function showProjectAndDateWiseReportData(response){
 	var projectInconDateWiseArray = [];
 	var projectInconDataArray = [];
 	
+	var inconChkDate = response['INCONSISTENCY_DATE'];
+	var inconsistencyCheckDates = inconChkDate.split(",");
+	for(var i = 0; i<inconsistencyCheckDates.length;i++){
+		projectInconDateWiseArray.push(inconsistencyCheckDates[i]);
+	}
 	
-	
-var inconChkDate = response['INCONSISTENCY_DATE'];
-var inconsistencyCheckDates = inconChkDate.split(",");
-for(var i = 0; i<inconsistencyCheckDates.length;i++){
-	projectInconDateWiseArray.push(inconsistencyCheckDates[i]);
-}
+	var inconDateWise = response['INCONSISTENCY_DATEWISE_DATE'];
 
-console.log('projectInconDataWiseArray'+projectInconDateWiseArray);
-
-var inconDateWise = response['INCONSISTENCY_DATEWISE_DATE'];
-
-inconDateWise.forEach(function(element) {
-	var dates = element['DATE_OF_ENTRY'];
-	var projectName = element['PROJECT_NAME'];
-	var projectData = element['PROJECT_DATA'];
-	
-	var projectDataVal = projectData.split(",");
-	var projectDataValArray = [];
-	for(var i = 0; i<projectDataVal.length;i++){
+	inconDateWise.forEach(function(element) {	
 		
-		projectDataValArray.push(projectDataVal[i]);
-	}
-	console.log('Project Data '+dates+' '+projectName+' '+projectData);
-	
-	var projectDataJson = {
-			"label" : projectName,
-			"data" : projectDataValArray,
-			"backgroundColor" : "blue",
-			"borderColor" : "lightblue",
-			"fill" : false,
-			"lineTension" : 0,
-			"pointRadius" : 5
-	}
-	projectInconDataArray.push(projectDataJson);
-});
-
-console.log(projectInconDataArray);
-/*for (var i = 0; i < inconDateWise.length; i++) {
-	var elem = inconDateWise[i];	
-	console.log('elem '+elem);
-}*/
+		var dates = element['DATE_OF_ENTRY'];
+		var projectName = element['PROJECT_NAME'];
+		var projectData = element['PROJECT_DATA'];
+		
+		var borderColor = getRandomColor();
+		
+		var projectDataVal = projectData.split(",");
+		var projectDataValArray = [];
+		for(var i = 0; i<projectDataVal.length;i++){
+			
+			projectDataValArray.push(projectDataVal[i]);
+		}
+			
+		var projectDataJson = {
+				"label" : projectName,
+				"data" : projectDataValArray,
+				//"backgroundColor" : "blue",
+				"backgroundColor" : borderColor,
+				//"borderColor" : "lightblue",
+				//"borderColor" : "#0a3678",
+				"borderColor" : borderColor,
+				//"borderColor" : "rgb(255,60,70)",
+				//"borderColor" : "rgb('+r+','+g+','+b+')",
+				//"borderColor" : borderColor,
+				"fill" : false,
+				"lineTension" : 0,
+				"pointRadius" : 5
+		}
+		projectInconDataArray.push(projectDataJson);
+	});
 
 	//JSON END
 		//get canvas
@@ -2091,4 +2072,13 @@ console.log(projectInconDataArray);
 		options : options
 	} );
 	
+}
+
+function getRandomColor(){
+	var letters = '0123456789ABCDEF';
+	var color = '#';
+	for(var i=0; i < 6; i++){
+		color +=letters[Math.floor(Math.random() *16)];
+	}
+	return color;
 }
