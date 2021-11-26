@@ -237,7 +237,7 @@ li.topnav-first {
 }
 .form-container {
 	background: #00a0f0;
-	font-size: 0;
+	/* font-size: 0; */
 	padding: 0 15px;
 	border-radius: 15px;
 	box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
@@ -247,7 +247,7 @@ li.topnav-first {
 	font-size: 13px;
 	text-align: center;
 	text-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-	width: 50%;
+	width: 49%;
 	padding: 50px 0;
 	vertical-align: top;
 	display: inline-block;
