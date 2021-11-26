@@ -166,13 +166,13 @@ $(document).ready(function () {
         	else{%>
         	<tr><tr valign="top">
         	
-            <td colspan="3" class="text-center">No Project Assigned</td></tr>
+            <td colspan="4" class="text-center">No Project Assigned</td></tr>
         <% }
         	
         }else{%>
         	<tr><tr valign="top">
         	
-            <td colspan="3" class="text-center">No Project Assigned</td></tr>
+            <td colspan="4" class="text-center">No Project Assigned</td></tr>
         <% }%>
     </table>  </div>
   </div>

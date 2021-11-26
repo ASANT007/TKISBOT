@@ -95,7 +95,7 @@ body {
 					  
 		<div class="col-md-4  align-self-center">
           	<input class="btn btn-primary " type = "button" value = "Submit" onClick="getProjectAndDateWiseReport()"/>
-          	<a href="getProjectAndDateWiseReport">
+          	<a href="projectAndDateWiseReport">
           	<input class="btn btn-primary" type = "button" value = "Cancel" />
           	</a>
 		</div>
